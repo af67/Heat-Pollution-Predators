@@ -4,7 +4,6 @@
 #                           C L E A N I N G   OF    S H A R K      A T T A C K S
 
 #________________________________________________________________________________________________________________________
-
 install.packages("countrycode")
 
 library(tidyverse)
@@ -13,13 +12,13 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(countrycode)
+library(leaflet)
+library(viridisLite)
+library(htmltools)
+library(RColorBrewer)
 
 attacks <- read.csv("attacks1.csv")
 attacks <- attacks[1:3406, ]
-
-
-
-
 #________________________________________________________________________________________________________________________
 #we drop the columns that we do not need
 
@@ -108,8 +107,6 @@ attacks$Date <- na_if(attacks$Date, "")
 attacks <- subset(attacks, !is.na(Date))
 
 #________________________________________________________________________________________________________________________
-
-
 #NOW WE WORK ON AGE
 
 #To clean the column of the age we took off all the letters, we computed by hand the means of all victims
@@ -136,15 +133,11 @@ attacks$Age <- ifelse(attacks$Age == "16 to 18", "27", attacks$Age)
 attacks$Age <- ifelse(attacks$Age == "21 or 26", "23.5", attacks$Age)
 
 
-
 attacks$Age <- str_replace_all(attacks$Age, "[A-Za-z]", "")
 
 attacks$Age <- na_if(attacks$Age, "")
 
 attacks$Age <- as.numeric(str_extract(attacks$Age, "\\d+\\.?\\d*"))
-
-
-
 
 
 #CORRECTION
@@ -436,14 +429,12 @@ attacks$Age[attacks$Country == "NEW CALEDONIA" & is.na(attacks$Age)] <- mean
 
 #We fixed those countries that had lots of NA. Now, for the remaining NA we decided not to do anything for a specific reason. Not only we have not cound the real information on the internet, but we also believe that doing the mean for those remaining situations was useless, because these are the cases when NA are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
 
-
 count_na_by_country <- attacks %>%
   group_by(Country) %>%
   summarise(NA_count = sum(is.na(Age)))
 
 
 attacks <- subset(attacks, !is.na(Age))
-
 
 #________________________________________________________________________________________________________________________
 
@@ -534,8 +525,6 @@ attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
 
 #________________________________________________________________________________________________________________________
-
-
 #NOW WE WORK ON SHARK SPECIES
 
 
@@ -1017,9 +1006,9 @@ co2 <- read.csv("CO2.csv")
 
 # Change names of columns in order to have the same columns that in the other datasets
 
-names(co2)[names(co2) == "Entity"] <- "Country"
-names(co2)[names(co2) == "Year"] <- "Year"
+names(co2)[names(co2) == "year"] <- "Year"
 names(co2)[names(co2) == "Annual.CO..emissions"] <- "Annual CO2 Emissions"
+names(co2)[names(co2) == "Entity"] <- "Country"
 names(co2)[names(co2) == "Code"] <- "ISO_Code"
 
 
@@ -1034,10 +1023,12 @@ co2 <- subset(co2, select = c("ISO_Code", "Year", "Annual CO2 Emissions", "Count
 # the last 50 years
 co2<- co2[co2$Year >= 1970, ]
 
-co2$ISO_Code <- na_if(co2$ISO_Code, "")
+#co2$ISO_Code <- na_if(co2$ISO_Code, "")
+
+co2$ISO_Code <- ifelse(co2$ISO_Code == "", NA, co2$ISO_Code)
+
 
 co2 <- subset(co2, !is.na(ISO_Code))
-
 
 #________________________________________________________________________________________________________________________
 #MERGE FIRST THREE DATA SETS
@@ -1045,4 +1036,74 @@ co2 <- subset(co2, !is.na(ISO_Code))
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
 merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
 
+#Change name of a column
 colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
+
+#Delete a useless column
+merged_data3 <- select(merged_data3, -Country.y)
+
+#_______________________________________________________________________________________________________________________
+#Interactive map
+
+
+#Import the data concerning the map
+map <- read.csv("map.csv")
+map <- map[c('latitude', 'longitude', 'country')]
+
+#Let's rename the columns of the dataset
+colnames(map)[colnames(map) == 'latitude'] <- 'lat'
+colnames(map)[colnames(map) == 'longitude'] <- 'lng'
+colnames(map)[colnames(map) == 'country'] <- 'Country'
+map$Country <- toupper(map$Country)
+
+
+map <- map %>%
+  mutate(Country = ifelse(Country == "UNITED STATES", "USA", Country))
+
+merged_map <- merge(merged_data3, map, by='Country', all=FALSE)
+
+# Create a new variable representing the nb of attacks per country
+results <- merged_map %>%
+  group_by(Country) %>%
+  summarise(Attackscountry = n())
+print(results)
+
+# Attach aggregated data to your original dataframe
+merged_map <- left_join(merged_map, results, by = "Country")
+
+
+# Definition of the thresholds for the categorization
+seuils <- c(-Inf, 50, 100, 500, Inf)
+
+# Definition of the colors we want to have in the map
+couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF","#001F3F80")
+
+# Add a new category column based on thresholds
+merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
+
+merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
+
+#Let's have fun with an interactive map
+ma_carte <- leaflet(merged_map) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    radius = ~sqrt(echelle_taille) * 2,
+    color = ~factor(merged_map$cat_attacks, labels = couleurs),
+    fillOpacity = 0.4,
+    label = ~paste(Country, ":", Attackscountry),
+    options = markerOptions(autoPopup = TRUE)
+  ) %>%
+  addLegend(
+    position = "bottomleft",
+    colors = couleurs,
+    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
+    title = "Number of shark attacks"
+  )
+
+ma_carte
+
+
+
+
