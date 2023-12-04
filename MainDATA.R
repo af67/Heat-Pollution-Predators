@@ -803,7 +803,6 @@ attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
 
 names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 
-
 #________________________________________________________________________________________________________________________
 #final check up:
 
