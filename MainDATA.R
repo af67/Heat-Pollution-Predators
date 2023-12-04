@@ -799,7 +799,9 @@ attacks$Fatal..Y.N. <-na_if(attacks$Fatal..Y.N., "")
 attacks <- subset(attacks, !is.na(Fatal..Y.N.))
 
 #Replace Yes by 1, 0 otherwise
-# attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
+attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
+
+names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 
 
 #________________________________________________________________________________________________________________________
