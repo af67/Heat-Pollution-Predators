@@ -1144,4 +1144,3 @@ model <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`,
 summary(model)
 
 
-
