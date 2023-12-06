@@ -18,6 +18,7 @@ library(leaflet)
 library(viridisLite)
 library(htmltools)
 library(RColorBrewer)
+library(car)
 
 attacks <- read.csv("attacks1.csv")
 attacks <- attacks[1:3406, ]
@@ -514,8 +515,34 @@ attacks$Time <- sapply(attacks$Time, timeoftheday)
 attacks$Time <- tolower(attacks$Time)
 
 
-sum(is.na(attacks$Time))
-table(attacks$Time)
+sum(is.na(attacks$Time)) #this is the only one that still presents 1237 NA. we dont want to delete
+#them all coz we'd lose 40% of our data. 
+table(attacks$Time)#table shows that most of them happen in the afternoon, while 2ns place is owned by
+#morning. To confirm the higher frequency of attacks between 8am and 6pm is this artile (link JC found??)
+#we explain this by the fact that, naturally, most of people swim during the day. therefore, what we do
+#is replacing NA randomly by the proportion of afternoon, morning and evening.
+
+attacks$Time <- na_if(attacks$Time, "")
+
+898+228+589+9 
+898/1724
+228/1724
+589/1724
+#afternoon is 52%, evening is 12% and morning is 34%.
+
+attacks$Time <- ifelse(is.na(attacks$Time),
+                       sample(c("afternoon", "morning", "evening", "night"), 
+                              size = sum(is.na(attacks$Time)), 
+                              replace = TRUE, 
+                              prob = c(0.52, 0.34, 0.12, 0.02)),
+                       attacks$Time)
+
+
+# Let's focus on the transformation of time where evening correspond to 0, afternoon to 1,
+# morning to 2 and night to 3
+attacks$Time <- as.numeric(factor(attacks$Time, levels = c("evening", "afternoon", "morning", "night")))
+
+
 
 
 #________________________________________________________________________________________________________________________
@@ -525,6 +552,9 @@ table(attacks$Time)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
+# Let's do some n-coding
+attacks$Sex <- ifelse(attacks$Sex == "M", 0, 
+                      ifelse(attacks$Sex == "F", 1, 2))
 
 #________________________________________________________________________________________________________________________
 #NOW WE WORK ON SHARK SPECIES
@@ -754,6 +784,23 @@ attacks$Species <- species
 
 attacks$Species <- ifelse(is.na(attacks$Species), "Unknown", attacks$Species)
 
+#Let's put the Species variable on numeric
+
+attacks <- attacks %>%
+  mutate(Species = as.numeric(factor(Species)))
+
+# Get the top 5 species
+top_species <- attacks %>%
+  count(Species, sort = TRUE) %>%
+  slice_head(n = 5)
+
+# Create a logical condition to include only the top 5 species
+condition <- attacks$Species %in% top_species$Species
+
+# Subset the data based on the condition
+filtered_data <- attacks[condition, ]
+
+
 
 #________________________________________________________________________________________________________________________
 #ACTIVITY
@@ -808,14 +855,27 @@ attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
 
 names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 
+#________________________________________________________________________________________
+#TYPE
+#Regroup some words under the same word "Boat"
+attacks$Type <- gsub("Boatomg|Boating", "Boat", attacks$Type)
+
+#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
+# Provoked to 4, Questionable to 5 and Sea Disaster to 6
+# Définir les correspondances entre catégories et chiffres
+categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
+
+# Convertir la variable Type en facteur avec les nouvelles étiquettes
+attacks$Type <- factor(attacks$Type, levels = names(categories))
+
+# Convertir le facteur en numérique
+attacks$Type <- as.numeric(attacks$Type)
+
 #________________________________________________________________________________________________________________________
 #final check up:
 
 table(attacks$Date) #this one is fine
 table(attacks$Year) #this one is fine
-table(attacks$Type) #here we have boating and boat which mean the same thing. let us group them
-attacks$Type <- gsub("Boating", "Boat", attacks$Type)
-attacks$Type <- gsub("Boatomg", "Boat", attacks$Type)
 table(attacks$Type) #this one is fine
 table(attacks$Country)#this one is fine
 table(attacks$Activity)#this one is fine
@@ -823,28 +883,6 @@ table(attacks$Age)#this one is fine
 table(attacks$Fatality)#this one is fine
 table(attacks$Time)#this one is fine
 table(attacks$Species)#this one is fine
-
-sum(is.na(attacks$Time)) #this is the only one that still presents 1237 NA. we dont want to delete
-#them all coz we'd lose 40% of our data. 
-table(attacks$Time)#table shows that most of them happen in the afternoon, while 2ns place is owned by
-#morning. To confirm the higher frequency of attacks between 8am and 6pm is this artile (link JC found??)
-#we explain this by the fact that, naturally, most of people swim during the day. therefore, what we do
-#is replacing NA randomly by the proportion of afternoon, morning and evening.
-
-attacks$Time <- na_if(attacks$Time, "")
-
-898+228+589+9 
-898/1724
-228/1724
-589/1724
-#afternoon is 52%, evening is 12% and morning is 34%.
-
-attacks$Time <- ifelse(is.na(attacks$Time),
-                       sample(c("afternoon", "morning", "evening", "night"), 
-                              size = sum(is.na(attacks$Time)), 
-                              replace = TRUE, 
-                              prob = c(0.52, 0.34, 0.12, 0.02)),
-                       attacks$Time)
 
 
 #________________________________________________________________________________________________________________________
@@ -1118,6 +1156,159 @@ ma_carte
 
 #________________________________________________________________________________________________________________________
 
+# REGRESSION
+
+#Before doing the regression, we will do a correlation matrix of the numerical variables
+numeric_columns <- sapply(attacks, is.numeric)
+
+#Let's choose the numeric columns only
+numeric_data <- attacks[, numeric_columns]
+
+# Calculate the correlation matrix
+correlation_matrix <- cor(numeric_data)
+
+# Show the correlation matrix
+print(correlation_matrix)
+
+# Let's do an overall multiple regression model
+model <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = merged_map)
+
+# Print the summary of the regression model
+summary(model)
+
+#________________________________________________________
+# USA Regression
+
+#This first regression will be based only on the USA
+usa_data <- merged_map %>%
+  filter(Country == "USA")
+
+#Regression model of the USA
+model1 <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = usa_data)
+
+print("Regression for USA:")
+summary(model1)
+
+# Compute the VIF
+vif_values <- car::vif(model1)
+
+# Show me the results of the VIF
+print(vif_values)
+
+
+#___________________________________________________________
+# Assuming 'usa_data' is your dataset for the USA
+# Include the intercept in the initial model
+current_model <- lm(Attackscountry ~ 1, data = usa_data)
+
+# List to store models at each step
+selected_models <- list()
+
+# Variables to add
+variables_to_add <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model <- update(current_model, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model
+  
+  # Calculate AIC
+  aic_value <- AIC(current_model)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model))
+}
+
+#___________________________________________________________
+#This second regression will be based only on Australia
+aus_data <- merged_map %>%
+  filter(Country == "AUSTRALIA")
+
+model2 <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = aus_data)
+
+print("Regression for AUSTRALIA:")
+summary(model2)
+
+#___________________________________________________________
+# Include the intercept in the initial model
+current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
+
+# List to store models at each step
+selected_models2 <- list()
+
+# Variables to add
+variables_to_add2 <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add2) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model2 <- update(current_model2, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model2
+  
+  # Calculate AIC
+  aic_value2 <- AIC(current_model2)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model2))
+}
+
+# Compute the VIF
+vif_values2 <- car::vif(model2)
+
+# Show me the results of the VIF
+print(vif_values2)
+
+
+#_______________________________________________________________________________
+# Let's focus on both countries
+# This regression will be based on both USA and AUSTRALIA
+combined_data <- merged_map %>%
+  filter(Country %in% c("USA", "AUSTRALIA"))
+
+# Run the regression based on both USA and AUSTRALIA
+model_combined <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = combined_data)
+
+# Print the results
+print("Regression for USA and AUSTRALIA:")
+print(summary(model_combined))
+
+#______________________________________________________________________________
+#Model combined, AIC 
+
+# Include the intercept in the initial model
+current_model3 <- lm(Attackscountry ~ 1, data = combined_data)
+
+# List to store models at each step
+selected_models3 <- list()
+
+# Variables to add
+variables_to_add3 <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add3) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model3 <- update(current_model3, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model3
+  
+  # Calculate AIC
+  aic_value2 <- AIC(current_model3)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model3))
+}
 
 
 #________________________________________________________________________________________________________________________
