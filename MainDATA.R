@@ -947,7 +947,6 @@ temperature$ISO_Code[temperature$Country %in% c("MICRONESIA") & is.na(temperatur
 #now that i put iso, i can remove the country one
 temperature <- temperature %>% select(-'Country')
 
-
 #________________________________________________________________________________________________________________________
 #MERGE FIRST TWO DATA SETS
 
@@ -1042,6 +1041,8 @@ colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
 
 #Delete a useless column
 merged_data3 <- select(merged_data3, -Country.y)
+merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
+
 
 #_______________________________________________________________________________________________________________________
 #Interactive map
@@ -1105,6 +1106,39 @@ ma_carte <- leaflet(merged_map) %>%
 
 ma_carte
 
+
+
+#________________________________________________________________________________________________________________________
+
+#                           RESEARCH QUESTION ON CLIMATE CHANGE
+
+#________________________________________________________________________________________________________________________
+
+
+#Explain that we saw both increasing trend in frequency of shark attacks and on factors that explain
+#climate change (co2 level etc) -> so, run regression  to see whats going on
+
+#We only focus on 3 biggest countries (USA, ZAF, AUS), bacause others have very small frequencies of shark
+#attacks. 
+
+str(merged_data3) #ok now im sure they all num/int and no chr
+
+# Create a new variable 'shark_attacks' representing the frequency of shark attacks per year
+count_shark_attacks <- merged_data3 %>%
+  group_by(Year, ISO_Code) %>%
+  summarize(SharkAttacksCount = n())
+
+# Merge the aggregated shark attacks data back to your original dataset based on the 'year' and 'country' variables
+merged_data3 <- merge(merged_data3, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
+
+# FIRST MODEL
+filtered_data <- merged_data3 %>%
+  filter(ISO_Code %in% c("USA", "ZAF", "AUS"))
+
+model <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`, data = filtered_data)
+
+# With the summary function, we can see the new estimators. All positive and significant
+summary(model)
 
 
 
