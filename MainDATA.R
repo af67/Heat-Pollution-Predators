@@ -5,6 +5,7 @@
 
 #________________________________________________________________________________________________________________________
 install.packages("countrycode")
+install.packages("corrplot")
 
 library(tidyverse)
 library(readxl)
@@ -12,6 +13,7 @@ library(dplyr)
 library(tidyr)
 library(stringr)
 library(countrycode)
+library(corrplot)
 library(leaflet)
 library(viridisLite)
 library(htmltools)
@@ -1124,23 +1126,55 @@ ma_carte
 #We only focus on 3 biggest countries (USA, ZAF, AUS), bacause others have very small frequencies of shark
 #attacks. 
 
-str(merged_data3) #ok now im sure they all num/int and no chr
+#The first thing we do is creating a copy of our dataset, so that we can take away some information
+#that are not needed here. Indeed, with the na.omit function, we delete all the rows of the years
+#after 1992. The reason for this is that we were not able to find a dataset on sea level information
+#that contained information starting from 1970.
+
+data_RQ2 <- merged_data3
+data_RQ2 <- na.omit(data_RQ2) 
+
+
+str(data_RQ2) #ok now im sure they all num/int and no chr
+
+#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
+#all vorrelations are far from being equal to 1 or -1, which is a positive sign.
+
+subset_data <- data_RQ2[, c("Temperature", "Annual CO2 Emissions", "GMSL_GIA")]
+correlation_matrix <- cor(subset_data, use = "complete.obs")
+corrplot1 <- corrplot(correlation_matrix, method = "circle")
+
+# Customized corrplot for the subset
+corrplot2 <- corrplot(
+  correlation_matrix,
+  method = "ellipse",
+  type = "upper",
+  tl.col = "black",
+  tl.srt = 45,
+  addCoef.col = "gray"
+)
+
 
 # Create a new variable 'shark_attacks' representing the frequency of shark attacks per year
-count_shark_attacks <- merged_data3 %>%
+count_shark_attacks <- data_RQ2 %>%
   group_by(Year, ISO_Code) %>%
   summarize(SharkAttacksCount = n())
 
 # Merge the aggregated shark attacks data back to your original dataset based on the 'year' and 'country' variables
-merged_data3 <- merge(merged_data3, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
+data_RQ2 <- merge(data_RQ2, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
 
 # FIRST MODEL
-filtered_data <- merged_data3 %>%
+filtered_data <- data_RQ2 %>%
   filter(ISO_Code %in% c("USA", "ZAF", "AUS"))
 
 model <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`, data = filtered_data)
 
 # With the summary function, we can see the new estimators. All positive and significant
 summary(model)
+
+
+
+
+
 
 
