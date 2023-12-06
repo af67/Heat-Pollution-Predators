@@ -792,7 +792,7 @@ attacks$Activity[is.na(attacks$Activity)] <- "other"
 
 #FATAL 
 
-table(attacks$Fatal..Y.N.)
+table(attacks$Fatal..Y.N.) #to check if categories have mistakes etc
 
 attacks$Fatal..Y.N. <- gsub("2017", "", attacks$Fatal..Y.N.)
 attacks$Fatal..Y.N. <- gsub("M", "", attacks$Fatal..Y.N.)
@@ -818,7 +818,7 @@ table(attacks$Type) #this one is fine
 table(attacks$Country)#this one is fine
 table(attacks$Activity)#this one is fine
 table(attacks$Age)#this one is fine
-table(attacks$Fatal..Y.N.)#this one is fine
+table(attacks$Fatality)#this one is fine
 table(attacks$Time)#this one is fine
 table(attacks$Species)#this one is fine
 
