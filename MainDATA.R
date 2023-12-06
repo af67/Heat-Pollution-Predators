@@ -782,6 +782,9 @@ pattern <- paste(kept_activities, collapse = "|")
 
 # Extract only the specific words from the column and replace the rest with an empty string
 attacks$Activity <- str_extract(attacks$Activity, paste0("\\b(?:", pattern, ")\\b"))
+attacks <- attacks %>%
+  mutate(Activity = str_replace_all(Activity, "\\bkayaking\\b", "kayak")) %>%
+  mutate(Activity = str_replace_all(Activity, "\\bsurfing\\b", "surf"))
 
 attacks$Activity[is.na(attacks$Activity)] <- "other"
 
