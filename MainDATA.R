@@ -1155,7 +1155,6 @@ ma_carte
 #                           RESEARCH QUESTION ON SHARKS
 
 #________________________________________________________________________________________________________________________
-
 # REGRESSION
 
 #Before doing the regression, we will do a correlation matrix of the numerical variables
@@ -1171,7 +1170,7 @@ correlation_matrix <- cor(numeric_data)
 print(correlation_matrix)
 
 # Let's do an overall multiple regression model
-model <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = merged_map)
+model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
 
 # Print the summary of the regression model
 summary(model)
@@ -1184,7 +1183,7 @@ usa_data <- merged_map %>%
   filter(Country == "USA")
 
 #Regression model of the USA
-model1 <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = usa_data)
+model1 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = usa_data)
 
 print("Regression for USA:")
 summary(model1)
@@ -1205,7 +1204,7 @@ current_model <- lm(Attackscountry ~ 1, data = usa_data)
 selected_models <- list()
 
 # Variables to add
-variables_to_add <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+variables_to_add <- c("Year", "Sex", "Age", "Species", "Time", "Type")
 
 # Forward selection loop
 for (variable in variables_to_add) {
@@ -1229,7 +1228,7 @@ for (variable in variables_to_add) {
 aus_data <- merged_map %>%
   filter(Country == "AUSTRALIA")
 
-model2 <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = aus_data)
+model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = aus_data)
 
 print("Regression for AUSTRALIA:")
 summary(model2)
@@ -1242,7 +1241,7 @@ current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
 selected_models2 <- list()
 
 # Variables to add
-variables_to_add2 <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+variables_to_add2 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
 
 # Forward selection loop
 for (variable in variables_to_add2) {
@@ -1275,7 +1274,7 @@ combined_data <- merged_map %>%
   filter(Country %in% c("USA", "AUSTRALIA"))
 
 # Run the regression based on both USA and AUSTRALIA
-model_combined <- lm(Attackscountry ~ Year + Sex + Age + Fatality + Species + Type + Time, data = combined_data)
+model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = combined_data)
 
 # Print the results
 print("Regression for USA and AUSTRALIA:")
@@ -1291,7 +1290,7 @@ current_model3 <- lm(Attackscountry ~ 1, data = combined_data)
 selected_models3 <- list()
 
 # Variables to add
-variables_to_add3 <- c("Year", "Sex", "Age", "Fatality", "Species", "Time", "Type")
+variables_to_add3 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
 
 # Forward selection loop
 for (variable in variables_to_add3) {
