@@ -1343,7 +1343,7 @@ data_RQ2 <- na.omit(data_RQ2)
 str(data_RQ2) #ok now im sure they all num/int and no chr
 
 #Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
-#all vorrelations are far from being equal to 1 or -1, which is a positive sign.
+#all correlations are far from being equal to 1 or -1, which is a positive sign.
 
 subset_data <- data_RQ2[, c("Temperature", "Annual CO2 Emissions", "GMSL_GIA")]
 correlation_matrix <- cor(subset_data, use = "complete.obs")
