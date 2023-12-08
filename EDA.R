@@ -36,26 +36,6 @@ barplot(table(attacks$Time),
         xlab = "Time of Day", ylab = "Frequency of Attacks",
         main = "Frequency of Shark Attacks by Time of Day")
 
-#4. other plots
-
-library(ggplot2)
-
-
-#piechart: fatal vs non fatal
-ggplot(attacks, aes(x = "", fill = Fatal..Y.N.)) + geom_bar(position = "fill") + coord_polar("y") + labs(title = "Fatality")
-
-# Create a stacked bar plot that shows which species lead to fatal attacks
-
-
-summary_table <- table(attacks$Species, attacks$Fatal..Y.N.)
-
-summary_df <- as.data.frame(summary_table)
-ggplot(summary_df, aes(x = Var1, y = Freq, fill = Var2)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Fatality by Type of Shark", x = "Type of Shark", y = "Frequency") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_fill_manual(values = c("blue", "pink", "yellow"))
-
 
 
 
