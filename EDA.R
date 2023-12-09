@@ -619,18 +619,18 @@ print(results)
 merged_map <- left_join(merged_map, results, by = "Country")
 
 # Definition of the thresholds for the categorization
-seuils <- c(-Inf, 50, 100, 500, Inf)
+seuils <- c(0, 50, 100, 500, Inf)
 
 # Definition of the colors we want to have in the map
-couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF","#001F3F80")
+#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
+couleurs <- c("green", "yellow", "orange", "red")
 
 # Add a new category column based on thresholds
 merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
 
 merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
 
-
-#Let's have fun with an interactive map
+# Let's have fun with an interactive map
 ma_carte <- leaflet(merged_map) %>%
   addTiles() %>%
   addCircleMarkers(
@@ -649,6 +649,6 @@ ma_carte <- leaflet(merged_map) %>%
     title = "Number of shark attacks"
   )
 
-#Let's see the map (how can I change the colors of the légende??????)
+# Let's see the map
 ma_carte
 
