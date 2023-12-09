@@ -58,7 +58,7 @@ print(interactive_co2_evolution)
 
 
 
-#6. See what are the countries with the most co2 emission
+#6A. See what are the countries with the most co2 emission
 
 # Create a bar plot
 ggplot(data = co2, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
@@ -87,6 +87,8 @@ interactive_top30_countries_co2 <- ggplotly(
 # Display the interactive bar plot
 print(interactive_top30_countries_co2)
 
+
+#6B. Continents with most co2 emissions
 
 #The goal now is to regroup countries by continents and be able to have a better idea of where are most of the emissions coming from around the globe
 
