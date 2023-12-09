@@ -1,0 +1,2044 @@
+---
+title: "<span style='color:#114F80; font-family: Impact, sans-serif;'>Heat and Predators: Understanding Shark Attacks in a Complex Environment</span>"
+author: "Noel Demko, Manal Moubtassim, Jean Carlos Perez Perilla, Elias Zakarya"
+date: "25/10/2023"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    number_sections: no
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+  
+---
+
+
+![© USO—iStock/Getty Images](https://cdn.britannica.com/93/197393-050-253FF7B6/great-white-shark-surface-food-pursuit.jpg) 
+
+# 1. <strong>Introduction</strong>
+
+
+## 1.1 Background and Motivation
+
+At first, we wanted to analyse the impacts of the recent global pandemic on individuals within the context of a variety of mental health conditions, namely anxiety and depression, in a pre- and post-COVID framework. However, we decided to drop the idea due to a lack of data available regarding the topic, which wouldn’t have allowed us to conduct a thorough analysis. As we were searching for new topic ideas, we found a dataset that concerns shark attacks around the world. A group member has then told us about an incident that occurred during his last holidays in Egypt, involving a shark attack at a paradisiac beach. We discussed thereafter the presence of these predators in many different regions in the world including Florida, Hawaii, and Australia just to name a few. For this reason, we decided to dive deeper into the topic of shark attacks and explore potential influencing factors. After a few days of research and information gathering, we found that a wide range of factors are capable of influencing such incidents, both directly and indirectly.
+We all enjoy going on holidays and enjoy beaches while drinking a cocktail, and when we feel that temperature increases, we go in the water to refresh, but depending on the location we are, this could be unsafe. 
+
+Another motivation behind this project is our interest in the preservation of marine fauna. Very often human beings tend to primarily blame the animals for their fierce behavior (just look at the example of the attack that occurred in Hurghada during summer of 2023: after the death of the victim, the shark was killed!) but we often forget that the water it is their natural habitat, and that we are the guests. This point motivates us even more to study the phenomenon of attacks and to disclose how human activity causes shark attacks.
+
+## 1.2 Project Objective
+
+The project’s focus is to provide an understanding of the complex dynamics of shark attacks globally, by conducting an in-depth analysis on the different factors that influence the phenomenon. In addressing the topic at hand, we explore both direct and indirect influencing factors.
+
+At the end of our work we want to learn how it is possible to reduce accidents caused by sharks. On the one hand, this is crucial to guarantee the safety of people who take pleasure in coastal waters and engage in water-related activities. On the other hand, the conservation of aquatic animals might benefit from this. Making efforts to preserve these species is essential for sustaining the health of marine ecosystems in a time when the extinction rate of many animal species is rising. Among the factors that might have an impact on the trend of shark attacks we have climatic variations. Ocean temperatures and currents are capable of affecting migration patterns and habitat preferences, which further complicates the dynamics of shark attacks. By providing a step-by-step analysis on climate-related aspects, we aim to provide empirical evidence on the impact of environmental changes on shark movements and interactions with humans.
+
+This project’s goal is to contribute to the understanding of shark-related incidents and thereby to provide possible strategies such as policymaking, which would help mitigate such occurrences, ultimately safeguarding human life and protecting sharks. In essence, we aim to advance research on sustainable coexistence with the marine environment through actionable insights and intend to contribute to the broader efforts of marine conservation.
+
+## 1.3 Related Work
+
+To have a global overview of the phenomenon, we also read some papers, here are some of them:
+
+1. https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0211049)
+2. https://www.publish.csiro.au/mf/pdf/MF10181
+
+What is more, while gathering information on Google Scholar, we found that this topic stirred up a considerable amount of discussion and analysis, and this was yet another compelling argument to investigate it further, by adding some points of discussion that have not been explored yet.
+
+At this point we all agreed and decided to pursue this project.
+
+## 1.4 Research Questions
+
+1. What are the primary factors influencing the occurrence of shark attacks?
+2. Is it true that shark attacks have been increasing with climate change?
+3. What are the main factors leading to the fatality of a shark attack?
+
+
+# 2. <strong>Data Sets</strong>
+
+In the second section of our work, we will present the datasets that are necessary to answer our research questions. These datasets serve as the foundation for our investigation and provide the data required to draw insightful and important findings.
+The purpose of this part is to provide a clear overview of the data landscape and make clear to the reader what are the information to be found in each web-based data, and how do they interrelate.
+
+## 2.1 Shark Attacks Data Set
+
+Our first dataset contains the information in over 6000 shark attacks that have occurred worldwide over the course of the past centuries. The dataset was obtained from the Shark Research Institute's (SRI) website, which carries out and funds rigorous, peer-reviewed shark field research and instructs people using scientific data. 
+
+Even though the dataset is owned by the SRI, we have downloaded it through the following plateform: https://www.kaggle.com/datasets/teajay/global-shark-attacks.
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Case Number", "Date", "Year", "Type", "Country", "Area", "Location", "Activity", "Name", "Sex", "Age", "Injury", "Fatal", "Time", "Species", "Investigator.or.Source", "pdf", "href.formula", "Case Number 2")
+Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same aas the first one)")
+
+
+Table1 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table1)
+```
+
+
+## 2.2 Temperatures Data Set 
+
+
+Our second dataset contains the average temperature change for each country (annually, monthly and seasonally) from 1961 to 2022. It contains 9,657 observations.
+
+The dataset was taken from the website of the Food and Agriculture Organization of United Nations: https://www.fao.org/faostat/en/#data/ET
+
+
+```{r, echo=TRUE, warning=FALSE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Area Code", "Area", "Months ", "Month code ", "Element Code ", "Element", "Unit", "Years")
+Description <- c("Code for each country", "Country for which the data has been collected", "Month during which the data on temperature has been collected", "Code of each month ", "Binary variable (7271: Temperature change; 6078: Standard Deviation)", "What is the data measuring (either temperature change or standard deviation of data collection)", "Unit of measure of temperature ", "Year of observations" )
+
+
+Table2 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table2)
+```
+
+
+
+## 2.3 Sea Level Data Set
+
+Our third dataset contains information on the global increase of sea level from 1993 to 2021. The following acronims are important to be noted:
+GMLS:Global mean sea level
+GIA: Global Isostatic Adjustment, which is the ongoing movement of land once burdened by ice-age glaciers (National Ocean Service, n.d.)
+
+The dataset was taken from the website of the NASA: https://climate.nasa.gov/vital-signs/sea-level/
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Year", "TotalWeightedObservations ", "GMSL_noGIA ", "StdDevGMSL_noGIA ", "SmoothedGSML_noGIA ", "GMSL_GIA", "StdDevGMSL_GIA", "SmoothedGSML_GIA", "SmoothedGSML_GIA_sigremoved")
+Description <- c("Year of the observation", "Total Weighted Observations of Sea Level", "Global mean sea level variation in millimeters, with respect to 20-year TOPEX/Jason collinear mean reference (without considering the GIA)", "Standard Deviation of global mean sea level variation estimate in millimeters (without considering the GIA)", "Smoothed (60-day Gaussian type filter) GMSL variation in millimeters (without considering the GIA)", "Global mean sea level variation in millimeters, with respect to 20-year TOPEX/Jason collinear mean reference (considering the GIA)", "Standard Deviation of global mean sea level variation estimate in millimeters (considering the GIA)", "Smoothed (60-day Gaussian type filter) GMSL variation in millimeters (considering the GIA)", "Smoothed (60-day Gaussian type filter) Global Mean Sea Level variation in millimeters (considering the GIA) ; annual and semi-annual signal removed ")
+
+
+Table3 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table3)
+```
+
+## 2.4 Greenhouse Gas Emissions Data Set
+
+Our fourth dataset relates to GHG emissions, one of the main concerns linked to global warming. The dataset contains 31.315 observations on annual GHG emissions per country and per continent, but we will focus on the first case only. 
+
+The dataset was taken from the website Our World in Data: https://ourworldindata.org/annual-co2-emissions
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Entity", "Code", "Year", "Annual CO₂ emissions")
+Description <- c("Country examinated", "ISO Code", "Year of the observation", "GHG emissions per year")
+
+
+Table4 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table4)
+```
+
+
+
+# 3. <strong>Data Wrangling</strong>
+
+The first step of our work is data cleaning. While collecting data for a study, it might happen to have some variables with missing information, worthless data or spelling mistakes In order to run a regression, it is fundamental that each column within a data set has no missing values and that information is written following the same format. This procedure takes the name of data cleaning, and it will cover the whole subsection. 
+
+Please be aware that at the beginning of each subsection we only provide <strong>general</strong> instructions of our cleaning. Through the code, you will get additional in-depth explanations of each step we took.
+ 
+
+```{r message=FALSE}
+#We start by selecting the packages that we will need to run our functions
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(countrycode)
+library(ggplot2)
+library(plotly)
+library(stargazer)
+library(gtsummary)
+library(corrplot)
+library(gridExtra)
+library(leaflet)
+library(viridisLite)
+library(htmltools)
+library(RColorBrewer)
+library(car)
+
+```
+
+
+## 3.1 Attacks Cleaning
+
+The first dataset we will examine is the one pertaining to shark attacks. It was quite full of misspellings and missing values, which required a lot of time and a very dense code to be able to clean it.
+
+For our work, we have decided to only study the phenomenon of shark attacks from 1970 forward. In fact, it is possible to observe in the raw dataset that, before to this date, observations had more erroneous information. This leads one to believe that, more likely than not, the information we needed is more accurate if we do not travel too far back in time.
+
+
+```{r results='hide', warning=FALSE}
+
+attacks <- read.csv("attacks1.csv")
+attacks <- attacks[1:3406, ]
+
+#We drop the columns that we do not need. The country is enough for our study, so we will not take into consideration the precise areas. The injury is not useful as well, indeed, the fatality column already gives us enough information. The other columns all contain information that are not useful for a research.
+
+
+attacks <- subset(attacks, select = setdiff(names(attacks), c('X', 'X.1', 'Area', 'Location', 'Injury', 'href', 'href.formula', 'Investigator.or.Source', 'pdf', 'Name', 'Case.Number.1', 'Case.Number.2', 'original.order')))
+
+#____________________________________________________________________________________
+#FIRSTLY WE WORK ON THE COUNTRY COLUMN
+
+#Firstly we put everything in CAPS in order to group countries (The problem was only Fiji which was written sometimes in capital letters and sometimes not. The rest was good). When we run a table, we can see that all countries are written in the same way, but we have 6 NA. We decided to investigate them. To do this, used the function "which" to spot where the NA are. We found out that we could get the country of 2 of them because, the column with the precise area war filled. For row 2957 area says "English Channel", meaning that the attack happened in the UK, while for row 3388 the area is "Carribean Sea". As a consequence, we will fill this spot with Jamaica, since it is central to Carribean and has average temperatures similar to sourrounding countries.
+
+#After that, we have investigated the other 4 NA: they don't have anything in common, nor we found any information about those attacks on internet, so we just deleted the rows. Now countries are clean.
+
+attacks$Country <- toupper(attacks$Country) 
+attacks$Country <- na_if(attacks$Country, "") #We turned blank spots to NA
+
+rows_with_NA <- which(is.na(attacks$Country))
+
+
+attacks$Country <- gsub("COLUMBIA", "COLOMBIA", attacks$Country, ignore.case = TRUE)
+attacks[2957, "Country"] <- "UNITED KINGDOM"
+attacks[3388, "Country"] <- "JAMAICA"
+attacks$Country <- gsub("UNITED ARAB EMIRATES \\(UAE\\)", "UNITED ARAB EMIRATES", attacks$Country) #We took off the part "\\(UAE\\)" from the United Arab Emirates
+
+
+attacks <- subset(attacks, !is.na(Country))
+
+
+#____________________________________________________________________________________
+
+#NOW WE WORK ON THE DATE
+
+#For this column, we will drop both the year (which is already included in another column) and the day, which we consider useless therefore, we will only keep the month
+
+
+attacks$Date <- gsub("\\bReported\\b", "", attacks$Date, ignore.case = TRUE) #Remove the word "reported" which appeared sometimes
+attacks$Date <-  gsub("\\bEarly\\b", "", attacks$Date, ignore.case = TRUE)#Remove the word "Early" which appeared sometimes
+attacks$Date <- gsub("[[:digit:][:punct:]]", "", attacks$Date) #remove all signs
+
+words_to_keep <- c("Jan", "Feb", "Mar", "Apr","May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+
+# Remove words not in the specific list of months (words_to_keep) for each row
+attacks$Date <- sapply(attacks$Date, function(sentence) {
+  gsub(paste0("\\b(?!", paste(words_to_keep, collapse = "|"), "\\b)\\w+\\s*"), "", sentence, perl = TRUE)
+})
+
+attacks$Date <- trimws(attacks$Date) #remove white spaces (" Feb" becomes "Feb")
+
+#when we run the table, we see that there are still some problems, that we will correct by hand (Jul Jul, Jula etc.). We run the function "gsub"  to correct mistakes.
+
+attacks$Date <- gsub("Jul Jul", "Jul", attacks$Date)
+attacks$Date <- gsub("Jula", "Jul", attacks$Date)
+attacks$Date <- gsub("Julb", "Jul", attacks$Date)
+attacks$Date <- gsub("July", "Jul", attacks$Date)
+attacks$Date <- gsub("June", "Jun", attacks$Date)
+attacks$Date <- gsub("May  Nov", "Aug", attacks$Date)
+attacks$Date <- gsub("November", "Nov", attacks$Date)
+
+#Once the spelling mistakes are good, We replace all NA by blank spaces and investigate them. Some of them actually have their month on the column "Case Number". The others don't have anything in common.
+
+rows_with_mistakes <- attacks[attacks$Date == "", ]
+attacks$Date[is.na(attacks$Date)] <- ""
+
+attacks <- mutate(attacks, Date = ifelse(Case.Number == "2017.06.05", "Jun", Date))
+attacks <- mutate(attacks, Date = ifelse(Case.Number == "2008.01.30", "Jan", Date))
+attacks <- mutate(attacks, Date = ifelse(Case.Number == "2001.04.02.b", "Apr", Date))
+attacks <- mutate(attacks, Date = ifelse(Case.Number == "1980.12.30", "Dec", Date))
+attacks <- mutate(attacks, Date = ifelse(Case.Number == "2012.12.00", "Dec", Date))
+
+
+#Finally, we remove the few NA that remained because they had no information that would have helped us getting the information.
+
+attacks$Date <- na_if(attacks$Date, "")
+attacks <- subset(attacks, !is.na(Date))
+#________________________________________________________________________________________________________________________
+
+#NOW WE WORK ON AGE COLUMN
+
+#To clean the column of the age we took off all the letters, we computed by hand the mean age of all victims that had a range for their year and finally transformed all the ages expressed in months to years (Meaning that: age from 10 to 12 became 11, while 18 months old became 1.5)
+
+attacks$Age <- ifelse(attacks$Age == "18 months", "1.5", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "28 & 26", "27", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "18 or 20", "19", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "12 or 13", "12.5", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "46 & 34", "40", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "28, 23 & 30", "27", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "36 & 26", "31", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "8 or 10", "9", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "30 or 36", "33", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "6½", "6.5", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "21 & ?", "21", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "33 or 37", "35", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "23 & 20", "21.5", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "7      &    31", "19", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "32 & 30", "31", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "16 to 18", "27", attacks$Age)
+attacks$Age <- ifelse(attacks$Age == "21 or 26", "23.5", attacks$Age)
+
+
+attacks$Age <- str_replace_all(attacks$Age, "[A-Za-z]", "")
+ #Delete all letters and signs
+attacks$Age <- na_if(attacks$Age, "") #replace blank spots with NA
+attacks$Age <- as.numeric(str_extract(attacks$Age, "\\d+\\.?\\d*")) #put age as logic and not char
+```
+
+While cleaning the column of Ages, we realized that NA were too much and we could not delete them all, because that would have meant losing 29,5% of our data. Therefore, we have decided to  work in the following way: for each country that presents LESS NA than the total observation, we compute an histogram (Age against frequency) of non-missing data. If the distribution is normal, we substitute the NA with the mean. If it is left skewed, we substitute the NAs with the first quantile, if it is right skewed, we substitute it with the third quantile.
+
+Here is an example with USA and Bahamas. For USA, the distribution of the non-missing victims' ages is skewed on the left. Therefore we have decided to substitute all the missing values with the first quantile. For Bahamas, it is evident that data follow a normal distribution, therefore we replace NAs with the mean.
+
+
+```{r warning=FALSE}
+
+#At this point, NA were still too much, so we will  work in the following way: for each country that presents LESS NA than the total observation, we compute an histogram (Age against frequency). If the distribution is normal, we substitute the NA with the mean. If it is left skewed, we substitute the NAs with the first quantile, if it is right skewed, we substitute it with the third quantile 
+
+#USA#
+
+ages_in_USA <- attacks %>%
+  filter(Country == "USA") %>%
+  select(Age)
+
+ages_vector <- ages_in_USA$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+
+hist(ages_without_na, 
+     col = "skyblue",       
+     xlab = "Ages",         
+     ylab = "Frequency",     
+     main = "Histogram of Ages in USA without NA"
+) #We can see that the histogram is skewed, so we will replace the NAs by the first quartile of non-missing values
+
+
+q.25 <- quantile(ages_without_na, 0.25)
+attacks$Age[attacks$Country == "USA" & is.na(attacks$Age)] <- q.25 
+
+#BAHAMAS#
+
+ages_in_BAH <- attacks %>%
+  filter(Country == "BAHAMAS") %>%
+  select(Age)
+
+ages_vector <- ages_in_BAH$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+
+hist(ages_without_na, 
+     col = "darkgreen",       
+     xlab = "Ages",         
+     ylab = "Frequency",     
+     main = "Histogram of Ages in Bahamas without NA"
+)
+mean_BAH = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "BAHAMAS" & is.na(attacks$Age)] <- mean_BAH
+
+```
+
+```{r results='hide', warning=FALSE, echo= TRUE}
+#EGYPT#
+
+ages_in_egy <- attacks %>%
+  filter(Country == "EGYPT") %>%
+  select(Age)
+
+ages_vector <- ages_in_egy$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean_egy = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "EGYPT" & is.na(attacks$Age)] <- mean_egy
+
+
+#ITALY#
+
+# Extract all ages from individuals who come from Italy
+ages_in_italy <- attacks %>%
+  filter(Country == "ITALY") %>%
+  select(Age)
+
+# Convert the extracted ages to a vector
+ages_vector <- ages_in_italy$Age
+
+
+# Display or use the 'ages_vector' containing ages from individuals in Italy
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean_age = mean(ages_without_na)
+
+# Replace all the NA on Italy with the mean of people attacked in Italy.
+
+attacks$Age[attacks$Country == "ITALY" & is.na(attacks$Age)] <- 37.375
+
+#AUSTRALIA#
+
+ages_in_aus <- attacks %>%
+  filter(Country == "AUSTRALIA") %>%
+  select(Age)
+
+ages_vector <- ages_in_aus$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean_aus = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "AUSTRALIA" & is.na(attacks$Age)] <- mean_aus
+
+
+
+#SOUTH AFRICA#
+
+ages_in_SA <- attacks %>%
+  filter(Country == "SOUTH AFRICA") %>%
+  select(Age)
+
+ages_vector <- ages_in_SA$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean_SA = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "SOUTH AFRICA" & is.na(attacks$Age)] <- mean_SA
+
+
+#BRAZIL#
+
+ages_in_BRA <- attacks %>%
+  filter(Country == "BRAZIL") %>%
+  select(Age)
+
+ages_vector <- ages_in_BRA$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean_BRA = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "BRAZIL" & is.na(attacks$Age)] <- mean_BRA
+
+
+#FIJI#
+
+ages <- attacks %>%
+  filter(Country == "FIJI") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "FIJI" & is.na(attacks$Age)] <- mean
+
+#FRENCH POLYNESIA#
+
+ages <- attacks %>%
+  filter(Country == "FRENCH POLYNESIA") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "FRENCH POLYNESIA" & is.na(attacks$Age)] <- mean
+
+#HONG KONG#
+
+ages <- attacks %>%
+  filter(Country == "HONG KONG") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "HONG KONG" & is.na(attacks$Age)] <- mean
+
+#JAPAN#
+
+ages <- attacks %>%
+  filter(Country == "JAPAN") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "JAPAN" & is.na(attacks$Age)] <- mean
+
+#MEXICO#
+
+ages <- attacks %>%
+  filter(Country == "MEXICO") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "MEXICO" & is.na(attacks$Age)] <- mean
+
+
+#MOZAMBIQUE#
+
+ages <- attacks %>%
+  filter(Country == "MOZAMBIQUE") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "MOZAMBIQUE" & is.na(attacks$Age)] <- mean
+
+
+#NEW ZELAND#
+
+ages <- attacks %>%
+  filter(Country == "NEW ZEALAND") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "NEW ZEALAND" & is.na(attacks$Age)] <- mean
+
+#PHILIPPINES#
+
+ages <- attacks %>%
+  filter(Country == "PHILIPPINES") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "PHILIPPINES" & is.na(attacks$Age)] <- mean
+
+#REUNION#
+
+ages <- attacks %>%
+  filter(Country == "REUNION") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "REUNION" & is.na(attacks$Age)] <- mean
+
+#NEW CALEDONIA#
+
+ages <- attacks %>%
+  filter(Country == "NEW CALEDONIA") %>%
+  select(Age)
+
+ages_vector <- ages$Age
+
+ages_without_na = na.omit(ages_vector)
+ages_without_na <- as.numeric(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
+mean = mean(ages_without_na)
+
+attacks$Age[attacks$Country == "NEW CALEDONIA" & is.na(attacks$Age)] <- mean
+
+
+#We fixed those countries that had lots of NA. Now, for the remaining NA we decided not to do anything for a specific reason. Not only we have not cound the real information on the internet, but we also believe that doing the mean for those remaining situations was useless, because these are the cases when NA are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
+
+
+count_na_by_country <- attacks %>%
+  group_by(Country) %>%
+  summarise(NA_count = sum(is.na(Age)))
+
+
+attacks <- subset(attacks, !is.na(Age))
+
+#___________________________________________________________________________________________________________________
+
+
+#NOW WORK ON TIME
+
+#sometimes hours are written in a different format compared to most of the others, which follow the format
+#13h30. Since they are not a lot we just replaced them manually
+
+attacks<- mutate(attacks, Time= ifelse(Time=="Possibly same incident as 2000.08.21", "", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="14h00  -15h00", "14h30", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="14h30 / 15h30", "15h00", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="09h30 / 10h00", "9h45", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="10h45-11h15", "11h00", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="Sometime between 06h00 & 08hoo", "7h00", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="18h15-18h30", "18h20", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="09h00 - 09h30", "9h15", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="10h00 -- 11h00", "10h30", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="11h115", "11h15", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "Between 05h00 and 08h00", "6h30", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "17h00 or 17h40", "17h20", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "13h345", "13h45", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "<a0> ", "", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "09h00 -10h00", "9h30", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "2 hours after Opperman", "", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "11h00 / 11h30", "11h15", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "Between 06h00 & 07h20", "6h40", Time))
+attacks <- mutate(attacks, Time = ifelse(Time == "30 minutes after 1992.07.08.a", "", Time))
+
+
+
+#now, our objective is to classify hours in parts of the day. indeed, it is useless to keep hours as they are
+#for a regression because we want times like 7h30 and 7h00 OR 15h00 and 16h00 to be read as the same thing.
+# some of the rows already had the part of the day in it, but in order to work easily with all the column, we
+#replaced "morning" with 8h00 etc. in this way, we're able to remove all the strings that are useless. finally, 
+#void rows have been replaced by an NA and hours, which were there as CHAR have been replaced by numeric
+
+attacks$Time <- str_replace_all(attacks$Time, "\\bmorning\\b", "8h00")
+attacks$Time <- str_replace_all(attacks$Time, "\\bafternoon\\b", "15h00")
+attacks$Time <- str_replace_all(attacks$Time, "\\bevening\\b", "20h00")
+attacks$Time <- str_replace_all(attacks$Time, "\\bnight\\b", "23h00")
+
+attacks$Time <- gsub("[^[:digit:]]", "", attacks$Time)
+attacks$Time = na_if(attacks$Time, "")
+attacks$Time <- as.numeric(attacks$Time)
+
+# since we removed all the letters, hours now are not written as 8h00 or 15h30 but as 800 and 15h00. this is
+# great for us, so that we can easily create a function that classifies those numbers as parts of the day. the 
+#function works this way: if a value is included between 0 and 500 (i.e. midnight and 5a.m.), the value is replaced
+#by the word "night" etc.
+
+timeoftheday <- function(time) {
+  if (!is.na(time)) {
+    if (time >= 0 && time < 500) {
+      return("night")
+    } else if (time >= 500 && time < 1200) {
+      return("morning")
+    } else if (time >= 1200 && time < 1730) {
+      return("afternoon")
+    } else if (time >= 1730 && time < 2400) {
+      return("evening")
+    } else {
+      return("")  # Handle any other cases (if necessary)
+    }
+  } else {
+    return(NA)  # Retain NA values
+  }
+}
+
+attacks$Time <- sapply(attacks$Time, timeoftheday)
+attacks$Time <- tolower(attacks$Time)
+
+sum(is.na(attacks$Time))
+table(attacks$Time)
+
+
+#_____________________________________________________________________________________________
+#NOW WE WORK ON SEX
+
+attacks$Sex <- na_if(attacks$Sex, "")
+attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
+
+#__________________________________________________________________________________________________________________
+
+
+#NOW WE WORK ON SHARK SPECIES
+
+
+#Creation of a variable species where we delete all the numbers that concern the size of the shark
+species <- gsub("[0-9]", "", attacks$Species)
+
+#If there is an empty cell, we will put NA
+species = na_if(attacks$Species, "")
+
+#gsub to take off punctuation
+species <- gsub("[[:punct:]]", "", species)
+
+#Delete all the numbers followed by cm or m
+species <- gsub("\\d+\\s*(cm|m)\\b", "", species)
+
+#Delete word composed by 1 or 2 letters
+species <- gsub("\\b\\w{1,2}\\b", "", species)
+
+#Delete all the numbers
+species <- gsub("\\d", "", species)
+
+#Delete all unities as lb, kg or l
+species <- gsub("\\b(kg|lb|b)\\b", "", species)
+
+#If the word shark appears more than once in each cell, we only write shark once
+species <- gsub("\\bshark\\b(.*\\bshark\\b)?", "shark", species, ignore.case = TRUE)
+
+
+# Rewrite shark species names in one way, and do that for each species
+species<- gsub("^.*White shark.*$", "White shark", species)
+species<- gsub("^.*whitetip shark.*$", "White shark", species)
+species<- gsub("^.*white shark.*$", "White shark", species)
+species<- gsub("^.*Wobbegong shark.*$", "Wobbegong shark", species)
+species<- gsub("^.*Wobbegong.*$", "Wobbegong shark", species)
+species<- gsub("^.*Zambesi shark.*$", "Zambesi shark", species)
+species<- gsub("^.*Zambezi shark.*$", "Zambesi shark", species)
+species<- gsub("^.*whaler shark.*$", "Whale shark", species)
+species<- gsub("^.*whale shark.*$", "Whale shark", species)
+species<- gsub("^.*tiger shark.*$", "Tiger shark", species)
+species<- gsub("^.*Tiger shark.*$", "Tiger shark", species)
+species<- gsub("^.*thresher shark.*$", "Thresher shark", species)
+species<- gsub("^.*spinner shark.*$", "Spinner shark", species)
+species<- gsub("^.*Spinner shark feet.*$", "Spinner shark", species)
+species<- gsub("^.*Spinner shark.*$", "Spinner shark", species)
+species<- gsub("^.*spinner  blacktip shark.*$", "Spinner shark", species)
+species<- gsub("^.*Tawny nurse shark.*$", "Nurse shark", species)
+species<- gsub("^.*nurse shark.*$", "Nurse shark", species)
+species<- gsub("^.*Nurse shark.*$", "Nurse shark", species)
+species<- gsub("^.*Mako shark.*$", "Mako shark", species)
+species<- gsub("^.*mako shark.*$", "Mako shark", species)
+species<- gsub("^.*Lemon shark.*$", "Lemon shark", species)
+species<- gsub(".*lemon shark.*", "Lemon shark", species, ignore.case = TRUE)
+species<-gsub("^\\s*shark\\s*$", "Unidentified shark", species)
+species<- gsub(".*bull.*", "Bull shark", species, ignore.case = TRUE)
+species<- gsub(".*blue.*", "Blue shark", species, ignore.case = TRUE)
+species<- gsub(".*reef.*", "Reef shark", species, ignore.case = TRUE)
+species<- gsub(".*sand shark*", "Sand shark", species, ignore.case = TRUE)
+species<- gsub("^.*Sand shark.*$", "Sand shark", species)
+species<- gsub(".*Sand shark*", "Sand shark", species, ignore.case = TRUE)
+species<- gsub(".*sandshark*", "Sand shark", species, ignore.case = TRUE)
+species<- gsub(".*Sandbar shark*", "Sand shark", species, ignore.case = TRUE)
+species<- gsub("juvenile\\s+\\w+", "Juvenile shark",species, ignore.case = TRUE)
+species<- gsub("Juvenile shark shark", "Juvenile shark",species, ignore.case = TRUE)
+species<- gsub("Juvenile shark  blacktip shark", "Juvenile shark",species, ignore.case = TRUE)
+species<- gsub("blacktip\\s+\\w+", "Blacktip shark",species, ignore.case = TRUE)
+species <- gsub("\\black\\w*\\b", "Blacktip shark", species, ignore.case = TRUE)
+
+#Replace all occurrences of the word "blacktip" in a column with "Blacktip Shark," even if the word is accompanied by other words before or after
+
+species <- gsub("\\bblacktip\\b", "Blacktip Shark", species, ignore.case = TRUE)
+species<- gsub(".*copper shark*", "Copper shark", species, ignore.case = TRUE)
+species <- gsub("\\bcow\\b", "Cow", species)
+species <- gsub("\\bsilky\\b", "Silky", species)
+species <- gsub("\\bsilvertip\\b", "Silvertip", species)
+
+
+#Condition: if "Hammerhead" followed by other words then replaced by Hammerhead shark
+species <- ifelse(grepl("Hammerhead\\s+\\w+", species, ignore.case = TRUE), "Hammerhead shark", species)
+species <- ifelse(grepl("Blacktip\\s+\\w+", species, ignore.case = TRUE), "Blacktip shark", species)
+species <- ifelse(grepl("Raggedtooth\\s+\\w+", species, ignore.case = TRUE), "Raggedtooth shark", species)
+species <- ifelse(grepl("Porbeagle\\s+\\w+", species, ignore.case = TRUE), "Porbeagle shark", species)
+
+
+#if the word shark does not appear then NA
+species <- ifelse(grepl("shark", species, ignore.case = TRUE), species, NA)
+species <- ifelse(grepl("Juvenile\\s+\\w+", species, ignore.case = TRUE), "Juvenile shark", species)
+species <- ifelse(grepl("grey\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
+species <- ifelse(grepl("greycolored\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
+species <- ifelse(grepl("gray\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
+species <- ifelse(grepl("Broadnose\\s+\\w+", species, ignore.case = TRUE), "Sevengill shark", species)
+species <- ifelse(grepl("7gill\\s+\\w+", species, ignore.case = TRUE), "Sevengill shark", species)
+species <- ifelse(grepl("sevengill\\s+\\w+", species, ignore.case = TRUE), "Sevengill shark", species)
+species <- ifelse(grepl("black\\s+\\w+", species, ignore.case = TRUE), "Blacktip shark", species)
+species <- ifelse(grepl("Sand\\s+\\w+", species, ignore.case = TRUE), "Sand shark", species)
+species <- ifelse(grepl("Carpet\\s+\\w+", species, ignore.case = TRUE), "Carpet shark", species)
+species <- ifelse(grepl("\\bbrown\\b", species, ignore.case = TRUE), "Brown shark", species)
+
+species <- gsub("^frag\\w+", "Unidentified shark", species)
+species <- gsub("^shark$", "Unidentified shark", species)
+
+#Function to check if "small" is present in cell
+contains_small <- function(text) {
+  return(grepl("small", text))
+}
+# Replace cell with "unidentified shark" if "small" is present
+species <- ifelse(sapply(species, contains_small), "Unidentified shark", species)
+
+#Function to check if "Small" is present in cell
+contains_small <- function(text) {
+  return(grepl("Small", text))
+}
+#  Replace cell with "unidentified shark" if "Small" is present
+species <- ifelse(sapply(species, contains_small), "Unidentified shark", species)
+
+#Function to check if "sharks" is present in cell
+contains_sharks <- function(text) {
+  return(grepl("sharks", text))
+}
+# Replace cell with"unidentified shark" if "sharks" is present
+species <- ifelse(sapply(species, contains_sharks), "Unidentified shark", species)
+
+#Function to check if "cookie" is present in cell
+contains_cookie <- function(text) {
+  return(grepl("cookie", text))
+}
+# Replace cell with"Cookiecutter shark" if "cookie" is present
+species <- ifelse(sapply(species, contains_cookie), "Cookiecutter shark", species)
+
+
+#Function to check if "involvement" is present in cell
+contains_involvement <- function(text) {
+  return(grepl("involvement", text))
+}
+# Replace cell with"No shark" if "involvement" is present
+species <- ifelse(sapply(species, contains_involvement), "No shark", species)
+
+#Function to check if "invovlement" is present in cell
+contains_invovlement <- function(text) {
+  return(grepl("invovlement", text))
+}
+# Replace cell with"No shark" if "invovlement" is present
+species <- ifelse(sapply(species, contains_invovlement), "No shark", species)
+
+#Function to check if "Not" is present in cell
+contains_Not <- function(text) {
+  return(grepl("Not", text))
+}
+# Replace cell with"No shark" if "Not" is present
+species <- ifelse(sapply(species, contains_Not), "No shark", species)
+
+#Function to check if "not" is present in cell
+contains_not <- function(text) {
+  return(grepl("not", text))
+}
+# Replace cell with"No shark" if "not" is present
+species <- ifelse(sapply(species, contains_not), "No shark", species)
+
+#Function to check if "Questionable" is present in cell
+contains_Questionable <- function(text) {
+  return(grepl("Questionable", text))
+}
+# Replace cell with"No shark" if "Questionable" is present
+species <- ifelse(sapply(species, contains_Questionable), "No shark", species)
+
+#Function to check if "questionable" is present in cell
+contains_questionable <- function(text) {
+  return(grepl("questionable", text))
+}
+# Replace cell with"No shark" if "questionable" is present
+species <- ifelse(sapply(species, contains_questionable), "No shark", species)
+
+
+#Function to check if "Salmon" is present in cell
+contains_Salmon <- function(text) {
+  return(grepl("Salmon", text))
+}
+# Replace cell with"Salmon shark" if "Salmon" is present
+species <- ifelse(sapply(species, contains_Salmon), "Salmon shark", species)
+
+
+#Function to check if "whaler" is present in cell
+contains_whaler <- function(text) {
+  return(grepl("whaler", text))
+}
+# Replace cell with"Whale shark" if "involvement" is present
+species <- ifelse(sapply(species, contains_whaler), "Whale shark", species)
+
+
+# Replace the cell with "Unidentified shark" if any of the specified words are found
+species <- ifelse(grepl("(seen|observed|Tooth|tooth|large|killed|captive|female|metre|foot|followed|caused|Said|young|probably|gaffed)", species, ignore.case = TRUE), "Unidentified shark", species)
+
+# Replace the cell with "No shark" if any of the specified words are found
+species <- ifelse(grepl("(hoax|No Shark)", species, ignore.case = TRUE), "No shark", species)
+
+# Replace the cell with "Copper shark" if any of the specified words are found
+species <- ifelse(grepl("(Copper)", species, ignore.case = TRUE), "Copper shark", species)
+
+# Replace the cell with "Dogfish shark" if any of the specified words are found
+species <- ifelse(grepl("(Dog|dogfish)", species, ignore.case = TRUE), "Dogfish shark", species)
+
+# Replace the cell with "Dusky shark" if any of the specified words are found
+species <- ifelse(grepl("(Dusky)", species, ignore.case = TRUE), "Dusky shark", species)
+
+# Replace the cell with "Sevengill shark" if any of the specified words are found
+species <- ifelse(grepl("(gill)", species, ignore.case = TRUE), "Sevengill shark", species)
+
+# Replace the cell with "Angel shark" if any of the specified words are found
+species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", species)
+
+
+attacks$Species <- species
+attacks$Species <- ifelse(is.na(attacks$Species), "Unidentifies shark", attacks$Species)
+
+#_____________________________________________________________________________________________
+
+#ACTIVITY
+
+#when trying to put everything in lower cap, this was the result: Errore in tolower(attacks$Activity) :  multibyte string 921 not valid --> therefore, we converted everything in ASCII (=American Standard Code for Information Interchange)
+
+attacks$Activity <- iconv(attacks$Activity, to = "ASCII", sub = " ")
+attacks$Activity <- gsub("[^ -~]", "", attacks$Activity)
+
+attacks$Activity <- tolower(attacks$Activity)
+
+#when running a table of all activities, we can see that we can group them in some categories: diving, race, windsurfing, walking, wading, wade fishing, touching, swimming, surfing, surf, standing, spearfishing, snorkeling,  scuba diving, playing, paddle, murder, kayaking, kayak, floating, fishing, so that we have standard categories.
+
+attacks$Activity <- gsub("[^A-Za-z ]", "", attacks$Activity) 
+
+
+kept_activities <- c("diving", "race", "windsurfing", "walking", "wading", "wade fishing", "touching", "swimming", "surfing", "surf", "standing", "spearfishing", "snorkeling", "scuba diving", "playing", "paddle", "murder", "kayaking", "kayak", "floating", "fishing")
+
+
+# We create an expression pattern that matches any of the specific words
+pattern <- paste(kept_activities, collapse = "|")
+
+# Extract only the specific words (kept_activities) from the column and replace the rest with an empty string
+attacks$Activity <- str_extract(attacks$Activity, paste0("\\b(?:", pattern, ")\\b"))
+
+attacks <- attacks %>%
+  mutate(Activity = str_replace_all(Activity, "\\bkayaking\\b", "kayak")) %>%
+  mutate(Activity = str_replace_all(Activity, "\\bsurfing\\b", "surf"))
+
+attacks$Activity[is.na(attacks$Activity)] <- "other" # for all activities that are not part of the list or for NA, we just put Other, since no information is available
+
+
+#_____________________________________________________________________________________________
+
+#FATAL 
+ #When we run a table for the Fatality column, we see that almost observation follow the same category (Y = yes, N = No, Unknwn). An observation has a 2017, which is probably a typo (which we replace by empty case) while another one has an M. We want to believe that it was a typo as well, and that "M" was typed instead of "N".
+attacks$Fatal..Y.N. <- gsub("2017", "", attacks$Fatal..Y.N.)
+attacks$Fatal..Y.N. <- gsub("M", "N", attacks$Fatal..Y.N.)
+
+attacks$Fatal..Y.N. <-na_if(attacks$Fatal..Y.N., "")
+
+#For the rest of NA, we have no information, so we took of these few observations.
+attacks <- subset(attacks, !is.na(Fatal..Y.N.))
+#Replace Yes by 1, 0 otherwise
+attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
+
+names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
+
+
+#_____________________________________________________________________________________________
+#final check up:
+
+#We run a table for all columns, in order to check if columns have any missing value or if we still have other mistakes. 
+
+table(attacks$Date) #this one is fine
+table(attacks$Year) #this one is fine
+table(attacks$Type) #here we have boating and boat which mean the same thing. Let us group them
+attacks$Type <- gsub("Boating", "Boat", attacks$Type)
+attacks$Type <- gsub("Boatomg", "Boat", attacks$Type)
+table(attacks$Type) #this one is fine
+table(attacks$Country)#this one is fine
+table(attacks$Activity)#this one is fine
+table(attacks$Age)#this one is fine
+table(attacks$Fatality)#this one is fine
+table(attacks$Species)#this one is fine
+
+sum(is.na(attacks$Time)) #this is the only one that still presents 1237 NA. We don't want to delete them all because we would lose 40% of our data. 
+table(attacks$Time)#table shows that most of them happen in the afternoon, while 2nd place is owned by morning. To confirm the higher frequency of attacks between 8am and 6pm is this artile (link JC found??)
+#We explain this by the fact that, naturally, most of people swim during the day. Therefore, what we do is replacing NA randomly by the proportion of afternoon, morning, evening and night.
+
+attacks$Time <- na_if(attacks$Time, "")
+
+898+228+589+9 
+898/1724
+228/1724
+589/1724
+#afternoon is 52%, evening is 12%, morning is 34% and night 2%.
+
+attacks$Time <- ifelse(is.na(attacks$Time),
+                                sample(c("afternoon", "morning", "evening", "night"), 
+                                       size = sum(is.na(attacks$Time)), 
+                                       replace = TRUE, 
+                                       prob = c(0.52, 0.34, 0.12, 0.02)),
+                     attacks$Time)
+
+#With the following code, we will add a new column which will associate each country with its ISO code. This is a very important step for the cleaning if the enxt sections, because il will allow us to match the different datasets. 
+
+# Get ISO country codes
+iso_codes <- countrycode(attacks$Country, "country.name", "iso3c")
+attacks$ISO_Code <- countrycode(attacks$Country, "country.name", "iso3c")
+
+#Through the following function we can spot NAs. We can see that there are 23 countries with no ISO Code. We will fix them by hand. 
+rows_with_na <- which(is.na(attacks$ISO_Code))
+
+attacks$ISO_Code[attacks$Country %in% c("ENGLAND", "SCOTLAND", "BRITISH ISLES") & is.na(attacks$ISO_Code)] <- "GB"
+attacks$ISO_Code[attacks$Country %in% c("AZORES") & is.na(attacks$ISO_Code)] <- "PRT"
+attacks$ISO_Code[attacks$Country %in% c("ST. MAARTIN", "ST. MARTIN") & is.na(attacks$ISO_Code)] <- "MAF"
+attacks$ISO_Code[attacks$Country %in% c("OKINAWA") & is.na(attacks$ISO_Code)] <- "JPN"
+attacks$ISO_Code[attacks$Country %in% c("MICRONESIA") & is.na(attacks$ISO_Code)] <- "FSM"
+attacks <- subset(attacks, !is.na(ISO_Code))
+
+
+```
+
+
+
+```{r, echo=TRUE}
+
+DT::datatable(attacks, options = list(pageLength = 10))
+
+
+```
+
+## 3.2 Temperatures Cleaning
+
+The main mission for this dataset was to change the entire structure of the dataset. Originally, the dataset had the years as columns (one column for each year), while the rows were represented by the different countries; the temperature observations were presented by month, quarter and year. Furthermore, for each country and each month/quarter/year, the dataset shows both the change in temperatures and the standard deviation.
+
+To proceed with the cleaning, we eliminated the rows corresponding to the standard deviation (we will not work with it), and the monthly and quarterly observations: we are only interested in yearly temperature variations.
+
+We then rotated the dataset so as to have all the years under a single column; we subsequently matched each country and year with its temperature change observation. Finally we added the ISO code to merge with the other datasets.
+
+```{r, echo=TRUE, warning=FALSE}
+
+temperature <- read_xlsx("Temperature.xlsx")
+
+#R did not read the "°C" on the column Unit, so we changed it manually
+
+temperature <- temperature %>% mutate(Unit = "°C")
+
+#We take off all the columns that we do not need for our study
+
+temperature <- temperature %>% select(-'Area Code (M49)', -'Months Code', -'Element Code')
+
+#We wliminate all columns having an F at the end (For each year there are 2 columns (ex: 1961 - 1961F; 1962 - 1962F). The column with the F at the end of the Year is a column where only the letter E appears for each row. We tried to look for its meaning on the FAO website but we did not succeed. Therefore, we removed it. What is more, it is important to notice that it was in any case unimportant for our work).
+
+columns_to_remove <- grep("F$", names(temperature), value = TRUE)
+temperature <- temperature[, !(names(temperature) %in% columns_to_remove)]
+
+# We keep only meteorological year, we don't need to work with monthly and seasonal data.
+
+target_name <- "Meteorological year"
+temperature <- temperature[temperature$Months == target_name, ]
+
+target_name2 <- "Temperature change"
+temperature <- temperature[temperature$Element == target_name2, ]
+
+
+
+#  We take off the rest of the columns that we do not need
+
+temperature <- temperature %>% select(-'Area Code', -'Months', -'Element', -'Unit')
+
+#The column of each year starts with an Y (Y1961, Y1961...). We take it off, so that we can easily match data with other datasets.
+
+new_colnames <- gsub("Y", "", colnames(temperature))
+colnames(temperature) <- new_colnames
+temperature <- na.omit(temperature)
+
+
+# We transpose the dataset so that columns become rows. With this function we have a single column, where each row corresponds to a year, but countries became the columns now. We will work on this later in the code.
+temperature <- t(temperature)
+
+# I want the first row to be the header
+
+colnames(temperature) <- temperature[1, ]
+clean_temperature <- temperature[-1, ]
+
+#col names in CAPS
+colnames(clean_temperature) <- toupper(colnames(clean_temperature))
+
+
+library(tidyr)
+
+# Convert the matrix/array "clean_temperatures" to a data frame
+temperature <- as.data.frame(clean_temperature)
+
+# Add 'Year' as a separate column
+temperature$Year <- rownames(clean_temperature)
+
+# Reshape the data from wide to long format
+temperature <- tidyr::pivot_longer(temperature, 
+                                     cols = -Year, 
+                                     names_to = "Country", 
+                                     values_to = "Temperature")
+
+# Reorder columns as per your desired format
+temperature <- temperature[c("Year", "Country", "Temperature")]
+
+#As we said at the beginning, we only work with data from 1970
+temperature <- temperature %>% filter(Year >= 1970)
+temperature$Year <- as.numeric(temperature$Year)
+
+temperature <- temperature %>% 
+  mutate(Country = ifelse(Country == "UNITED STATES OF AMERICA", "USA", Country))
+
+#As for the attacks dataset, we add a column for the ISO code.
+
+temperature$ISO_Code <- countrycode(temperature$Country, "country.name", "iso3c")
+temperature$ISO_Code[temperature$Country %in% c("MICRONESIA") & is.na(temperature$ISO_Code)] <- "FSM"
+
+#Now that we put ISO code, we can remove the country column
+temperature <- temperature %>% select(-'Country')
+
+DT::datatable(temperature, options = list(pageLength = 10))
+
+
+```
+
+## 3.3 Sea Level Cleaning
+
+We choose a data set about the sea level change observed during the last years. We start analyzing the sea level changes since 1993 because we did not find any data of years before. 
+In this data set we had few columns but we only kept 2 columns that were the more relevant for us: the year and the GMSL_GIA. This last column is the global mean of sea level including the glacial isostatic adjustement (GIA). We choose the column with GIA and not without because this show the response of solid Earth to the past changes in surface loading by ice and water such as the glaciation and deglaciation.
+
+```{r, echo=TRUE, warning=FALSE}
+
+sealevel <- read.csv("sealevel.csv")
+
+# keep the 2 columns we are interested to analyze because the other are irrelevant for our project
+sealevel <- subset(sealevel, select = c(Year, GMSL_GIA))
+
+#Show the year only the first time by creating a new column called Year2
+sealevel$Year2 <- ifelse(duplicated(sealevel$Year), NA, sealevel$Year)
+
+# delete column Year due to the creation of column Year 2
+sealevel <- subset(sealevel, select = -Year)
+
+# delete NA because it does not bring anything to our analysis
+sealevel <- na.omit(sealevel)
+
+#Change name of column Year
+column <- gsub("2","",colnames(sealevel))
+colnames(sealevel) <- column
+
+DT::datatable(sealevel, options = list(pageLength = 10))
+
+
+```
+
+## 3.4 Greenhouse Gas Emissions Cleaning
+
+Finally, the GHG emissions dataset was the easiest  to clean. Indeed, we already have a column for the ISO code, so we simply had to filter the years so that the observations began in 1970.
+
+```{r, echo=TRUE, warning=FALSE}
+co2 <- read.csv("CO2.csv")
+
+# Change names of columns in order to have the same columns that in the other datasets
+names(co2)[names(co2) == "Entity"] <- "Country"
+names(co2)[names(co2) == "Annual.CO..emissions"] <- "Annual CO2 Emissions"
+names(co2)[names(co2) == "Code"] <- "ISO_Code"
+
+
+
+# keep the 3 columns we are interested to analyze
+co2 <- subset(co2, select = c("ISO_Code", "Year", "Annual CO2 Emissions"))
+
+
+# only keep information starting in 1970 because we want to look at the evolution of 
+# the last 50 years
+co2<- co2[co2$Year >= 1970, ]
+
+co2$ISO_Code <- na_if(co2$ISO_Code, "")
+
+co2 <- subset(co2, !is.na(ISO_Code))
+
+DT::datatable(co2, options = list(pageLength = 10))
+
+
+```
+
+## 3.5 Merged Data Set
+
+After cleaning the four datasets, we have finally merged them. This step is essential to be able to run regression across variables that came from multiple datasets. 
+
+```{r, echo=TRUE, warning=FALSE}
+
+#MERGE FIRST TWO DATA SETS
+
+# Assuming 'Year' and 'Country' are the columns in both datasets for matching
+merged_data <- left_join(attacks, temperature, by = c("Year", "ISO_Code"))
+
+#MERGE WITH THIRD
+
+# Assuming 'Year' is the columns in both datasets for matching
+merged_data2 <- left_join(merged_data, sealevel, by = c("Year"))
+
+#MERGE WITH FOURTH
+
+# Assuming 'Year' and 'Country' are the columns in both datasets for matching
+merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
+merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
+
+DT::datatable(merged_data3, options = list(pageLength = 10))
+
+
+```
+# 4. <strong>EDA</strong>
+
+## 4.1 Evolution of shark attacks through the years
+
+With the y-axis showing the frequency of shark attacks and the x-axis showing the passage of time, the graph below displays a striking pattern in shark attacks over time. The data exhibits a recognizable pattern that indicates a steady increase in the quantity of shark attacks within the designated period. This rising tendency begs critical concerns regarding what is causing such an increase and necessitates more research into ecological, environmental, and human-related elements that could be involved in this occurrence. The graph emphasizes the need of keeping an eye on and comprehending the dynamics of these episodes in addition to providing a visual depiction of the rise in shark attacks. 
+
+This trend is a key research topic: why are marine attacks increasing year after year? What could be the reasons? In fact, the reasons can be various, for example of an ecological, environmental nature or linked to human seaside activity. The graph highlights the need to keep an eye on and understand the dynamics of these episodes, which is exactly what we will do during our study.
+
+Three fundamental areas of this graph should be an element of analysis: 1975-1978; 1988-1990; 2019-2020. In fact, we could ask ourselves, why is there a decrease in attacks in this period?
+For the last period, the answer is simple: our dataset presents data up to June 2018, for the second half of the year we have no data, which explains the drastic drop in attacks.
+For the other two periods, we will discover the reasons during a more in-depth analysis
+
+```{r, echo=TRUE}
+plot1 <- ggplot(data = attacks, aes(x = Year)) +
+  geom_smooth(stat = "count", aes(group = 1), color = "blue", size = 1) +
+  geom_bar(stat = "count", fill = "red") +
+  labs(title = "Shark Attacks Evolution Over Years", x = "Year", y = "Number of Attacks")
+
+plot1
+```
+
+## 4.2 Pattern of shark attacks frequencies
+
+<strong> Pattern of shark attacks frequencies through the day</strong> 
+
+The bar graph below, where the x-axis indicates four time categories —morning, afternoon, evening, and night— displays the distribution of shark attacks throughout the day. The graph's most noticeable aspect is how frequently shark attacks occur in the afternoon, followed by the morning, evening and night. This concentration of incidents in the afternoon raises intriguing questions about potential human behavioral factors that could contribute to this temporal pattern. 
+
+First and foremost, we believe that the afternoon is when most people choose to go swimming, which contributes to the frequency of shark attacks during this time. Recreational water activities such as swimming, surfing, kayaking, and other water sports are probably more popular during these times. Furthermore, the afternoon is when the seas are the warmest, so it's intriguing to find out if this aspect also has a significant influence on shark activity.
+Conversely, the decreased number of assaults that occur at night may be related to less people using the water during that time, but there may be other possible reasons as well (less high temperatures, poorer visibility).
+
+Lastly, we suppose that the medium frequencies of the morning and evening might correspond to transitional periods when shark and human behavior are changing.
+
+```{r, echo=TRUE}
+bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854")
+
+barplot1 <- barplot(table(attacks$Time),
+        col = bar_colors,
+        xlab = "Time of Day", ylab = "Frequency of Attacks",
+        main = "Frequency of Shark Attacks by Time of Day",
+        border = "white",  # White borders for bars
+        ylim = c(0, max(table(attacks$Time)) + 5),  # Adjust y-axis limits
+        space = 0.5,  # Adjust space between bars
+        cex.names = 0.8,  # Adjust font size of axis labels
+        font.axis = 2,  # Bold axis labels
+        args.legend = list(title = "Time of Day", cex = 0.8),  # Legend settings
+        beside = TRUE)
+
+barplot1
+
+```
+
+<strong>Pattern of shark attacks frequencies per country</strong> 
+
+A first glance at our plotted data reveals that the United States, Australia, and South Africa are the three primary countries with a significant number of shark attacks. 
+
+```{r, echo=TRUE}
+shark_attacks_by_country <- attacks %>%
+  group_by(Country) %>%
+  summarise(total_attacks = n())
+
+shark_attacks_by_country <- shark_attacks_by_country %>%
+  mutate(CountryCategory = ifelse(total_attacks >= 30, as.character(Country), "Other"))
+
+# Order the countries by frequency in descending order
+shark_attacks_by_country$CountryCategory <- reorder(shark_attacks_by_country$CountryCategory, -shark_attacks_by_country$total_attacks)
+
+# Plot the data
+plot2<- ggplot(data = shark_attacks_by_country, aes(x = total_attacks, y = CountryCategory)) +
+  geom_col(fill = "skyblue") +
+  labs(title = "Total Shark Attacks in Each Country", x = "Number of Attacks", y = "Country") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(hjust = 1)) +
+  scale_y_discrete(labels = scales::label_wrap(10))
+
+interactive_plot <- ggplotly(plot2)
+interactive_plot
+
+```
+
+## 4.3 Fatality of shark attacks
+
+<strong>Are shark attacks more likely to lead to death?</strong> 
+
+This pie shows that more than 85% of the attacks were not lethal. Only less than 13% of the total number of accidents were deadly, while for about 1% on these we have a lack of information. When we hear about shark attacks, we directly think about the degree of injury or death. This graph is a surprise for us because it shows us that shark do not kill that many people.  Why? After some research, we learnt that sharks bite while they are exploring their environment. They bite humans, making them some injuries due to their mistaken identify. Moreover, when they meet surfers or swimmers, sharks bite them and then leave because the lack of blubber on humans.
+The low rate of shark attacks fatalities can tell us that sharks are not seeking for humans in order to feed themselves. Another factor that helps humans not to die is the rapid medical and emergency response that we can have at the beaches of high rate of sharks presence such as in the United States and Australia.
+
+```{r, echo=TRUE}
+
+pie_plot <- ggplot(attacks, aes(x = "", fill = Fatality)) +
+  geom_bar(position = "fill", color = "black", width = 1) +
+  coord_polar("y") +
+  labs(title = "Proportion of Fatal Attacks", fill = "Fatality") +
+  scale_fill_manual(values = c("#3498db", "#e74c3c", "#f39c12")) +
+  theme_minimal()
+print(pie_plot)
+```
+
+<strong>Fatalities by type of shark</strong> 
+
+As we can see in this graph, most of attacks were not fatal, meaning that sharks injured a lot of people without taking their lives away. The types of sharks that did the most of accidents were the following ones: Bull shark, Tiger shark and White shark, with the deadlies being the last one. Why do they commit attacks? Probably because their feeding behavior. Maybe they misidentify their predators attacking people instead of animals like turtles, seals, or sea lions. This is consistent with Bull shark and Tiger shark being repetitevly named as the deadlies sharks in the seas and oeceans (CBS News, 2010).
+Another relevant information derived from this graph is the big number of unidentified sharks. Out of all the attacks recorded by our dataset, we have almost 600 Unidentified species. It is such a pity not to be able to have this information, which would have led us to more insightful results.
+
+
+```{r, echo=TRUE}
+summary_table <- table(attacks$Species, attacks$Fatality)
+
+summary_df <- as.data.frame(summary_table)
+plot4 <- ggplot(summary_df, aes(x = Var1, y = Freq, fill = Var2)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Fatality by Type of Shark",
+    x = "Type of Shark",
+    y = "Frequency",
+    fill = "Legend"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(
+    name = "Was the shark attack fatal?",
+    values = c("blue", "pink", "yellow"),
+    labels = c("Yes", "No", "Unknown")
+  )
+
+print(plot4)
+```
+
+## 4.4 Evolution of temperatures through the years
+
+The graph below illustrates the change in global temperature throughout the last few decades, showing an overall increase in temperature over the 50-year period. Despite some fluctuations, the upward trend indicates a clear warming pattern, with a notable acceleration following the 1980s and one of the two most significant rises occurring in the recent decade.
+
+
+```{r, echo=TRUE}
+# Filter out NA values and non-numeric values in the Temperature column
+temperature_data_filtered <- temperature %>%
+  filter(!is.na(Temperature), !is.na(as.numeric(Temperature)))
+
+# Convert the Temperature column to numeric
+temperature_data_filtered$Temperature <- as.numeric(temperature_data_filtered$Temperature)
+
+# Calculate the mean temperature for each year
+world_temperature <- temperature_data_filtered %>%
+  group_by(Year) %>%
+  summarise(World_Temperature = mean(Temperature, na.rm = TRUE))
+
+# Create a line plot for the world temperature
+plot5 <- ggplot(world_temperature, aes(x = Year, y = World_Temperature)) +
+  geom_line() +
+  labs(title = "World Temperature Change Over Years",
+       x = "Year",
+       y = "World Temperature Change") +
+  theme_minimal()
+
+interactive_plot <- ggplotly(plot5)
+
+interactive_plot
+
+```
+
+
+## 4.5 Evolution of sea level through the yars
+
+This line graph depicts the trend of rising sea levels from around the ‘90s until the early 2020s, showing some fluctuations initially, and a notable upward trend thereafter. The early 2000s represent a steady rate of increase, with a minor decrease in the early 2010s. This pattern appears to be somewhat consistent with global temperature changes, and a steepening rise in the last couple of years indicate a complementary relation with the increasing temperature levels.
+
+```{r, echo=TRUE}
+# Create a line plot
+plot6 <- ggplot(data = sealevel, aes(x = Year, y = GMSL_GIA)) +
+  geom_line(color = "green", size = 1.5) +
+  labs(title = "Evolution of Sea Level Over the Years", x = "Year", y = "Sea Level")
+
+interactive_plot <- ggplotly(plot6)
+interactive_plot
+```
+
+## 4.6 CO2 emissions insights
+
+<strong>Trend of CO2 emissions per year</strong> 
+
+The bar graph reveals an evident increase of emissions in the depicted period, as indicated by a consistent upward trend with few fluctuations and no significant declines. The rise reflects the growth of industrialisation over the years, especially marked by the end of the Cold War and subsequent economic growth in many parts of the world. The early 2000s show a particularly sharp increase, which is likely to be as a result of the rapid increase in manufacturing and energy production in Asian regions. Post-2010 years show some fluctuations that could be attributed to emissions mitigation efforts, but the trend overall remains the same.
+
+
+```{r, echo=TRUE}
+# Create a line plot with backticks to show the trend in co2 emissions throughout the years
+plot7 <- ggplot(data = co2, aes(x = Year, y = `Annual CO2 Emissions`)) +
+  geom_line(color = "blue") +
+  labs(title = "Trend of CO2 Emissions Over the Years", x = "Year", y = "Annual CO2 Emissions")
+
+interactive_plot <- ggplotly(plot7)
+interactive_plot
+```
+
+<strong>Which continent generates more GHG emissions? </strong> 
+
+We can see that there is a significant disparity in emissions among different continents; Asia shows a sharp increase in emissions over the years, particularly accelerating after 2000, becoming the continent with the highest CO2 emissions. This is perfectly consistent with other data, showing that 5 out of the 6 most polluting countries in the world are in Asian, namely China, India, Japan, Russia and Iran. (Statista, 2021)
+Emissions in Europe depict a gradual rise until the early 90’s, with a noticeable fluctuation and decline thereafter. 
+The North American region follows a similar trend to Europe with a steady increase until the 2000s, followed by a levelling off and a decline. 
+On the other hand, CO2 emissions from South America show a steady increase over time with less fluctuations as compared to Europe and NA.
+Africa’s emissions have additionally been increasing at a steady rate over the last few decades, but they remain significantly lower compared to the rest of the continents. 
+Oceania represents the lowest overall emissions among the listed regions, with an increase rate on par with Africa.
+Antarctica’s emissions are not visible on the graph, which is consistent with expectations as it is a largely uninhabited continent.
+
+
+```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+
+co2_grouped <- co2 %>%
+  mutate(Region = case_when(
+    ISO_Code %in% c(NA) ~ "Unknown",
+    ISO_Code %in% c("AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BOL", "BGR", "BFA", "BDI", "KHM", "CMR", "CPV", "CHN", "CXR", "CYP", "HKG", "IND", "IDN", "IRN", "IRQ", "ISR", "JOR", "JPN", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "OMN", "PAK", "PSE", "PHL", "QAT", "SAU", "SGP", "KOR", "LKA", "TUR", "SYR", "TWN", "TJK", "THA", "TKM", "ARE", "UZB", "YEM", "VNM") ~ "Asia",
+    ISO_Code %in% c("ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BWA", "HRV", "CZE", "DNK", "EST", "FIN", "FRO", "FRA", "GEO", "DEU", "GRC", "GRL", "GLP", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LIE", "LUX", "MLT", "MDA", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR") ~ "Europe",
+    ISO_Code %in% c("DZA", "AGO", "BEN", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "TLS", "EGY", "ERI", "SWZ", "ETH", "GNQ", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MTQ", "MRT", "MUS", "MYT", "MAR", "MOZ", "NAM", "NER", "NGA", "REU", "RWA", "SHN", "SEN", "SYC", "SLE", "STP", "ZAF", "SOM", "SSD", "SDN", "SUR", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE") ~ "Africa",
+    ISO_Code %in% c("AIA", "ATG", "ABW", "BHS", "BMU", "BRB", "BLZ", "VGB", "BRN", "CAN", "CRI", "CUB", "CUW", "DMA", "DOM", "SLV", "GRD", "GTM", "HTI", "HND", "JAM", "MSR", "MEX", "USA", "NIC", "PAN", "KNA", "LCA", "SPM", "VCT", "SXM", "TCA", "TTO") ~ "North America",
+    ISO_Code %in% c("ARG", "COL", "CHL", "ECU", "GUF", "GUY", "PRY", "PER", "URY", "VEN", "BRA", "BES") ~ "South America",
+    ISO_Code %in% c("AUS", "COK", "FJI", "PYF", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL", "NIU", "PLW", "PNG", "WSM", "SLB", "TON", "TUV", "VUT", "WLF") ~ "Australia & Oceania",
+    ISO_Code %in% c("ATA") ~ "Antarctica"
+  ))
+
+
+# Step 1: Calculate Mean Emissions by Year and Region
+mean_emissions <- co2_grouped %>%
+  group_by(Year, Region) %>%
+  summarize(Mean_Emissions = mean(`Annual CO2 Emissions`, na.rm = TRUE))
+
+
+# Now we get rid of that Unknown Region to have a better view of the other Regions
+
+# Step 1: Calculate Mean Emissions by Year and Region and getting rid of the things we don't want
+mean_emissions <- co2_grouped %>%
+  filter(!is.na(Region) & !is.na(`ISO_Code`) & Region != "Unknown") %>%
+  group_by(Year, Region) %>%
+  summarize(Mean_Emissions = mean(`Annual CO2 Emissions`, na.rm = TRUE))
+
+
+```
+
+```{r, echo=TRUE}
+# Step 2: Let's plot the Data
+plot2 <- ggplot(mean_emissions, aes(x = Year, y = Mean_Emissions, color = Region)) +
+  geom_line() +
+  labs(title = "CO2 Emissions by Continent",
+       x = "Year",
+       y = "Annual CO2 Emissions") +
+  theme_minimal()
+
+interactive_plot <- ggplotly(plot2)
+interactive_plot
+```
+
+
+Shows the relationship between the attacks and the age of the victims 
+
+```{r, echo=TRUE}
+
+# Filter data to include only realistic age values (between 0 and 120)
+attacks_filtered <- attacks %>%
+  filter(Age >= 0 & Age <= 120)
+
+# Create a summary table with the count of attacks for each age
+attacks_summary <- attacks_filtered %>%
+  group_by(Age) %>%
+  summarise(NumAttacks = n())
+
+# Scatter plot to show the relationship between the number of shark attacks and age
+ggplot(attacks_summary, aes(x = Age, y = NumAttacks)) +
+  geom_point(color = "blue", size = 2) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
+  labs(title = "Relationship between Shark Attacks and Age",
+       x = "Age",
+       y = "Number of Attacks")
+
+```
+
+Better understanding of the attacks and sex of the victims
+
+
+```{r, echo=TRUE}
+# Create a summary table with the count of attacks for each sex
+attacks_summary_sex <- attacks_filtered %>%
+  group_by(Sex) %>%
+  summarise(NumAttacks = n())
+# Filter data to include only "M", "F", and "NA" in the Sex column
+filtered_attacks_sex <- attacks_summary_sex %>% 
+  filter(Sex %in% c("M", "F", NA))
+
+# Bar plot to show the distribution of shark attacks by sex
+ggplot(filtered_attacks_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  labs(title = "Distribution of Shark Attacks by Sex",
+       x = "Sex",
+       y = "Number of Attacks") +
+  scale_fill_manual(values = c("pink", "blue", "gray"))
+
+```
+
+Want to know where are the regions (continents) with the most attacks
+
+```{r, echo=TRUE}
+
+#Create a new column in attacks that represents the continents
+attacks_grouped <- attacks %>%
+  mutate(Region = case_when(
+    ISO_Code %in% c(NA) ~ "Unknown",
+    ISO_Code %in% c("AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BOL", "BGR", "BFA", "BDI", "KHM", "CMR", "CPV", "CHN", "CXR", "CYP", "HKG", "IND", "IDN", "IRN", "IRQ", "ISR", "JOR", "JPN", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "OMN", "PAK", "PSE", "PHL", "QAT", "SAU", "SGP", "KOR", "LKA", "TUR", "SYR", "TWN", "TJK", "THA", "TKM", "ARE", "UZB", "YEM", "VNM") ~ "Asia",
+    ISO_Code %in% c("ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BWA", "HRV", "CZE", "DNK", "EST", "FIN", "FRO", "FRA", "GEO", "DEU", "GRC", "GRL", "GLP", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LIE", "LUX", "MLT", "MDA", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR") ~ "Europe",
+    ISO_Code %in% c("DZA", "AGO", "BEN", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "TLS", "EGY", "ERI", "SWZ", "ETH", "GNQ", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MTQ", "MRT", "MUS", "MYT", "MAR", "MOZ", "NAM", "NER", "NGA", "REU", "RWA", "SHN", "SEN", "SYC", "SLE", "STP", "ZAF", "SOM", "SSD", "SDN", "SUR", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE") ~ "Africa",
+    ISO_Code %in% c("AIA", "ATG", "ABW", "BHS", "BMU", "BRB", "BLZ", "VGB", "BRN", "CAN", "CRI", "CUB", "CUW", "DMA", "DOM", "SLV", "GRD", "GTM", "HTI", "HND", "JAM", "MSR", "MEX", "USA", "NIC", "PAN", "KNA", "LCA", "SPM", "VCT", "SXM", "TCA", "TTO") ~ "North America",
+    ISO_Code %in% c("ARG", "COL", "CHL", "ECU", "GUF", "GUY", "PRY", "PER", "URY", "VEN", "BRA", "BES") ~ "South America",
+    ISO_Code %in% c("AUS", "COK", "FJI", "PYF", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL", "NIU", "PLW", "PNG", "WSM", "SLB", "TON", "TUV", "VUT", "WLF") ~ "Australia & Oceania",
+    ISO_Code %in% c("ATA") ~ "Antarctica"
+  ))
+
+# Filter data to include only "M", "F", and "NA" in the Sex column
+filtered_attacks_sex <- attacks_summary_sex %>% 
+  filter(Sex %in% c("M", "F", NA))
+
+# Filter data to include only valid regions (excluding "Unknown")
+filtered_attacks_region <- attacks_grouped %>% 
+  filter(!is.na(Region) & Region != "Unknown")
+
+# Bar plot to show the distribution of shark attacks by region
+ggplot(filtered_attacks_region, aes(x = Region, fill = Region)) +
+  geom_bar() +
+  labs(title = "Distribution of Shark Attacks by Region",
+       x = "Region",
+       y = "Number of Attacks") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+
+```
+
+Does sea level and the number of shark attacks have a relationship
+```{r, echo=TRUE}
+# Calculate the number of attacks per year
+attacks_summary <- attacks %>%
+  group_by(Year) %>%
+  summarize(Number_of_Attacks = n())
+
+# Assuming there's a common column named "Year" in both datasets
+merged_data <- merge(attacks_summary, sealevel, by = "Year", all.x = TRUE)
+
+correlation_coefficient <- cor(merged_data$Number_of_Attacks, merged_data$GMSL_GIA, use = "complete.obs")
+print(paste("Correlation Coefficient:", correlation_coefficient))
+
+# Scatter plot
+ggplot(merged_data, aes(x = GMSL_GIA, y = Number_of_Attacks)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line -> WARNING MESSAGE
+  labs(title = "Relationship Between Sea Level and Shark Attacks",
+       x = "Global Mean Sea Level Global Isostatic Adjustment (GMSL_GIA)",
+       y = "Number of Attacks")
+
+
+```
+
+Relationship between temperature change and the number of shark attacks
+
+```{r, echo=TRUE}
+
+
+# Identify non-numeric values in the Temperature column
+non_numeric_temp <- temperature %>%
+  filter(!is.numeric(Temperature)) %>%
+  distinct(Temperature)
+
+# Print non-numeric values
+print(non_numeric_temp)
+
+# Convert "Temperature" column to numeric
+temperature$Temperature <- as.numeric(temperature$Temperature)
+
+# Check for negative values
+negative_values <- temperature %>%
+  filter(Temperature < 0)
+
+# Print rows with negative values
+print(negative_values)
+
+# Calculate the mean temperature
+mean_temp_world <- temperature %>%
+  group_by(Year) %>%
+  summarize(Mean_Temperature = mean(Temperature, na.rm = TRUE))
+
+# Filter out non-numeric values in the Temperature column
+temperature <- temperature %>%
+  filter(is.numeric(Temperature))
+
+# Calculate mean temperature for the world per year
+mean_temp_world <- temperature %>%
+  group_by(Year) %>%
+  summarize(Mean_Temperature = mean(Temperature, na.rm = TRUE))
+
+# Merge datasets
+merged_data <- merge(attacks_summary, mean_temp_world, by = "Year", all.x = TRUE)
+
+# Plotting
+ggplot(merged_data, aes(x = Mean_Temperature, y = Number_of_Attacks)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
+  labs(title = "Relationship between Shark Attacks and World Mean Temperature Change",
+       x = "World Mean Temperature Change",
+       y = "Number of Shark Attacks") +
+  theme_minimal()
+
+```
+
+What are the activities with the most attacks
+
+```{r, echo=TRUE}
+
+
+# Check the top activities with the most attacks
+top_activities <- attacks %>%
+  group_by(Activity) %>%
+  summarize(Number_of_Attacks = n()) %>%
+  arrange(desc(Number_of_Attacks)) %>%
+  top_n(30)  # Adjust the number if you want more or fewer top activities
+
+# Plot the results
+ggplot(top_activities, aes(x = reorder(Activity, -Number_of_Attacks), y = Number_of_Attacks)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top Activities with the Most Attacks",
+       x = "Activities",
+       y = "Number of Attacks") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+
+INTERACTIVE MAP
+
+
+
+
+```{r, echo=TRUE}
+
+library(leaflet)
+library(viridisLite)
+library(htmltools)
+library(RColorBrewer)
+library(car)
+
+map <- read.csv("map.csv")
+map <- map[c('latitude', 'longitude', 'country')]
+
+#Let's rename the columns of the dataset
+colnames(map)[colnames(map) == 'latitude'] <- 'lat'
+colnames(map)[colnames(map) == 'longitude'] <- 'lng'
+colnames(map)[colnames(map) == 'country'] <- 'Country'
+map$Country <- toupper(map$Country)
+
+
+map <- map %>%
+  mutate(Country = ifelse(Country == "UNITED STATES", "USA", Country))
+
+merged_map <- merge(merged_data3, map, by='Country', all=FALSE)
+
+# Create a new variable representing the nb of attacks per country
+results <- merged_map %>%
+  group_by(Country) %>%
+  summarise(Attackscountry = n())
+print(results)
+
+# Attach aggregated data to your original dataframe
+merged_map <- left_join(merged_map, results, by = "Country")
+
+
+# Definition of the thresholds for the categorization
+seuils <- c(-Inf, 50, 100, 500, Inf)
+
+# Definition of the colors we want to have in the map
+couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF","#001F3F80")
+
+# Add a new category column based on thresholds
+merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
+
+merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
+
+#Let's have fun with an interactive map
+ma_carte <- leaflet(merged_map) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    radius = ~sqrt(echelle_taille) * 2,
+    color = ~factor(merged_map$cat_attacks, labels = couleurs),
+    fillOpacity = 0.4,
+    label = ~paste(Country, ":", Attackscountry),
+    options = markerOptions(autoPopup = TRUE)
+  ) %>%
+  addLegend(
+    position = "bottomleft",
+    colors = couleurs,
+    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
+    title = "Number of shark attacks"
+  )
+
+ma_carte
+
+
+
+
+```
+
+
+
+
+# 5. <strong>Analysis</strong>
+
+## 5.1 RQ1: Which are the primary factors influencing the occurrence of shark attacks?
+
+After a deep Exploratory Data Analysis we thought about the relevance of some factors that might influence directly the occurrence of shark attacks. Directly in the sense that these are variables that were found in the main data set and not in a secondary one. Let's begin then:
+
+Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
+
+```{r}
+#Before doing the regression, we will do a correlation matrix of the numerical variables
+numeric_columns <- sapply(attacks, is.numeric)
+
+#Let's choose the numeric columns only
+numeric_data <- attacks[, numeric_columns]
+
+# Calculate the correlation matrix
+correlation_matrix <- cor(numeric_data)
+
+# Show the correlation matrix
+print(correlation_matrix)
+```
+
+-	Thanks to this correlation matrix, we can affirm that:
+o	Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
+o	Age has a slightly positive correlation (0.11) with Time almost.
+o	The variable Type has a slight positive correlation with Age and Species while it has a slight negative correlation with Year, Species and Sex.
+o	There is a negative correlation between Year and Species.
+o	The following variables have no significant correlation with the other numeric variables, due to the value of the coefficient close to 0: Sex and Type.
+
+The regression that we will use is the following one:
+\[ \hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4 + \beta_5 X_5 + \beta_6 X_6 + \epsilon \] where: 1. \(\hat{Y}\) = Frequency of Shark Attacks 2. \(X_{\text{1}}\) = Year 3. \(X_{\text{2}}\) = Sex 4. \(X_{\text{3}}\) = Age 5. \(X_{\text{4}}\) = Species 6.\(X_{\text{5}}\) = Type 7. \(X_{\text{6}}\) = Time 8. \(\epsilon\) = Residual Error
+
+
+Let's do our main regression based on all the countries
+```{r}
+# Let's do an overall multiple regression model
+model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
+
+# Print the summary of the regression model
+summary(model)
+```
+-	We just did a linear regression where the response variable is Attackscountry predicted by the following variables: Year, Sex, Age, Time, Type and Species.
+-	The intercept represents the predicted value of Attackscountry when almost all variables are zero except Age that could not be zero.
+-	The variable Year is statistically significant (p-value < 0.05), indicating that there is a significant relationship between the Year and the number of shark attacks.  The variable Type is statistically significant at the 0.1 level.
+-	The variable Age is also statistically significant at the same level (0.1%).
+-	In the other side, the variables that are not statistically significant at this level are: Sex and Species.
+-	The R-squared in this model is of 5.2 %. Thus, 5.2% of the variance in the response variable (Attackscountry) is explained by this model. The adjusted R-squared is similar, 5 %. This model does not explain a large portion of the variability of this variable.
+-	Concerning the F-statistic we can say that there is a low p-value suggesting that at least one predictor variable is significantly related to the response variable. 
+
+
+This first regression will be based only on the USA
+```{r}
+# USA Regression
+usa_data <- merged_map %>%
+  filter(Country == "USA")
+
+#Regression model of the USA
+model1 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = usa_data)
+
+print("Regression for USA:")
+summary(model1)
+
+# Compute the VIF
+vif_values <- car::vif(model1)
+
+# Show me the results of the VIF
+print(vif_values)
+```
+-	We focus on the country that has the most shark attacks in the world according to our main dataset.
+-	None of the predictor variables are statistically significant predicting the number of shark attacks in the USA. 
+-	This model fits the data concerning USA very well, because of the high R-Squared value (0.5) and the small residuals. Does this model fit well or is there some multicollinearity?
+-	According to the VIF analysis, the values are low. As they are below 5, we cannot say that there is high multicollinearity between some variables because here all the values are close to 1. Each variable contributes relatively independently to explaining the variability of Attackscountry.
+
+
+In order to have a better model by doing a forward selection where we will take the model with the lowest AIC.
+```{r}
+# Include the intercept in the initial model
+current_model <- lm(Attackscountry ~ 1, data = usa_data)
+
+# List to store models at each step
+selected_models <- list()
+
+# Variables to add
+variables_to_add <- c("Year", "Sex", "Age", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model <- update(current_model, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model
+  
+  # Calculate AIC
+  aic_value <- AIC(current_model)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model))
+}
+```
+In order to have a better model by doing a forward selection where we will take the model with the lowest AIC.
+
+Here we have the AIC values for each model:
+1. Model with Year only: AIC = -66827.49
+2. Model with Year and Sex: AIC = -66825.83
+3. Model with Year, Sex, and Age: AIC = -66824.46
+4. Model with Year, Sex, Age, and Species: AIC = -66822.72
+5. Model with Year, Sex, Age, Species and Time: AIC = -66820.77
+6. Model with Year, Sex, Age, Species, Time and Type: AIC = -66818.77
+
+As said previously, we chose the model with the lowest AIC indicating a better fit of the model, but we decided to choose it because the model includes more variables than the others, thus best explaining the variability in the data.
+
+
+
+
+This second regression will be based only on Australia
+```{r}
+aus_data <- merged_map %>%
+  filter(Country == "AUSTRALIA")
+
+model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = aus_data)
+
+print("Regression for AUSTRALIA:")
+summary(model2)
+```
+-	We focus on the second country that has the most shark attacks in the world according to our main dataset.
+-	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively.
+
+
+```{r}
+# Include the intercept in the initial model
+current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
+
+# List to store models at each step
+selected_models2 <- list()
+
+# Variables to add
+variables_to_add2 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add2) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model2 <- update(current_model2, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model2
+  
+  # Calculate AIC
+  aic_value2 <- AIC(current_model2)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model2))
+}
+
+# Compute the VIF
+vif_values2 <- car::vif(model2)
+
+# Show me the results of the VIF
+print(vif_values2)
+```
+-	In this case, for each model we have the same AIC, that has a value of -66818.77. Increasing the number of variables that we add in the model does not seem to improve the significance of the model. As the AIC value is the same, we prefer to have as many variables as possible.
+-	The model with all the variables will explain almost 50% of the variability. But this value is high, but according to the VIF analysis, there is no high multicollinearity between variables. We can conclude saying that this model fits well.
+
+Let's focus on both countries
+```{r}
+# This regression will be based on both USA and AUSTRALIA
+combined_data <- merged_map %>%
+  filter(Country %in% c("USA", "AUSTRALIA"))
+
+# Run the regression based on both USA and AUSTRALIA
+model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = combined_data)
+
+# Print the results
+print("Regression for USA and AUSTRALIA:")
+print(summary(model_combined))
+```
+-	We focus on the two countries that have the most shark attacks in the world according to our main dataset.
+-	Year and Sex are the two variables in this model that are not statistically significant while the others are, at different thresholds. Age and Species are statistically significant at 0.1%, while Time is statistically significant at 10%. The variable Type is statistically significant at 5%.
+-	The variability of Attackscountry has a value of 5.25% (R^2) and is explained by the model. We conclude that this model is better explained by another model that contains more useful variables.
+
+
+```{r}
+#Model combined, AIC 
+
+# Include the intercept in the initial model
+current_model3 <- lm(Attackscountry ~ 1, data = combined_data)
+
+# List to store models at each step
+selected_models3 <- list()
+
+# Variables to add
+variables_to_add3 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
+
+# Forward selection loop
+for (variable in variables_to_add3) {
+  # Add a variable to the formula
+  formula <- as.formula(paste(". ~ . +", variable))
+  current_model3 <- update(current_model3, formula)
+  
+  # Store the current model in the list
+  selected_models[[variable]] <- current_model3
+  
+  # Calculate AIC
+  aic_value2 <- AIC(current_model3)
+  
+  # Print the summary of the current model and AIC value
+  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
+  print(summary(current_model3))
+}
+```
+-	Here we have the same AIC value for each model: -66818.77. As said previously, we decide to use the model containing the most variables.
+
+
+We have done the following type of models of this first regression that will help us to answer this first research question:
+-	Overall: all countries that we have on our merged dataset.
+-	Focus on USA.
+-	Focus on Australia.
+-	Focus on the two countries above.
+
+Each type of model according to their focus has its own primary factors influencing the occurrence of shark attacks. For example, in the first one (Overall), Age, Year, Type and Time are the factors that influence the attacks. But the two that are highly significant are Age and Year. In the 4th one, the one that is focused on both countries, the main factors are Age, Species, Type and Time. In conclusion, Age, Type and Time are highly significant predictors, thus they strongly influence the occurrence of shark attacks from a statistical point of view. 
+We did not consider models focus on one country because they are not that relevant. We choose to analyze more than 1 country because it makes more sense. We analyzed the two countries with the most shark attacks because we had the most data about these countries. It gives us more details and the significative factors that influence the shark attacks. We reduce the complexity of our model because of the focus on the regions with the most attacks, so it makes our results more relevant.
+
+## 5.2 RQ2: Is it true that shark attacks have been increasing with climate change?
+
+The graphs in the section on Exploratory Data Analysis (EDA) show us that the elements impacting climate change are trending upward. Interestingly, there is a comparable rising trend in the incidence of shark attacks. It presents a valid question regarding whether these two developments are correlated and how strong that association is.
+The problem of climate change is intricate and multidimensional. Three primary variables will be the focus of our investigation: temperature change, sea level rise, and CO2 emissions. Although we recognize that many other factors also contribute to this environmental phenomenon, we will focus on these specific variables and simplify the analysis in this way.
+
+We must include a new column in our dataset that indicates the number of shark attacks that occur annually in each nation in order to answer this issue. We shall be able to investigate their frequency in this way.
+
+\[ \hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \epsilon \]
+
+where:
+
+1.  \(\hat{Y}\) = Frequency of Shark Attacks
+2. \(X_{\text{2}}\)  = CO2 Emissions
+3. \(X_{\text{3}}\) = Temperatures Change 
+4. \(X_{\text{4}}\) = Sea Level Change
+5. \(\epsilon\) = Residual Error
+
+
+```{r, echo= TRUE, results='hide', warning=FALSE, message=FALSE}
+
+#The first thing we do is creating a copy of our dataset, so that we can take away some information that are not needed here. Indeed, with the na.omit function, we delete all the rows of the years
+#after 1992. The reason for this is that we were not able to find a dataset on sea level information that contained information starting from 1970.
+
+data_RQ2 <- merged_data3
+data_RQ2 <- na.omit(data_RQ2) 
+
+str(merged_data3) #Firstly, we run the str function to check if all the variables of interest are num or int, and not chr
+
+#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
+#all vorrelations are far from being equal to 1 or -1, which is a positive sign.
+```
+
+Before running our regression, it is important to track if there is any sign of multicollinearity in our data. For this reason, we run two correlation plots. 
+The first plot helps us visualize pretty quickly what is the correlation magnitude of the variables analized. The fact that we do not see any dark blue or dark red circle between two different variables, tells us that the correlation is far from being equal to the extremes 1 and -1. 
+
+A clearer plot is the second one, that provides the reader with the exact correlation coefficients. The takeaway is that there is no linear dependence among the predictors we have chosen: this observation gives us confidence in the validity of our regression analysis, and opens us the doors to run our regression!
+
+```{r, echo= TRUE, results='hide', r, warning=FALSE, message=FALSE}
+
+subset_data <- data_RQ2[, c("Temperature", "Annual CO2 Emissions", "GMSL_GIA")]
+correlation_matrix <- cor(subset_data, use = "complete.obs")
+corrplot(correlation_matrix, method = "circle")
+
+# Customized corrplot for the subset
+corrplot(
+  correlation_matrix,
+  method = "ellipse",
+  type = "upper",
+  tl.col = "black",
+  tl.srt = 45,
+  addCoef.col = "gray"
+)
+```
+
+
+```{r, echo= TRUE}
+
+# We create a new variable 'SharkAttacksCount' representing the frequency of shark attacks per year
+count_shark_attacks <- data_RQ2 %>%
+  group_by(Year, ISO_Code) %>%
+  summarize(SharkAttacksCount = n())
+
+
+# Then, we merge the aggregated shark attacks data back to your original dataset (merged_data3) based on the 'year' and 'ISO_Code' variables. We do this, so as to be able to run a the regression
+data_RQ2 <- merge(data_RQ2, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
+
+# FIRST MODEL
+filtered_data <- data_RQ2 %>%
+  filter(ISO_Code %in% c("USA", "ZAF", "AUS"))
+
+model <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`, data = filtered_data)
+
+
+```
+
+
+
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
+
+stargazer(model,
+          title = 'Regression for shark attacks against climate change factors',
+          type = 'html',
+          digits = 5)
+
+```
+
+The results of our regression are really interesting to analyse! The statistical significance of the coefficients related to temperature change, sea level change, and CO2 emissions indicates their important contribution to our predictive model. 
+The complex interaction between environmental dynamics and shark activity is highlighted by the positive correlation found between the annual frequency of shark attacks and these three climate change parameters.
+
+The constant term denotes the baseline frequency of shark attacks when all environmental factors are held constant, and it is equal to <strong>8.00035</strong>. This means that, when we hold all the parameters to 0 (more precisely, if there is no detection of climate change), we would still have a positive amount of shark attacks.The interpretation is fairly clear, indicating that shark attacks are obviously not caused by climate change per se.
+
+Our second finding is that the temperature change beta coefficient is 4.34176, and the significance level is indicated by three asterisks (***). This highlights a strong and favorable correlation between temperature changes and the number of shark attacks. Similarly, the sea level change beta coefficient, which is marked with three asterisks and registers at 0.28554, indicates a significant positive correlation between rising sea levels and an increase in shark attacks. 
+Finally, the beta coefficient for CO2 emissions is very close to zero, still remaining positive. This notifies us that an increase of CO2 emissions leads to a very small increase of shark attacks.
+
+Finally, we also notice that \( R^2 \) is equal to 0,7917, meaning that, in this context, our variables explain 79,17% of the variation of our variables of interest.
+
+
+
+# 7. <strong>Conclusion</strong>
+
+# 8. <strong>References</strong>
+
+CBS News. (2010, October 24). Five Most Dangerous Sharks to Humans. https://www.cbsnews.com/pictures/five-most-dangerous-sharks-to-humans/
+
+Midway, S. R., Wagner, T., & Burgess, G. H. (2019). Trends in global shark attacks. PLOS ONE, 14(2), e0211049. https://doi.org/10.1371/journal.pone.0211049
+
+West, J. G. (2011). Changing patterns of shark attacks in Australian waters. Marine and Freshwater Research, 62(6), 744. https://doi.org/10.1071/mf10181
+
+World’s biggest CO₂ emitters 2021 | Statista. (2023, September 12). Statista. https://www.statista.com/statistics/271748/the-largest-emitters-of-co2-in-the-world/
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
