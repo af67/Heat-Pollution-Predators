@@ -1090,7 +1090,6 @@ merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
 #_______________________________________________________________________________________________________________________
 #Interactive map
 
-
 #Import the data concerning the map
 map <- read.csv("map.csv")
 map <- map[c('latitude', 'longitude', 'country')]
@@ -1101,11 +1100,9 @@ colnames(map)[colnames(map) == 'longitude'] <- 'lng'
 colnames(map)[colnames(map) == 'country'] <- 'Country'
 map$Country <- toupper(map$Country)
 
+map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
 
-map <- map %>%
-  mutate(Country = ifelse(Country == "UNITED STATES", "USA", Country))
-
-merged_map <- merge(merged_data3, map, by='Country', all=FALSE)
+merged_map <- merge(merged_data3,  map, by='Country', all=FALSE)
 
 # Create a new variable representing the nb of attacks per country
 results <- merged_map %>%
@@ -1113,22 +1110,22 @@ results <- merged_map %>%
   summarise(Attackscountry = n())
 print(results)
 
-# Attach aggregated data to your original dataframe
+#Attach aggregated data to your original dataframe
 merged_map <- left_join(merged_map, results, by = "Country")
 
-
 # Definition of the thresholds for the categorization
-seuils <- c(-Inf, 50, 100, 500, Inf)
+seuils <- c(0, 50, 100, 500, Inf)
 
 # Definition of the colors we want to have in the map
-couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF","#001F3F80")
+#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
+couleurs <- c("green", "yellow", "orange", "red")
 
 # Add a new category column based on thresholds
 merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
 
 merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
 
-#Let's have fun with an interactive map
+# Let's have fun with an interactive map
 ma_carte <- leaflet(merged_map) %>%
   addTiles() %>%
   addCircleMarkers(
@@ -1147,8 +1144,8 @@ ma_carte <- leaflet(merged_map) %>%
     title = "Number of shark attacks"
   )
 
+# Let's see the map
 ma_carte
-
 
 #________________________________________________________________________________________________________________________
 
