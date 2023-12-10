@@ -519,36 +519,40 @@ timeoftheday <- function(time) {
 
 attacks$Time <- sapply(attacks$Time, timeoftheday)
 attacks$Time <- tolower(attacks$Time)
+attacks$Time <- na_if(attacks$Time, "")
 
 
-sum(is.na(attacks$Time)) #this is the only one that still presents 1237 NA. we dont want to delete
-#them all coz we'd lose 40% of our data. 
+sum(is.na(attacks$Time)) #this is the only one that still presents 1415 NA. we dont want to delete
+#them all coz we'd lose 44% of our data. 
 table(attacks$Time)#table shows that most of them happen in the afternoon, while 2ns place is owned by
 #morning. To confirm the higher frequency of attacks between 8am and 6pm is this artile (link JC found??)
 #we explain this by the fact that, naturally, most of people swim during the day. therefore, what we do
 #is replacing NA randomly by the proportion of afternoon, morning and evening.
 
-attacks$Time <- na_if(attacks$Time, "")
+sum(!is.na(attacks$Time))
 
-898+228+589+9 
-898/1724
-228/1724
-589/1724
-#afternoon is 52%, evening is 12% and morning is 34%.
+#create function that substitutes the NA in time with one of the 4 parts of the day, based on their
+#proportion presence in our dataset
 
-attacks$Time <- ifelse(is.na(attacks$Time),
-                       sample(c("afternoon", "morning", "evening", "night"), 
-                              size = sum(is.na(attacks$Time)), 
-                              replace = TRUE, 
-                              prob = c(0.52, 0.34, 0.12, 0.02)),
-                       attacks$Time)
+non_na_time_proportions <- table(attacks$Time) / sum(!is.na(attacks$Time))
 
+
+# Identify NA positions
+position_of_na <- is.na(attacks$Time)
+
+# Generate random values based on proportions
+attacks$Time[position_of_na] <- sample(
+  names(non_na_time_proportions),
+  sum(position_of_na),
+  replace = TRUE,
+  prob = as.vector(non_na_time_proportions)
+)
+
+table(attacks$Time)
 
 # Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
 # evening to 2 and night to 3
 attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
-
-
 
 
 #________________________________________________________________________________________________________________________
@@ -1326,8 +1330,7 @@ filtered_data4 <- merged_data3 %>%
   filter(ISO_Code %in% c("ZAF", "USA", "AUS"),
          Sex %in% c(0, 1))
 
-
-model12 <- glm(Fatality ~ Date + Sex + Year + Age + Time, 
+model12 <- glm(Fatality ~ Date + Year + Age + Time, 
                data = filtered_data4, 
                family = "binomial")
 
