@@ -109,6 +109,12 @@ attacks <- mutate(attacks, Date = ifelse(Case.Number == "2012.12.00", "Dec", Dat
 attacks$Date <- na_if(attacks$Date, "")
 attacks <- subset(attacks, !is.na(Date))
 
+date_logic <- c("Jan" = 1, "Feb" = 2, "Mar" = 3, "Apr" = 4, "May" = 5, "Jun" = 6,
+                "Jul" = 7, "Aug" = 8, "Sep" = 9, "Oct" = 10, "Nov" = 11, "Dec" = 12)
+
+attacks$Date <- as.integer(factor(attacks$Date, levels = names(date_logic)))
+
+
 #________________________________________________________________________________________________________________________
 #NOW WE WORK ON AGE
 
@@ -538,9 +544,9 @@ attacks$Time <- ifelse(is.na(attacks$Time),
                        attacks$Time)
 
 
-# Let's focus on the transformation of time where evening correspond to 0, afternoon to 1,
-# morning to 2 and night to 3
-attacks$Time <- as.numeric(factor(attacks$Time, levels = c("evening", "afternoon", "morning", "night")))
+# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
+# evening to 2 and night to 3
+attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
 
 
 
@@ -1313,7 +1319,19 @@ for (variable in variables_to_add3) {
 
 #________________________________________________________________________________________________________________________
 
+filtered_data4 <- merged_data3 %>%
+  filter(ISO_Code %in% c("ZAF", "USA", "AUS"))
 
+filtered_data4 <- merged_data3 %>%
+  filter(ISO_Code %in% c("ZAF", "USA", "AUS"),
+         Sex %in% c(0, 1))
+
+
+model12 <- glm(Fatality ~ Date + Sex + Year + Age + Time, 
+               data = filtered_data4, 
+               family = "binomial")
+
+summary(model12)
 
 #________________________________________________________________________________________________________________________
 
