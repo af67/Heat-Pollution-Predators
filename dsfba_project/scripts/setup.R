@@ -2,7 +2,7 @@
 ## The following loads the needed packages ##
 #############################################
 
-# load the required packages
+# load the required packages --> qua mettere tutti i packages che usiamo
 packages <- c(
   "here", # for the project's organization
   "tidyverse", # for wrangling
@@ -39,6 +39,7 @@ knitr::opts_chunk$set(
   fig.asp = 0.618,
   fig.show = "hold",
   message = FALSE,
-  echo = FALSE
+  echo = FALSE,
+  warning = FALSE
 )
 

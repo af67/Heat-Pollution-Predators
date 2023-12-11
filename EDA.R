@@ -236,11 +236,11 @@ attacks_summary_sex <- attacks_filtered %>%
   summarise(NumAttacks = n())
 # Filter data to include only "M", "F", and "NA" in the Sex column
 filtered_attacks_sex <- attacks_summary_sex %>% 
-  filter(Sex %in% c("M", "F", "Unknown"))
+  filter(Sex %in% c("0", "1", "2"))
 
 # Bar plot to show the distribution of shark attacks by sex
 interactive_bar_plot_sex_attacks <- ggplotly(
-  ggplot(filtered_attacks_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
+  ggplot(filtered_attacks_sex, aes(x = factor(Sex), y = NumAttacks, fill = factor(Sex))) +
     geom_bar(stat = "identity", position = "dodge", width = 0.7) +
     labs(title = "Distribution of Shark Attacks by Sex",
          x = "Sex",
@@ -250,7 +250,6 @@ interactive_bar_plot_sex_attacks <- ggplotly(
 
 # Display the interactive bar plot
 print(interactive_bar_plot_sex_attacks)
-
 
 
 #11. Want to know where are the regions (continents) with the most attacks
@@ -285,6 +284,7 @@ interactive_bar_plot_region_attacks <- ggplotly(
          y = "Number of Attacks") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
 )
+
 
 # Display the interactive bar plot
 print(interactive_bar_plot_region_attacks)  
