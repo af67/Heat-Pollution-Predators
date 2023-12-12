@@ -1165,19 +1165,27 @@ ma_carte
 # REGRESSION
 
 #Before doing the regression, we will do a correlation matrix of the numerical variables
-numeric_columns <- sapply(attacks, is.numeric)
+#without fatality because is an irrelevant variable in this first regression 
+#given that the fatality is something that we know once the accident happen and not before
 
-#Let's choose the numeric columns only
-numeric_data <- attacks[, numeric_columns]
+data_RQ1 <- merged_map
+data_RQ1 <- na.omit(data_RQ1) 
+
+str(data_RQ1) #ok now im sure they all num/int and no chr
+
+#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
+#all correlations are far from being equal to 1 or -1, which is a positive sign.
+
+subset_data1 <- data_RQ1[, c("Year", "Sex", "Type", "Time", "Age", "Species")]
 
 # Calculate the correlation matrix
-correlation_matrix <- cor(numeric_data)
+correlation_matrix <- cor(subset_data1)
 
 # Show the correlation matrix
 print(correlation_matrix)
 
 # Let's do an overall multiple regression model
-model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
+model <- lm(Attackscountry ~ Year + Sex + Type + Time + Age + Species, data = merged_map)
 
 # Print the summary of the regression model
 summary(model)
