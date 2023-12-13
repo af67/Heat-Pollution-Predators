@@ -23,28 +23,53 @@ shark_attacks_by_country <- attacks %>%
   group_by(Country) %>%
   summarise(total_attacks = n())
 
-ggplot(data = shark_attacks_by_country, aes(x = Country, y = total_attacks)) +
+shark_attacks_by_country <- shark_attacks_by_country %>%
+  mutate(CountryCategory = ifelse(total_attacks >= 30, as.character(Country), "Other"))
+
+# Order the countries by frequency in descending order
+shark_attacks_by_country$CountryCategory <- reorder(shark_attacks_by_country$CountryCategory, -shark_attacks_by_country$total_attacks)
+
+# Plot the data
+plot2<- ggplot(data = shark_attacks_by_country, aes(x = total_attacks, y = CountryCategory)) +
   geom_col(fill = "skyblue") +
-  labs(title = "Total Shark Attacks in Each Country", x = "Country", y = "Number of Attacks") +
+  labs(title = "Total Shark Attacks in Each Country", x = "Number of Attacks", y = "Country") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.y = element_text(hjust = 1)) +
+  scale_y_discrete(labels = scales::label_wrap(10))
+
+interactive_plot <- ggplotly(plot2)
+interactive_plot
 
 
 #3. WHAT TIME
 
-barplot(table(attacks$Time), 
-        xlab = "Time of Day", ylab = "Frequency of Attacks",
-        main = "Frequency of Shark Attacks by Time of Day")
+bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
 
+# Create a sorted table
+sorted_table <- table(attacks$Time)
+sorted_table <- sorted_table[order(-sorted_table)]
+
+# Create a bar plot with the sorted data
+barplot1 <- barplot(sorted_table,
+                    col = bar_colors,
+                    xlab = "Time of Day", ylab = "Frequency of Attacks",
+                    main = "Frequency of Shark Attacks by Time of Day",
+                    border = "white",
+                    ylim = c(0, 1800),
+                    space = 0.5,
+                    cex.names = 0.8,
+                    font.axis = 2,
+                    beside = TRUE)
+
+
+# Add text labels with frequencies on the bars
+text_labels <- sorted_table
+text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, col = "black")
 
 
 
 #5. See the evolution of the level of co2 emission throughout the years
 
-#Load the needed packages
-library(ggplot2)
-library(plotly)
-library(dplyr)
 
 # Create an interactive line plot with backticks to show the trend in co2 emissions throughout the years
 interactive_co2_evolution <- ggplotly(
@@ -96,9 +121,6 @@ print(interactive_top30_countries_co2)
 # Get unique ISO codes to be able to put them in a group of continents
 unique_iso_codes <- unique(co2$ISO_Code)
 
-# Print the list of unique ISO codes
-print(unique_iso_codes)
-
 # Create a new column 'Region' based on the Continents and the countries 
 co2_grouped <- co2 %>%
   mutate(Region = case_when(
@@ -111,13 +133,6 @@ co2_grouped <- co2 %>%
     ISO_Code %in% c("AUS", "COK", "FJI", "PYF", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL", "NIU", "PLW", "PNG", "WSM", "SLB", "TON", "TUV", "VUT", "WLF") ~ "Australia & Oceania",
     ISO_Code %in% c("ATA") ~ "Antarctica"
   ))
-
-# Print the result
-print(co2_grouped)
-
-
-install.packages("tidyverse") 
-library(tidyverse)
 
 # Step 1: Calculate Mean Emissions by Year and Region
 mean_emissions <- co2_grouped %>%
@@ -134,9 +149,6 @@ interactive_co2_continent_wNA <- ggplotly(
          y = "Annual CO2 Emissions") +
     theme_minimal()
 )
-
-# Display the interactive line plot
-print(interactive_co2_continent_wNA)
 
 
 # Now we get rid of that Unknown Region to have a better view of the other Regions
@@ -166,7 +178,7 @@ print(interactive_co2_continent)
 # Create a line plot
 interactive_sealevel <- ggplotly(
   ggplot(data = sealevel, aes(x = Year, y = GMSL_GIA)) +
-    geom_line(color = "green") +
+    geom_line(color = "green", size = 1.5) +
     labs(title = "Evolution of Sea Level Over the Years", x = "Year", y = "Sea Level")
 )
 
@@ -205,12 +217,9 @@ print(interactive_temperature)
 
 #9. Shows the relationship between the attacks and the age of the victims
 
-# Filter data to include only realistic age values (between 0 and 120)
-attacks_filtered <- attacks %>%
-  filter(Age >= 0 & Age <= 120)
 
 # Create a summary table with the count of attacks for each age
-attacks_summary <- attacks_filtered %>%
+attacks_summary <- attacks %>%
   group_by(Age) %>%
   summarise(NumAttacks = n())
 
@@ -231,25 +240,29 @@ print(interactive_attacks_age)
 #10. Better understanding of the attacks and sex of the victims
 
 # Create a summary table with the count of attacks for each sex
-attacks_summary_sex <- attacks_filtered %>%
+attacks_summary_sex <- attacks %>%
   group_by(Sex) %>%
   summarise(NumAttacks = n())
-# Filter data to include only "M", "F", and "NA" in the Sex column
-filtered_attacks_sex <- attacks_summary_sex %>% 
-  filter(Sex %in% c("0", "1", "2"))
+
+# Define the desired order of levels
+sex_order <- c("M", "F", "Unknown")
+
+# Convert the 'Sex' variable to a factor with the specified order
+attacks_summary_sex$Sex <- factor(attacks_summary_sex$Sex, levels = sex_order)
 
 # Bar plot to show the distribution of shark attacks by sex
 interactive_bar_plot_sex_attacks <- ggplotly(
-  ggplot(filtered_attacks_sex, aes(x = factor(Sex), y = NumAttacks, fill = factor(Sex))) +
+  ggplot(attacks_summary_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
     geom_bar(stat = "identity", position = "dodge", width = 0.7) +
     labs(title = "Distribution of Shark Attacks by Sex",
          x = "Sex",
          y = "Number of Attacks") +
-    scale_fill_manual(values = c("pink", "blue", "gray"))
+    scale_fill_manual(values = c("blue", "pink", "gray"))
 )
 
 # Display the interactive bar plot
 print(interactive_bar_plot_sex_attacks)
+
 
 
 #11. Want to know where are the regions (continents) with the most attacks
@@ -267,9 +280,6 @@ attacks_grouped <- attacks %>%
     ISO_Code %in% c("ATA") ~ "Antarctica"
   ))
 
-# Filter data to include only "M", "F", and "NA" in the Sex column
-filtered_attacks_sex <- attacks_summary_sex %>% 
-  filter(Sex %in% c("M", "F", NA))
 
 # Filter data to include only valid regions (excluding "Unknown")
 filtered_attacks_region <- attacks_grouped %>% 
@@ -299,14 +309,13 @@ attacks_summary <- attacks %>%
   summarize(Number_of_Attacks = n())
 
 # Assuming there's a common column named "Year" in both datasets
-merged_data <- merge(attacks_summary, sealevel, by = "Year", all.x = TRUE)
+merged_data5 <- merge(attacks_summary, sealevel, by = "Year", all.x = TRUE)
 
-correlation_coefficient <- cor(merged_data$Number_of_Attacks, merged_data$GMSL_GIA, use = "complete.obs")
-print(paste("Correlation Coefficient:", correlation_coefficient))
+correlation_coefficient <- cor(merged_data5$Number_of_Attacks, merged_data5$GMSL_GIA, use = "complete.obs")
 
 # Scatter plot
 interactive_scatter_plot_sea_level_attacks <- ggplotly(
-  ggplot(merged_data, aes(x = GMSL_GIA, y = Number_of_Attacks)) +
+  ggplot(merged_data5, aes(x = GMSL_GIA, y = Number_of_Attacks)) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
     labs(title = "Relationship Between Sea Level and Shark Attacks",
@@ -325,9 +334,6 @@ non_numeric_temp <- temperature %>%
   filter(!is.numeric(Temperature)) %>%
   distinct(Temperature)
 
-# Print non-numeric values
-print(non_numeric_temp)
-
 # Convert "Temperature" column to numeric
 temperature$Temperature <- as.numeric(temperature$Temperature)
 
@@ -335,29 +341,26 @@ temperature$Temperature <- as.numeric(temperature$Temperature)
 negative_values <- temperature %>%
   filter(Temperature < 0)
 
-# Print rows with negative values
-print(negative_values)
-
 # Calculate the mean temperature
 mean_temp_world <- temperature %>%
   group_by(Year) %>%
   summarize(Mean_Temperature = mean(Temperature, na.rm = TRUE))
 
 # Filter out non-numeric values in the Temperature column
-temperature <- temperature %>%
+temperature2 <- temperature %>%
   filter(is.numeric(Temperature))
 
 # Calculate mean temperature for the world per year
-mean_temp_world <- temperature %>%
+mean_temp_world <- temperature2 %>%
   group_by(Year) %>%
   summarize(Mean_Temperature = mean(Temperature, na.rm = TRUE))
 
 # Merge datasets
-merged_data <- merge(attacks_summary, mean_temp_world, by = "Year", all.x = TRUE)
+merged_data6 <- merge(attacks_summary, mean_temp_world, by = "Year", all.x = TRUE)
 
 # Plotting
 interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
-  ggplot(merged_data, aes(x = Mean_Temperature, y = Number_of_Attacks)) +
+  ggplot(merged_data6, aes(x = Mean_Temperature, y = Number_of_Attacks)) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
     labs(title = "Relationship between Shark Attacks and World Mean Temperature Change",
@@ -366,19 +369,14 @@ interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
     theme_minimal()
 )
 
-# Display the interactive scatter plot
+
 print(interactive_scatter_plot_worldtemperature_attacks)
 
 
 #14. What are the activities with the most attacks
 
-# Preprocess the data
-attacks_processed_sex <- attacks %>%
-  filter(Sex %in% c("F", "M", "M ", "Unknown"), Sex != "Ily") %>%
-  mutate(Sex = ifelse(Sex %in% c("M", "M "), "M", Sex))
-
 # Check the top activities with the most attacks
-top_activities <- attacks_processed_sex %>%
+top_activities <- attacks %>%
   group_by(Activity, Sex) %>%
   summarize(Number_of_Attacks = n()) %>%
   arrange(desc(Number_of_Attacks)) %>%
@@ -394,10 +392,8 @@ top_activities_attacks <- ggplot(top_activities, aes(x = reorder(Activity, -Numb
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Convert the ggplot object to a plotly object
-interactive_top_activities_attacks <- ggplotly(top_activities_attacks)
 
-# Print the interactive plot
+interactive_top_activities_attacks <- ggplotly(top_activities_attacks)
 interactive_top_activities_attacks
 
 
@@ -405,7 +401,7 @@ interactive_top_activities_attacks
 #15. See the evolution of shark attacks throughout the years with sex 
 
 # Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
-attacks_evolution_sex <- ggplot(data = attacks_processed_sex, aes(x = Year, fill = Sex)) +
+attacks_evolution_sex <- ggplot(data = attacks, aes(x = Year, fill = Sex)) +
   geom_bar(position = "stack", color = "white") +
   labs(title = "Shark Attacks Evolution Over Years by Sex",
        x = "Year",
@@ -414,10 +410,8 @@ attacks_evolution_sex <- ggplot(data = attacks_processed_sex, aes(x = Year, fill
   scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
   theme_minimal()
 
-# Convert the ggplot object to a plotly object
-interactive_attacks_evolution_sex <- ggplotly(attacks_evolution_sex)
 
-# Print the interactive plot
+interactive_attacks_evolution_sex <- ggplotly(attacks_evolution_sex)
 interactive_attacks_evolution_sex
 
 
@@ -426,7 +420,7 @@ interactive_attacks_evolution_sex
 #Here it is great but I tried to class the months in order but it has not worked yet
 
 # Create a plot to show the repartition of shark attacks per month by sex
-attacks_per_months <- ggplot(data = attacks_processed_sex, aes(x = factor(Date), fill = Sex)) +
+attacks_per_months <- ggplot(data = attacks, aes(x = factor(Date), fill = Sex)) +
   geom_bar(position = "stack", color = "white") +
   labs(title = "Shark Attacks Repartition by Month and Sex",
        x = "Month",
@@ -435,13 +429,8 @@ attacks_per_months <- ggplot(data = attacks_processed_sex, aes(x = factor(Date),
   scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
   theme_minimal()
 
-# Display the plot
-print(attacks_per_months)
 
-# Convert the ggplot object to a plotly object
 interactive_attacks_per_months <- ggplotly(attacks_per_months)
-
-# Print the interactive plot
 interactive_attacks_per_months
 
 
@@ -449,8 +438,7 @@ interactive_attacks_per_months
 
 #Attacks
 
-# Summary statistics for numerical variables
-summary(attacks)
+
 
 #Age  
 
@@ -594,63 +582,10 @@ median(temperature$Temperature)
 sd(temperature$Temperature)
 var(temperature$Temperature)
 
-#_______________________________________________________________________________
-#Interactive map
 
-#Import the data concerning the map
-map <- read.csv("map.csv")
-map <- map[c('latitude', 'longitude', 'country')]
 
-#Let's rename the columns of the dataset
-colnames(map)[colnames(map) == 'latitude'] <- 'lat'
-colnames(map)[colnames(map) == 'longitude'] <- 'lng'
-colnames(map)[colnames(map) == 'country'] <- 'Country'
-map$Country <- toupper(map$Country)
 
-map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
 
-merged_map <- merge(merged_data3,  map, by='Country', all=FALSE)
 
-# Create a new variable representing the nb of attacks per country
-results <- merged_map %>%
-  group_by(Country) %>%
-  summarise(Attackscountry = n())
-print(results)
 
-#Attach aggregated data to your original dataframe
-merged_map <- left_join(merged_map, results, by = "Country")
-
-# Definition of the thresholds for the categorization
-seuils <- c(0, 50, 100, 500, Inf)
-
-# Definition of the colors we want to have in the map
-#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
-couleurs <- c("green", "yellow", "orange", "red")
-
-# Add a new category column based on thresholds
-merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
-
-merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
-
-# Let's have fun with an interactive map
-ma_carte <- leaflet(merged_map) %>%
-  addTiles() %>%
-  addCircleMarkers(
-    lng = ~lng,
-    lat = ~lat,
-    radius = ~sqrt(echelle_taille) * 2,
-    color = ~factor(merged_map$cat_attacks, labels = couleurs),
-    fillOpacity = 0.4,
-    label = ~paste(Country, ":", Attackscountry),
-    options = markerOptions(autoPopup = TRUE)
-  ) %>%
-  addLegend(
-    position = "bottomleft",
-    colors = couleurs,
-    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
-    title = "Number of shark attacks"
-  )
-
-# Let's see the map
-ma_carte
 

@@ -18,6 +18,9 @@ library(viridisLite)
 library(htmltools)
 library(RColorBrewer)
 library(car)
+library(ggplot2)
+library(plotly)
+
 
 attacks <- read.csv("attacks1.csv")
 attacks <- attacks[1:3406, ]
@@ -54,7 +57,6 @@ attacks[3388, "Country"] <- "JAMAICA"
 attacks$Country <- gsub("UNITED ARAB EMIRATES \\(UAE\\)", "UNITED ARAB EMIRATES", attacks$Country)
 
 attacks <- subset(attacks, !is.na(Country))
-
 
 #________________________________________________________________________________________________________________________
 
@@ -435,11 +437,12 @@ mean = mean(ages_without_na)
 attacks$Age[attacks$Country == "NEW CALEDONIA" & is.na(attacks$Age)] <- mean
 
 
-#We fixed those countries that had lots of NA. Now, for the remaining NA we decided not to do anything for a specific reason. Not only we have not cound the real information on the internet, but we also believe that doing the mean for those remaining situations was useless, because these are the cases when NA are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
+#We fixed those countries that had lots of NA. Now, for the remaining NA we decided 
+#not to do anything for a specific reason. Not only we have not count the real information 
+#on the internet, but we also believe that doing the mean for those 
+#remaining situations was useless, because these are the cases when NA 
+#are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
 
-count_na_by_country <- attacks %>%
-  group_by(Country) %>%
-  summarise(NA_count = sum(is.na(Age)))
 
 
 attacks <- subset(attacks, !is.na(Age))
@@ -549,21 +552,15 @@ attacks$Time[position_of_na] <- sample(
 
 table(attacks$Time)
 
-# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
-# evening to 2 and night to 3
-attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
-
-
 #________________________________________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
-
+attacks$Sex <- gsub("lli", "", attacks$Sex)
+attacks$Sex <- gsub("M ", "M", attacks$Sex)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
-# Let's do some n-coding
-attacks$Sex <- ifelse(attacks$Sex == "M", 0, 
-                      ifelse(attacks$Sex == "F", 1, 2))
+
 
 #________________________________________________________________________________________________________________________
 #NOW WE WORK ON SHARK SPECIES
@@ -778,37 +775,9 @@ species <- ifelse(grepl("(gill)", species, ignore.case = TRUE), "Sevengill shark
 # Replace the cell with "Angel shark" if any of the specified words are found
 species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", species)
 
-table(species)
-
-# Compter le nombre de chaque catégorie
-category_counts <- table(species)
-
-# Créer un histogramme
-histogram <- barplot(category_counts, col = "blue", main = "Histogramme de Catégories", xlab = "Catégories", ylab = "Fréquence")
-
-# Afficher l'histogramme
-print(histogram)
 
 attacks$Species <- species
-
 attacks$Species <- ifelse(is.na(attacks$Species), "Unknown", attacks$Species)
-
-#Let's put the Species variable on numeric
-
-attacks <- attacks %>%
-  mutate(Species = as.numeric(factor(Species)))
-
-# Get the top 5 species
-top_species <- attacks %>%
-  count(Species, sort = TRUE) %>%
-  slice_head(n = 5)
-
-# Create a logical condition to include only the top 5 species
-condition <- attacks$Species %in% top_species$Species
-
-# Subset the data based on the condition
-filtered_data <- attacks[condition, ]
-
 
 
 #________________________________________________________________________________________________________________________
@@ -853,14 +822,10 @@ attacks$Activity[is.na(attacks$Activity)] <- "other"
 table(attacks$Fatal..Y.N.) #to check if categories have mistakes etc
 
 attacks$Fatal..Y.N. <- gsub("2017", "", attacks$Fatal..Y.N.)
-attacks$Fatal..Y.N. <- gsub("M", "", attacks$Fatal..Y.N.)
+attacks$Fatal..Y.N. <- gsub("M", "N", attacks$Fatal..Y.N.)
 
 attacks$Fatal..Y.N. <-na_if(attacks$Fatal..Y.N., "")
-
 attacks <- subset(attacks, !is.na(Fatal..Y.N.))
-
-#Replace Yes by 1, 0 otherwise
-attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
 
 names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 
@@ -868,17 +833,6 @@ names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 #TYPE
 #Regroup some words under the same word "Boat"
 attacks$Type <- gsub("Boatomg|Boating", "Boat", attacks$Type)
-
-#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
-# Provoked to 4, Questionable to 5 and Sea Disaster to 6
-# Définir les correspondances entre catégories et chiffres
-categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
-
-# Convertir la variable Type en facteur avec les nouvelles étiquettes
-attacks$Type <- factor(attacks$Type, levels = names(categories))
-
-# Convertir le facteur en numérique
-attacks$Type <- as.numeric(attacks$Type)
 
 #________________________________________________________________________________________________________________________
 #final check up:
@@ -1005,7 +959,7 @@ temperature <- temperature %>% select(-'Country')
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
 merged_data <- left_join(attacks, temperature, by = c("Year", "ISO_Code"))
 
-sum(is.na(merged_data$Temperature)) #155 NA --> SHOULD I TAKE THEM OFF???
+sum(is.na(merged_data$Temperature)) 
 
 
 
@@ -1096,321 +1050,51 @@ merged_data3 <- select(merged_data3, -Country.y)
 merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
 
 
-#_______________________________________________________________________________________________________________________
-#Interactive map
+#for merged_data3, which we will use for our regressions, we need numerical variables
+#therefore, we will make changes in some categorical ones
 
-#Import the data concerning the map
-map <- read.csv("map.csv")
-map <- map[c('latitude', 'longitude', 'country')]
+#TYPE
 
-#Let's rename the columns of the dataset
-colnames(map)[colnames(map) == 'latitude'] <- 'lat'
-colnames(map)[colnames(map) == 'longitude'] <- 'lng'
-colnames(map)[colnames(map) == 'country'] <- 'Country'
-map$Country <- toupper(map$Country)
+#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
+# Provoked to 4, Questionable to 5 and Sea Disaster to 6
+categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
+merged_data3$Type <- factor(merged_data3$Type, levels = names(categories))
+merged_data3$Type <- as.numeric(merged_data3$Type)
 
-map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
+#TIME
 
-merged_map <- merge(merged_data3,  map, by='Country', all=FALSE)
+# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
+# evening to 2 and night to 3
+merged_data3$Time <- as.numeric(factor(merged_data3$Time, levels = c("morning", "afternoon", "evening", "night")))
 
-# Create a new variable representing the nb of attacks per country
-results <- merged_map %>%
-  group_by(Country) %>%
-  summarise(Attackscountry = n())
-print(results)
 
-#Attach aggregated data to your original dataframe
-merged_map <- left_join(merged_map, results, by = "Country")
 
-# Definition of the thresholds for the categorization
-seuils <- c(0, 50, 100, 500, Inf)
+#SEX
 
-# Definition of the colors we want to have in the map
-#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
-couleurs <- c("green", "yellow", "orange", "red")
+merged_data3$Sex <- ifelse(merged_data3$Sex == "M", 0, 
+                      ifelse(merged_data3$Sex == "F", 1, 2))
 
-# Add a new category column based on thresholds
-merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
 
-merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
+#SPECIES
 
-# Let's have fun with an interactive map
-ma_carte <- leaflet(merged_map) %>%
-  addTiles() %>%
-  addCircleMarkers(
-    lng = ~lng,
-    lat = ~lat,
-    radius = ~sqrt(echelle_taille) * 2,
-    color = ~factor(merged_map$cat_attacks, labels = couleurs),
-    fillOpacity = 0.4,
-    label = ~paste(Country, ":", Attackscountry),
-    options = markerOptions(autoPopup = TRUE)
-  ) %>%
-  addLegend(
-    position = "bottomleft",
-    colors = couleurs,
-    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
-    title = "Number of shark attacks"
-  )
 
-# Let's see the map
-ma_carte
+merged_data3 <- merged_data3 %>%
+  mutate(Species = as.numeric(factor(Species)))
 
-#________________________________________________________________________________________________________________________
+# Get the top 5 species
+top_species <- merged_data3 %>%
+  count(Species, sort = TRUE) %>%
+  slice_head(n = 5)
 
-#                           RESEARCH QUESTION ON SHARKS
+# Create a logical condition to include only the top 5 species
+condition <- merged_data3$Species %in% top_species$Species
 
-#________________________________________________________________________________________________________________________
-# REGRESSION
+# Subset the data based on the condition
+species_filtered_data <- merged_data3[condition, ]
 
-#Before doing the regression, we will do a correlation matrix of the numerical variables
-#without fatality because is an irrelevant variable in this first regression 
-#given that the fatality is something that we know once the accident happen and not before
-
-data_RQ1 <- merged_map
-data_RQ1 <- na.omit(data_RQ1) 
-
-str(data_RQ1) #ok now im sure they all num/int and no chr
-
-#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
-#all correlations are far from being equal to 1 or -1, which is a positive sign.
-
-subset_data1 <- data_RQ1[, c("Year", "Sex", "Type", "Time", "Age", "Species")]
-
-# Calculate the correlation matrix
-correlation_matrix <- cor(subset_data1)
-
-# Show the correlation matrix
-print(correlation_matrix)
-
-# Let's do an overall multiple regression model
-model <- lm(Attackscountry ~ Year + Sex + Type + Time + Age + Species, data = merged_map)
-
-# Print the summary of the regression model
-summary(model)
-
-#________________________________________________________
-# USA Regression
-
-#This first regression will be based only on the USA
-usa_data <- merged_map %>%
-  filter(Country == "USA")
-
-#Regression model of the USA
-model1 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = usa_data)
-
-print("Regression for USA:")
-summary(model1)
-
-# Compute the VIF
-vif_values <- car::vif(model1)
-
-# Show me the results of the VIF
-print(vif_values)
-
-
-#___________________________________________________________
-# Assuming 'usa_data' is your dataset for the USA
-# Include the intercept in the initial model
-current_model <- lm(Attackscountry ~ 1, data = usa_data)
-
-# List to store models at each step
-selected_models <- list()
-
-# Variables to add
-variables_to_add <- c("Year", "Sex", "Age", "Species", "Time", "Type")
-
-# Forward selection loop
-for (variable in variables_to_add) {
-  # Add a variable to the formula
-  formula <- as.formula(paste(". ~ . +", variable))
-  current_model <- update(current_model, formula)
-  
-  # Store the current model in the list
-  selected_models[[variable]] <- current_model
-  
-  # Calculate AIC
-  aic_value <- AIC(current_model)
-  
-  # Print the summary of the current model and AIC value
-  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
-  print(summary(current_model))
-}
-
-#___________________________________________________________
-#This second regression will be based only on Australia
-aus_data <- merged_map %>%
-  filter(Country == "AUSTRALIA")
-
-model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = aus_data)
-
-print("Regression for AUSTRALIA:")
-summary(model2)
-
-#___________________________________________________________
-# Include the intercept in the initial model
-current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
 
-# List to store models at each step
-selected_models2 <- list()
 
-# Variables to add
-variables_to_add2 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
+#FATALITY
 
-# Forward selection loop
-for (variable in variables_to_add2) {
-  # Add a variable to the formula
-  formula <- as.formula(paste(". ~ . +", variable))
-  current_model2 <- update(current_model2, formula)
-  
-  # Store the current model in the list
-  selected_models[[variable]] <- current_model2
-  
-  # Calculate AIC
-  aic_value2 <- AIC(current_model2)
-  
-  # Print the summary of the current model and AIC value
-  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
-  print(summary(current_model2))
-}
 
-# Compute the VIF
-vif_values2 <- car::vif(model2)
-
-# Show me the results of the VIF
-print(vif_values2)
-
-
-#_______________________________________________________________________________
-# Let's focus on both countries
-# This regression will be based on both USA and AUSTRALIA
-combined_data <- merged_map %>%
-  filter(Country %in% c("USA", "AUSTRALIA"))
-
-# Run the regression based on both USA and AUSTRALIA
-model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = combined_data)
-
-# Print the results
-print("Regression for USA and AUSTRALIA:")
-print(summary(model_combined))
-
-#______________________________________________________________________________
-#Model combined, AIC 
-
-# Include the intercept in the initial model
-current_model3 <- lm(Attackscountry ~ 1, data = combined_data)
-
-# List to store models at each step
-selected_models3 <- list()
-
-# Variables to add
-variables_to_add3 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
-
-# Forward selection loop
-for (variable in variables_to_add3) {
-  # Add a variable to the formula
-  formula <- as.formula(paste(". ~ . +", variable))
-  current_model3 <- update(current_model3, formula)
-  
-  # Store the current model in the list
-  selected_models[[variable]] <- current_model3
-  
-  # Calculate AIC
-  aic_value2 <- AIC(current_model3)
-  
-  # Print the summary of the current model and AIC value
-  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
-  print(summary(current_model3))
-}
-
-
-#________________________________________________________________________________________________________________________
-
-#                           RESEARCH QUESTION ON FATALITY
-
-#________________________________________________________________________________________________________________________
-
-filtered_data4 <- merged_data3 %>%
-  filter(ISO_Code %in% c("ZAF", "USA", "AUS"))
-
-filtered_data4 <- merged_data3 %>%
-  filter(ISO_Code %in% c("ZAF", "USA", "AUS"),
-         Sex %in% c(0, 1))
-
-model12 <- glm(Fatality ~ Date + Year + Age + Time, 
-               data = filtered_data4, 
-               family = "binomial")
-
-summary(model12)
-
-#________________________________________________________________________________________________________________________
-
-#                           RESEARCH QUESTION ON CLIMATE CHANGE
-
-#________________________________________________________________________________________________________________________
-
-
-#Explain that we saw both increasing trend in frequency of shark attacks and on factors that explain
-#climate change (co2 level etc) -> so, run regression  to see whats going on
-
-#We only focus on 3 biggest countries (USA, ZAF, AUS), bacause others have very small frequencies of shark
-#attacks. 
-
-#The first thing we do is creating a copy of our dataset, so that we can take away some information
-#that are not needed here. Indeed, with the na.omit function, we delete all the rows of the years
-#after 1992. The reason for this is that we were not able to find a dataset on sea level information
-#that contained information starting from 1970.
-
-data_RQ2 <- merged_data3
-data_RQ2 <- na.omit(data_RQ2) 
-
-
-str(data_RQ2) #ok now im sure they all num/int and no chr
-
-#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
-#all correlations are far from being equal to 1 or -1, which is a positive sign.
-
-subset_data <- data_RQ2[, c("Temperature", "Annual CO2 Emissions", "GMSL_GIA")]
-correlation_matrix <- cor(subset_data, use = "complete.obs")
-corrplot1 <- corrplot(correlation_matrix, method = "circle")
-
-# Customized corrplot for the subset
-corrplot2 <- corrplot(
-  correlation_matrix,
-  method = "ellipse",
-  type = "upper",
-  tl.col = "black",
-  tl.srt = 45,
-  addCoef.col = "gray"
-)
-
-
-# Create a new variable 'shark_attacks' representing the frequency of shark attacks per year
-count_shark_attacks <- data_RQ2 %>%
-  group_by(Year, ISO_Code) %>%
-  summarize(SharkAttacksCount = n())
-
-# Merge the aggregated shark attacks data back to your original dataset based on the 'year' and 'country' variables
-data_RQ2 <- merge(data_RQ2, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
-
-# FIRST MODEL
-filtered_data <- data_RQ2 %>%
-  filter(ISO_Code %in% c("USA", "ZAF", "AUS"))
-
-model <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`, data = filtered_data)
-
-# With the summary function, we can see the new estimators. All positive and significant
-summary(model)
-
-
-original_scipen <- options("scipen")
-options(scipen = 1000)
-
-stargazer(model,
-          title = 'Regression for shark attacks against climate change factors',
-          type = 'html',
-          digits = 5)
-
-
-
-
+merged_data3$Fatality <- ifelse(merged_data3$Fatality == "Y", 1, 0)
