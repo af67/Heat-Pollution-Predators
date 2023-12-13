@@ -1668,7 +1668,19 @@ o	There is a negative correlation between Year and Species.
 o	The following variables have no significant correlation with the other numeric variables, due to the value of the coefficient close to 0: Sex and Type.
 
 The regression that we will use is the following one:
-\[ \hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4 + \beta_5 X_5 + \beta_6 X_6 + \epsilon \] where: 1. \(\hat{Y}\) = Frequency of Shark Attacks 2. \(X_{\text{1}}\) = Year 3. \(X_{\text{2}}\) = Sex 4. \(X_{\text{3}}\) = Age 5. \(X_{\text{4}}\) = Species 6.\(X_{\text{5}}\) = Type 7. \(X_{\text{6}}\) = Time 8. \(\epsilon\) = Residual Error
+
+\[ \hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4 + \beta_5 X_5 + \beta_6 X_6 + \epsilon \] 
+
+where: 
+
+1. \(\hat{Y}\) = Frequency of Shark Attacks 
+2. \(X_{\text{1}}\) = Year 
+3. \(X_{\text{2}}\) = Sex 
+4. \(X_{\text{3}}\) = Age 
+5. \(X_{\text{4}}\) = Species 
+6.\(X_{\text{5}}\) = Type 
+7. \(X_{\text{6}}\) = Time 
+8. \(\epsilon\) = Residual Error
 
 
 Let's do our main regression based on all the countries
