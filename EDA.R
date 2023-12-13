@@ -389,7 +389,8 @@ top_activities_attacks <- ggplot(top_activities, aes(x = reorder(Activity, -Numb
        x = "Activities",
        y = "Number of Attacks",
        fill = "Sex") +
-  theme_minimal() +
+  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
+  theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
@@ -437,7 +438,6 @@ interactive_attacks_per_months
 #17. Descriptive data analysis
 
 #Attacks
-
 
 
 #Age  
