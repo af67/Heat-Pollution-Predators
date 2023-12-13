@@ -176,7 +176,6 @@ for (variable in variables_to_add3) {
   print(summary(current_model3))
 }
 
-
 #________________________________________________________________________________________________________________________
 
 #                           RESEARCH QUESTION ON FATALITY
