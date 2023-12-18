@@ -46,3 +46,16 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+#Import all the datasets
+#Main dataset
+attacks <- read.csv(here::here("data/attacks1.csv"))
+attacks <- attacks[1:3406, ]
+
+#Temperature dataset
+temperature <- read_xlsx(here::here("data/Temperature.xlsx"))
+
+#Sealevel dataset
+sealevel <- read.csv(here::here("data/sealevel.csv"))
+
+#CO2 dataset
+co2 <- read.csv(here::here("data/CO2.csv"))
