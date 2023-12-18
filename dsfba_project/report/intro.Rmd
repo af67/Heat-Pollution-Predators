@@ -1,0 +1,43 @@
+
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+
+![© USO—iStock/Getty Images](https://cdn.britannica.com/93/197393-050-253FF7B6/great-white-shark-surface-food-pursuit.jpg) 
+
+# 1. <strong>Introduction</strong>
+
+
+## 1.1 Background and Motivation
+
+At first, we wanted to analyse the impacts of the recent global pandemic on individuals within the context of a variety of mental health conditions, namely anxiety and depression, in a pre- and post-COVID framework. However, we decided to drop the idea due to a lack of data available regarding the topic, which wouldn’t have allowed us to conduct a thorough analysis. As we were searching for new topic ideas, we found a dataset that concerns shark attacks around the world. A group member has then told us about an incident that occurred during his last holidays in Egypt, involving a shark attack at a paradisiac beach. We discussed thereafter the presence of these predators in many different regions in the world including Florida, Hawaii, and Australia just to name a few. For this reason, we decided to dive deeper into the topic of shark attacks and explore potential influencing factors. After a few days of research and information gathering, we found that a wide range of factors are capable of influencing such incidents, both directly and indirectly.
+We all enjoy going on holidays and enjoy beaches while drinking a cocktail, and when we feel that temperature increases, we go in the water to refresh, but depending on the location we are, this could be unsafe. 
+
+Another motivation behind this project is our interest in the preservation of marine fauna. Very often human beings tend to primarily blame the animals for their fierce behavior (just look at the example of the attack that occurred in Hurghada during summer of 2023: after the death of the victim, the shark was killed!) but we often forget that the water it is their natural habitat, and that we are the guests. This point motivates us even more to study the phenomenon of attacks and to disclose how human activity causes shark attacks.
+
+## 1.2 Project Objective
+
+The project’s focus is to provide an understanding of the complex dynamics of shark attacks globally, by conducting an in-depth analysis on the different factors that influence the phenomenon. In addressing the topic at hand, we explore both direct and indirect influencing factors.
+
+At the end of our work we want to learn how it is possible to reduce accidents caused by sharks. On the one hand, this is crucial to guarantee the safety of people who take pleasure in coastal waters and engage in water-related activities. On the other hand, the conservation of aquatic animals might benefit from this. Making efforts to preserve these species is essential for sustaining the health of marine ecosystems in a time when the extinction rate of many animal species is rising. Among the factors that might have an impact on the trend of shark attacks we have climatic variations. Ocean temperatures and currents are capable of affecting migration patterns and habitat preferences, which further complicates the dynamics of shark attacks. By providing a step-by-step analysis on climate-related aspects, we aim to provide empirical evidence on the impact of environmental changes on shark movements and interactions with humans.
+
+This project’s goal is to contribute to the understanding of shark-related incidents and thereby to provide possible strategies such as policymaking, which would help mitigate such occurrences, ultimately safeguarding human life and protecting sharks. In essence, we aim to advance research on sustainable coexistence with the marine environment through actionable insights and intend to contribute to the broader efforts of marine conservation.
+
+## 1.3 Related Work
+
+To have a global overview of the phenomenon, we also read some papers, here are some of them:
+
+1. https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0211049)
+2. https://www.publish.csiro.au/mf/pdf/MF10181
+
+What is more, while gathering information on Google Scholar, we found that this topic stirred up a considerable amount of discussion and analysis, and this was yet another compelling argument to investigate it further, by adding some points of discussion that have not been explored yet.
+
+At this point we all agreed and decided to pursue this project.
+
+## 1.4 Research Questions
+
+1. What are the primary factors influencing the occurrence of shark attacks?
+2. Is it true that shark attacks have been increasing with climate change?
+3. What are the main factors leading to the fatality of a shark attack?

@@ -1,92 +1,169 @@
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
 
-#________________________________________________________________________________________________________________________
+# 2. <strong>Data Sets</strong>
 
-#                           C L E A N I N G   OF    S H A R K      A T T A C K S
+In the second section of our work, we will present the datasets that are necessary to answer our research questions. These datasets serve as the foundation for our investigation and provide the data required to draw insightful and important findings.
+The purpose of this part is to provide a clear overview of the data landscape and make clear to the reader what are the information to be found in each web-based data, and how do they interrelate.
 
-#________________________________________________________________________________________________________________________
-install.packages("countrycode")
-install.packages("corrplot")
-install.packages("here")
+## 2.1 Shark Attacks Data Set
 
-library(tidyverse)
-library(readxl)
-library(dplyr)
-library(tidyr)
-library(stringr)
-library(countrycode)
-library(corrplot)
-library(viridisLite)
-library(htmltools)
-library(RColorBrewer)
-library(car)
-library(ggplot2)
-library(plotly)
-library(here)
+Our first dataset contains the information in over 6000 shark attacks that have occurred worldwide over the course of the past centuries. The dataset was obtained from the Shark Research Institute's (SRI) website, which carries out and funds rigorous, peer-reviewed shark field research and instructs people using scientific data. 
 
+Even though the dataset is owned by the SRI, we have downloaded it through the following plateform: https://www.kaggle.com/datasets/teajay/global-shark-attacks.
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Case Number", "Date", "Year", "Type", "Country", "Area", "Location", "Activity", "Name", "Sex", "Age", "Injury", "Fatal", "Time", "Species", "Investigator.or.Source", "pdf", "href.formula", "Case Number 2")
+Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same aas the first one)")
+
+
+Table1 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table1)
+```
+
+
+## 2.2 Temperatures Data Set 
+
+
+Our second dataset contains the average temperature change for each country (annually, monthly and seasonally) from 1961 to 2022. It contains 9,657 observations.
+
+The dataset was taken from the website of the Food and Agriculture Organization of United Nations: https://www.fao.org/faostat/en/#data/ET
+
+
+```{r, echo=TRUE, warning=FALSE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Area Code", "Area", "Months ", "Month code ", "Element Code ", "Element", "Unit", "Years")
+Description <- c("Code for each country", "Country for which the data has been collected", "Month during which the data on temperature has been collected", "Code of each month ", "Binary variable (7271: Temperature change; 6078: Standard Deviation)", "What is the data measuring (either temperature change or standard deviation of data collection)", "Unit of measure of temperature ", "Year of observations" )
+
+
+Table2 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table2)
+```
+
+
+
+## 2.3 Sea Level Data Set
+
+Our third dataset contains information on the global increase of sea level from 1993 to 2021. The following acronims are important to be noted:
+GMLS:Global mean sea level
+GIA: Global Isostatic Adjustment, which is the ongoing movement of land once burdened by ice-age glaciers (National Ocean Service, n.d.)
+
+The dataset was taken from the website of the NASA: https://climate.nasa.gov/vital-signs/sea-level/
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Year", "TotalWeightedObservations ", "GMSL_noGIA ", "StdDevGMSL_noGIA ", "SmoothedGSML_noGIA ", "GMSL_GIA", "StdDevGMSL_GIA", "SmoothedGSML_GIA", "SmoothedGSML_GIA_sigremoved")
+Description <- c("Year of the observation", "Total Weighted Observations of Sea Level", "Global mean sea level variation in millimeters, with respect to 20-year TOPEX/Jason collinear mean reference (without considering the GIA)", "Standard Deviation of global mean sea level variation estimate in millimeters (without considering the GIA)", "Smoothed (60-day Gaussian type filter) GMSL variation in millimeters (without considering the GIA)", "Global mean sea level variation in millimeters, with respect to 20-year TOPEX/Jason collinear mean reference (considering the GIA)", "Standard Deviation of global mean sea level variation estimate in millimeters (considering the GIA)", "Smoothed (60-day Gaussian type filter) GMSL variation in millimeters (considering the GIA)", "Smoothed (60-day Gaussian type filter) Global Mean Sea Level variation in millimeters (considering the GIA) ; annual and semi-annual signal removed ")
+
+
+Table3 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table3)
+```
+
+## 2.4 Greenhouse Gas Emissions Data Set
+
+Our fourth dataset relates to GHG emissions, one of the main concerns linked to global warming. The dataset contains 31.315 observations on annual GHG emissions per country and per continent, but we will focus on the first case only. 
+
+The dataset was taken from the website Our World in Data: https://ourworldindata.org/annual-co2-emissions
+
+```{r, echo=TRUE}
+
+# Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
+
+Variables <- c("Entity", "Code", "Year", "Annual CO₂ emissions")
+Description <- c("Country examinated", "ISO Code", "Year of the observation", "GHG emissions per year")
+
+
+Table4 <- data.frame(Variable = Variables, Description = Description)
+
+# The knitr::kable() allows to visualize the table
+knitr::kable(Table4)
+```
+
+
+
+# 3. <strong>Data Wrangling</strong>
+
+The first step of our work is data cleaning. While collecting data for a study, it might happen to have some variables with missing information, worthless data or spelling mistakes In order to run a regression, it is fundamental that each column within a data set has no missing values and that information is written following the same format. This procedure takes the name of data cleaning, and it will cover the whole subsection. 
+
+Please be aware that at the beginning of each subsection we only provide <strong>general</strong> instructions of our cleaning. Through the code, you will get additional in-depth explanations of each step we took.
+
+
+## 3.1 Attacks Cleaning
+
+The first dataset we will examine is the one pertaining to shark attacks. It was quite full of misspellings and missing values, which required a lot of time and a very dense code to be able to clean it.
+
+For our work, we have decided to only study the phenomenon of shark attacks from 1970 forward. In fact, it is possible to observe in the raw dataset that, before to this date, observations had more erroneous information. This leads one to believe that, more likely than not, the information we needed is more accurate if we do not travel too far back in time.
+
+
+```{r results='hide', warning=FALSE}
 
 attacks <- read.csv("attacks1.csv")
 attacks <- attacks[1:3406, ]
-#________________________________________________________________________________________________________________________
-#we drop the columns that we do not need
+
+#We drop the columns that we do not need. The country is enough for our study, so we will not take into consideration the precise areas. The injury is not useful as well, indeed, the fatality column already gives us enough information. The other columns all contain information that are not useful for a research.
+
 
 attacks <- subset(attacks, select = setdiff(names(attacks), c('X', 'X.1', 'Area', 'Location', 'Injury', 'href', 'href.formula', 'Investigator.or.Source', 'pdf', 'Name', 'Case.Number.1', 'Case.Number.2', 'original.order')))
 
+#____________________________________________________________________________________
+#FIRSTLY WE WORK ON THE COUNTRY COLUMN
 
-#________________________________________________________________________________________________________________________
-#FIRSTLY WE WORK ON THE COUNTRY
+#Firstly we put everything in CAPS in order to group countries (The problem was only Fiji which was written sometimes in capital letters and sometimes not. The rest was good). When we run a table, we can see that all countries are written in the same way, but we have 6 NA. We decided to investigate them. To do this, used the function "which" to spot where the NA are. We found out that we could get the country of 2 of them because, the column with the precise area war filled. For row 2957 area says "English Channel", meaning that the attack happened in the UK, while for row 3388 the area is "Carribean Sea". As a consequence, we will fill this spot with Jamaica, since it is central to Carribean and has average temperatures similar to sourrounding countries.
 
-#Firstly we put everything in CAPS in order to group countries (The problem was only Fiji which was written
-#sometimes in caps and sometimes in lower cap. The rest was good). When we run a table, we can see that all
-#countries are written in the same way, but we have 6 NA. We decided to investigate those trous. How? we used
-#the function "which" to spot where the NA are. We found out that we could get the country of 2 of them because,
-#the column with the precise area war filled. For row 2957 area says "English Channel", meaning that the attack happened in
-#the UK, while for row 3388 the area is "Carribean Sea". As a consequence, we will fill this spot with Jamaica,
-#since it is central to Carribean and has average temperatures similar to sourrounding countries.
+#After that, we have investigated the other 4 NA: they don't have anything in common, nor we found any information about those attacks on internet, so we just deleted the rows. Now countries are clean.
 
-#After that, we have investigated the other 4 NA: they don't have anything in common (activity, missing information etc.)
-#nor we found any information about those attacks on internet, so we just deleted the rows.
-#Now countries are clean :)
-
-attacks$Country <- toupper(attacks$Country)
-attacks$Country <- na_if(attacks$Country, "")
+attacks$Country <- toupper(attacks$Country) 
+attacks$Country <- na_if(attacks$Country, "") #We turned blank spots to NA
 
 rows_with_NA <- which(is.na(attacks$Country))
-rows_with_NA
+
 
 attacks$Country <- gsub("COLUMBIA", "COLOMBIA", attacks$Country, ignore.case = TRUE)
 attacks[2957, "Country"] <- "UNITED KINGDOM"
 attacks[3388, "Country"] <- "JAMAICA"
-attacks$Country <- gsub("UNITED ARAB EMIRATES \\(UAE\\)", "UNITED ARAB EMIRATES", attacks$Country)
+attacks$Country <- gsub("UNITED ARAB EMIRATES \\(UAE\\)", "UNITED ARAB EMIRATES", attacks$Country) #We took off the part "\\(UAE\\)" from the United Arab Emirates
+
 
 attacks <- subset(attacks, !is.na(Country))
 
-#________________________________________________________________________________________________________________________
+
+#____________________________________________________________________________________
 
 #NOW WE WORK ON THE DATE
 
-#For this column, we will drop both the year (which is already included in another column) and the day, 
-#which we consider useless therefore, we will only keep the month
+#For this column, we will drop both the year (which is already included in another column) and the day, which we consider useless therefore, we will only keep the month
 
 
-attacks$Date <- gsub("\\bReported\\b", "", attacks$Date, ignore.case = TRUE)
-attacks$Date <-  gsub("\\bEarly\\b", "", attacks$Date, ignore.case = TRUE)
-attacks$Date <- gsub("[[:digit:][:punct:]]", "", attacks$Date)
+attacks$Date <- gsub("\\bReported\\b", "", attacks$Date, ignore.case = TRUE) #Remove the word "reported" which appeared sometimes
+attacks$Date <-  gsub("\\bEarly\\b", "", attacks$Date, ignore.case = TRUE)#Remove the word "Early" which appeared sometimes
+attacks$Date <- gsub("[[:digit:][:punct:]]", "", attacks$Date) #remove all signs
 
 words_to_keep <- c("Jan", "Feb", "Mar", "Apr","May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
 
-# Remove words not in the specific list for each row
+# Remove words not in the specific list of months (words_to_keep) for each row
 attacks$Date <- sapply(attacks$Date, function(sentence) {
   gsub(paste0("\\b(?!", paste(words_to_keep, collapse = "|"), "\\b)\\w+\\s*"), "", sentence, perl = TRUE)
 })
 
-attacks$Date <- trimws(attacks$Date)
-table(attacks$Date)
+attacks$Date <- trimws(attacks$Date) #remove white spaces (" Feb" becomes "Feb")
 
-#when we run the table, we see that there are stll some problems, that we will correct by hand (Jul Jul, Jula etc.).
-#We run the function below to check in which row the mistake happened and we correct it. In the first case
-#the resulting row is 2854, and we change Jul Jul with Jul
-
+#when we run the table, we see that there are still some problems, that we will correct by hand (Jul Jul, Jula etc.). We run the function "gsub"  to correct mistakes.
 
 attacks$Date <- gsub("Jul Jul", "Jul", attacks$Date)
 attacks$Date <- gsub("Jula", "Jul", attacks$Date)
@@ -96,8 +173,7 @@ attacks$Date <- gsub("June", "Jun", attacks$Date)
 attacks$Date <- gsub("May  Nov", "Aug", attacks$Date)
 attacks$Date <- gsub("November", "Nov", attacks$Date)
 
-#Once the spelling mistakes are good, We replace all NA by blank spaces and investigate them. Some of them
-#actually have their month on the column "Case Number". The others don't have anything in common.
+#Once the spelling mistakes are good, We replace all NA by blank spaces and investigate them. Some of them actually have their month on the column "Case Number". The others don't have anything in common.
 
 rows_with_mistakes <- attacks[attacks$Date == "", ]
 attacks$Date[is.na(attacks$Date)] <- ""
@@ -109,6 +185,8 @@ attacks <- mutate(attacks, Date = ifelse(Case.Number == "1980.12.30", "Dec", Dat
 attacks <- mutate(attacks, Date = ifelse(Case.Number == "2012.12.00", "Dec", Date))
 
 
+#Finally, we remove the few NA that remained because they had no information that would have helped us getting the information.
+
 attacks$Date <- na_if(attacks$Date, "")
 attacks <- subset(attacks, !is.na(Date))
 
@@ -119,12 +197,10 @@ attacks$Date <- as.integer(factor(attacks$Date, levels = names(date_logic)))
 
 
 #________________________________________________________________________________________________________________________
-#NOW WE WORK ON AGE
 
-#To clean the column of the age we took off all the letters, we computed by hand the means of all victims
-# that had a range for their year and finally transformed all the ages expressed in months to years.
+#NOW WE WORK ON AGE COLUMN
 
-# Replace "18 months" with "1.5"
+#To clean the column of the age we took off all the letters, we computed by hand the mean age of all victims that had a range for their year and finally transformed all the ages expressed in months to years (Meaning that: age from 10 to 12 became 11, while 18 months old became 1.5)
 
 attacks$Age <- ifelse(attacks$Age == "18 months", "1.5", attacks$Age)
 attacks$Age <- ifelse(attacks$Age == "28 & 26", "27", attacks$Age)
@@ -146,14 +222,20 @@ attacks$Age <- ifelse(attacks$Age == "21 or 26", "23.5", attacks$Age)
 
 
 attacks$Age <- str_replace_all(attacks$Age, "[A-Za-z]", "")
+ #Delete all letters and signs
+attacks$Age <- na_if(attacks$Age, "") #replace blank spots with NA
+attacks$Age <- as.numeric(str_extract(attacks$Age, "\\d+\\.?\\d*")) #put age as logic and not char
 
-attacks$Age <- na_if(attacks$Age, "")
+```
 
-attacks$Age <- as.numeric(str_extract(attacks$Age, "\\d+\\.?\\d*"))
+While cleaning the column of Ages, we realized that NA were too much and we could not delete them all, because that would have meant losing 29,5% of our data. Therefore, we have decided to  work in the following way: for each country that presents LESS NA than the total observation, we compute an histogram (Age against frequency) of non-missing data. If the distribution is normal, we substitute the NA with the mean. If it is left skewed, we substitute the NAs with the first quantile, if it is right skewed, we substitute it with the third quantile.
+
+Here is an example with USA and Bahamas. For USA, the distribution of the non-missing victims' ages is skewed on the left. Therefore we have decided to substitute all the missing values with the first quantile. For Bahamas, it is evident that data follow a normal distribution, therefore we replace NAs with the mean.
 
 
-#CORRECTION
+```{r warning=FALSE}
 
+#At this point, NA were still too much, so we will  work in the following way: for each country that presents LESS NA than the total observation, we compute an histogram (Age against frequency). If the distribution is normal, we substitute the NA with the mean. If it is left skewed, we substitute the NAs with the first quantile, if it is right skewed, we substitute it with the third quantile 
 
 #USA#
 
@@ -173,6 +255,7 @@ hist(ages_without_na,
      main = "Histogram of Ages in USA without NA"
 ) #We can see that the histogram is skewed, so we will replace the NAs by the first quartile of non-missing values
 
+
 q.25 <- quantile(ages_without_na, 0.25)
 attacks$Age[attacks$Country == "USA" & is.na(attacks$Age)] <- q.25 
 
@@ -186,7 +269,6 @@ ages_vector <- ages_in_BAH$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
 
 hist(ages_without_na, 
      col = "darkgreen",       
@@ -198,7 +280,9 @@ mean_BAH = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "BAHAMAS" & is.na(attacks$Age)] <- mean_BAH
 
+```
 
+```{r results='hide', warning=FALSE, echo= TRUE}
 #EGYPT#
 
 ages_in_egy <- attacks %>%
@@ -209,7 +293,7 @@ ages_vector <- ages_in_egy$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean_egy = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "EGYPT" & is.na(attacks$Age)] <- mean_egy
@@ -230,7 +314,7 @@ ages_vector <- ages_in_italy$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean_age = mean(ages_without_na)
 
 # Replace all the NA on Italy with the mean of people attacked in Italy.
@@ -247,7 +331,7 @@ ages_vector <- ages_in_aus$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean_aus = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "AUSTRALIA" & is.na(attacks$Age)] <- mean_aus
@@ -264,7 +348,7 @@ ages_vector <- ages_in_SA$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean_SA = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "SOUTH AFRICA" & is.na(attacks$Age)] <- mean_SA
@@ -280,7 +364,7 @@ ages_vector <- ages_in_BRA$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean_BRA = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "BRAZIL" & is.na(attacks$Age)] <- mean_BRA
@@ -296,7 +380,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "FIJI" & is.na(attacks$Age)] <- mean
@@ -311,7 +395,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "FRENCH POLYNESIA" & is.na(attacks$Age)] <- mean
@@ -326,7 +410,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "HONG KONG" & is.na(attacks$Age)] <- mean
@@ -341,7 +425,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "JAPAN" & is.na(attacks$Age)] <- mean
@@ -356,7 +440,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "MEXICO" & is.na(attacks$Age)] <- mean
@@ -372,7 +456,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "MOZAMBIQUE" & is.na(attacks$Age)] <- mean
@@ -388,7 +472,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "NEW ZEALAND" & is.na(attacks$Age)] <- mean
@@ -403,7 +487,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "PHILIPPINES" & is.na(attacks$Age)] <- mean
@@ -418,7 +502,7 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "REUNION" & is.na(attacks$Age)] <- mean
@@ -433,23 +517,23 @@ ages_vector <- ages$Age
 
 ages_without_na = na.omit(ages_vector)
 ages_without_na <- as.numeric(ages_without_na)
-hist(ages_without_na)
+#hist(ages_without_na) -> We put this function preceded by an hashtag because we do not want the histogram to be displayed for all countries
 mean = mean(ages_without_na)
 
 attacks$Age[attacks$Country == "NEW CALEDONIA" & is.na(attacks$Age)] <- mean
 
 
-#We fixed those countries that had lots of NA. Now, for the remaining NA we decided 
-#not to do anything for a specific reason. Not only we have not count the real information 
-#on the internet, but we also believe that doing the mean for those 
-#remaining situations was useless, because these are the cases when NA 
-#are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
+#We fixed those countries that had lots of NA. Now, for the remaining NA we decided not to do anything for a specific reason. Not only we have not cound the real information on the internet, but we also believe that doing the mean for those remaining situations was useless, because these are the cases when NA are either the same amount of total shark attacks (see Antigua with 1 shark attack and 1 NA), or NA are more than half of the total attacks (see Malaysia with 4 total attacks but 3 of them are NA).
 
+
+count_na_by_country <- attacks %>%
+  group_by(Country) %>%
+  summarise(NA_count = sum(is.na(Age)))
 
 
 attacks <- subset(attacks, !is.na(Age))
 
-#________________________________________________________________________________________________________________________
+#___________________________________________________________________________________________________________________
 
 
 #NOW WORK ON TIME
@@ -462,7 +546,7 @@ attacks<- mutate(attacks, Time= ifelse(Time=="14h00  -15h00", "14h30", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="14h30 / 15h30", "15h00", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="09h30 / 10h00", "9h45", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="10h45-11h15", "11h00", Time))
-attacks<- mutate(attacks, Time= ifelse(Time=="Sometime between 06h00 & 08hoo", "7h", Time))
+attacks<- mutate(attacks, Time= ifelse(Time=="Sometime between 06h00 & 08hoo", "7h00", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="18h15-18h30", "18h20", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="09h00 - 09h30", "9h15", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="10h00 -- 11h00", "10h30", Time))
@@ -476,7 +560,6 @@ attacks <- mutate(attacks, Time = ifelse(Time == "2 hours after Opperman", "", T
 attacks <- mutate(attacks, Time = ifelse(Time == "11h00 / 11h30", "11h15", Time))
 attacks <- mutate(attacks, Time = ifelse(Time == "Between 06h00 & 07h20", "6h40", Time))
 attacks <- mutate(attacks, Time = ifelse(Time == "30 minutes after 1992.07.08.a", "", Time))
-attacks <- mutate(attacks, Time = ifelse(Time == "Possibly same incident as 2000.08.21", "", Time))
 
 
 
@@ -491,11 +574,8 @@ attacks$Time <- str_replace_all(attacks$Time, "\\bafternoon\\b", "15h00")
 attacks$Time <- str_replace_all(attacks$Time, "\\bevening\\b", "20h00")
 attacks$Time <- str_replace_all(attacks$Time, "\\bnight\\b", "23h00")
 
-
 attacks$Time <- gsub("[^[:digit:]]", "", attacks$Time)
-
 attacks$Time = na_if(attacks$Time, "")
-
 attacks$Time <- as.numeric(attacks$Time)
 
 # since we removed all the letters, hours now are not written as 8h00 or 15h30 but as 800 and 15h00. this is
@@ -552,47 +632,50 @@ attacks$Time[position_of_na] <- sample(
   prob = as.vector(non_na_time_proportions)
 )
 
-table(attacks$Time)
 
-#________________________________________________________________________________________________________________________
+# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
+# evening to 2 and night to 3
+attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
+
+
+#_____________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
-attacks$Sex <- gsub("lli", "", attacks$Sex)
-attacks$Sex <- gsub("M ", "M", attacks$Sex)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
+#__________________________________________________________________________________________________________________
 
 
-#________________________________________________________________________________________________________________________
 #NOW WE WORK ON SHARK SPECIES
 
 
 #Creation of a variable species where we delete all the numbers that concern the size of the shark
-species <- str_replace_all(attacks$Species, "\\d", "")
+species <- gsub("[0-9]", "", attacks$Species)
 
 #If there is an empty cell, we will put NA
 species = na_if(attacks$Species, "")
 
-#gsub pour enlever la ponctuation
-species <- str_remove_all(species, "[[:punct:]]")
+#gsub to take off punctuation
+species <- gsub("[[:punct:]]", "", species)
 
-#gsub pour enlever les chiffres accompagnés de cm ou m
+#Delete all the numbers followed by cm or m
 species <- gsub("\\d+\\s*(cm|m)\\b", "", species)
 
-#gsub pour supprimer les mots de une ou deux lettres
+#Delete word composed by 1 or 2 letters
 species <- gsub("\\b\\w{1,2}\\b", "", species)
 
-#gsub pour supprimer tous les chiffres
+#Delete all the numbers
 species <- gsub("\\d", "", species)
 
-# Supprimer les unités de mesure (kg, lb, b)
+#Delete all unities as lb, kg or l
 species <- gsub("\\b(kg|lb|b)\\b", "", species)
 
+#If the word shark appears more than once in each cell, we only write shark once
 species <- gsub("\\bshark\\b(.*\\bshark\\b)?", "shark", species, ignore.case = TRUE)
 
 
-# Utiliser gsub pour regrouper nos espèces en espèces communes 
+# Rewrite shark species names in one way, and do that for each species
 species<- gsub("^.*White shark.*$", "White shark", species)
 species<- gsub("^.*whitetip shark.*$", "White shark", species)
 species<- gsub("^.*white shark.*$", "White shark", species)
@@ -617,7 +700,6 @@ species<- gsub("^.*mako shark.*$", "Mako shark", species)
 species<- gsub("^.*Lemon shark.*$", "Lemon shark", species)
 species<- gsub(".*lemon shark.*", "Lemon shark", species, ignore.case = TRUE)
 species<-gsub("^\\s*shark\\s*$", "Unidentified shark", species)
-
 species<- gsub(".*bull.*", "Bull shark", species, ignore.case = TRUE)
 species<- gsub(".*blue.*", "Blue shark", species, ignore.case = TRUE)
 species<- gsub(".*reef.*", "Reef shark", species, ignore.case = TRUE)
@@ -632,7 +714,7 @@ species<- gsub("Juvenile shark  blacktip shark", "Juvenile shark",species, ignor
 species<- gsub("blacktip\\s+\\w+", "Blacktip shark",species, ignore.case = TRUE)
 species <- gsub("\\black\\w*\\b", "Blacktip shark", species, ignore.case = TRUE)
 
-#remplacer toutes les occurrences du mot "blacktip" dans une colonne par "Blacktip Shark," même si le mot est accompagné par d'autres mots avant ou après
+#Replace all occurrences of the word "blacktip" in a column with "Blacktip Shark," even if the word is accompanied by other words before or after
 
 species <- gsub("\\bblacktip\\b", "Blacktip Shark", species, ignore.case = TRUE)
 species<- gsub(".*copper shark*", "Copper shark", species, ignore.case = TRUE)
@@ -641,18 +723,16 @@ species <- gsub("\\bsilky\\b", "Silky", species)
 species <- gsub("\\bsilvertip\\b", "Silvertip", species)
 
 
-#conndition si "Hammerhead" suivi d'autre mots alors remplacé par Hammerhead shark
+#Condition: if "Hammerhead" followed by other words then replaced by Hammerhead shark
 species <- ifelse(grepl("Hammerhead\\s+\\w+", species, ignore.case = TRUE), "Hammerhead shark", species)
 species <- ifelse(grepl("Blacktip\\s+\\w+", species, ignore.case = TRUE), "Blacktip shark", species)
 species <- ifelse(grepl("Raggedtooth\\s+\\w+", species, ignore.case = TRUE), "Raggedtooth shark", species)
 species <- ifelse(grepl("Porbeagle\\s+\\w+", species, ignore.case = TRUE), "Porbeagle shark", species)
 
 
-#si le mot shark apparaît pas alors NA
+#if the word shark does not appear then NA
 species <- ifelse(grepl("shark", species, ignore.case = TRUE), species, NA)
-
 species <- ifelse(grepl("Juvenile\\s+\\w+", species, ignore.case = TRUE), "Juvenile shark", species)
-
 species <- ifelse(grepl("grey\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
 species <- ifelse(grepl("greycolored\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
 species <- ifelse(grepl("gray\\s+\\w+", species, ignore.case = TRUE), "Grey shark", species)
@@ -664,95 +744,94 @@ species <- ifelse(grepl("Sand\\s+\\w+", species, ignore.case = TRUE), "Sand shar
 species <- ifelse(grepl("Carpet\\s+\\w+", species, ignore.case = TRUE), "Carpet shark", species)
 species <- ifelse(grepl("\\bbrown\\b", species, ignore.case = TRUE), "Brown shark", species)
 
-species <- gsub("^frag\\w+", "Unrecognized shark", species)
+species <- gsub("^frag\\w+", "Unidentified shark", species)
+species <- gsub("^shark$", "Unidentified shark", species)
 
-species <- gsub("^shark$", "Unrecognized shark", species)
-
-#Fonction pour vérifier si "small" est présent dans la cellule
+#Function to check if "small" is present in cell
 contains_small <- function(text) {
   return(grepl("small", text))
 }
-# Remplacer la cellule par "unidentified shark" si "small" est présent
+# Replace cell with "unidentified shark" if "small" is present
 species <- ifelse(sapply(species, contains_small), "Unidentified shark", species)
 
-#Fonction pour vérifier si "Small" est présent dans la cellule
+#Function to check if "Small" is present in cell
 contains_small <- function(text) {
   return(grepl("Small", text))
 }
-# Remplacer la cellule par "unidentified shark" si "Small" est présent
+#  Replace cell with "unidentified shark" if "Small" is present
 species <- ifelse(sapply(species, contains_small), "Unidentified shark", species)
 
-#Fonction pour vérifier si "sharks" est présent dans la cellule
+#Function to check if "sharks" is present in cell
 contains_sharks <- function(text) {
   return(grepl("sharks", text))
 }
-# Remplacer la cellule par "unidentified shark" si "sharks" est présent
+# Replace cell with"unidentified shark" if "sharks" is present
 species <- ifelse(sapply(species, contains_sharks), "Unidentified shark", species)
 
-#Fonction pour vérifier si "cookie" est présent dans la cellule
+#Function to check if "cookie" is present in cell
 contains_cookie <- function(text) {
   return(grepl("cookie", text))
 }
-# Remplacer la cellule par "Cookiecutter shark" si "cookie" est présent
+# Replace cell with"Cookiecutter shark" if "cookie" is present
 species <- ifelse(sapply(species, contains_cookie), "Cookiecutter shark", species)
 
 
-#Fonction pour vérifier si "involvement" est présent dans la cellule
+#Function to check if "involvement" is present in cell
 contains_involvement <- function(text) {
   return(grepl("involvement", text))
 }
-# Remplacer la cellule par "No shark" si "involvement" est présent
+# Replace cell with"No shark" if "involvement" is present
 species <- ifelse(sapply(species, contains_involvement), "No shark", species)
 
-#Fonction pour vérifier si "invovlement" est présent dans la cellule
+#Function to check if "invovlement" is present in cell
 contains_invovlement <- function(text) {
   return(grepl("invovlement", text))
 }
-# Remplacer la cellule par "No shark" si "invovlement" est présent
+# Replace cell with"No shark" if "invovlement" is present
 species <- ifelse(sapply(species, contains_invovlement), "No shark", species)
 
-#Fonction pour vérifier si "Not" est présent dans la cellule
+#Function to check if "Not" is present in cell
 contains_Not <- function(text) {
   return(grepl("Not", text))
 }
-# Remplacer la cellule par "No shark" si "Not" est présent
+# Replace cell with"No shark" if "Not" is present
 species <- ifelse(sapply(species, contains_Not), "No shark", species)
 
-#Fonction pour vérifier si "not" est présent dans la cellule
+#Function to check if "not" is present in cell
 contains_not <- function(text) {
   return(grepl("not", text))
 }
-# Remplacer la cellule par "No shark" si "not" est présent
+# Replace cell with"No shark" if "not" is present
 species <- ifelse(sapply(species, contains_not), "No shark", species)
 
-#Fonction pour vérifier si "Questionable" est présent dans la cellule
+#Function to check if "Questionable" is present in cell
 contains_Questionable <- function(text) {
   return(grepl("Questionable", text))
 }
-# Remplacer la cellule par "No shark" si "Questionable" est présent
+# Replace cell with"No shark" if "Questionable" is present
 species <- ifelse(sapply(species, contains_Questionable), "No shark", species)
 
-#Fonction pour vérifier si "questionable" est présent dans la cellule
+#Function to check if "questionable" is present in cell
 contains_questionable <- function(text) {
   return(grepl("questionable", text))
 }
-# Remplacer la cellule par "No shark" si "questionable" est présent
+# Replace cell with"No shark" if "questionable" is present
 species <- ifelse(sapply(species, contains_questionable), "No shark", species)
 
 
-#Fonction pour vérifier si "Salmon" est présent dans la cellule
+#Function to check if "Salmon" is present in cell
 contains_Salmon <- function(text) {
   return(grepl("Salmon", text))
 }
-# Remplacer la cellule par "Salmon shark" si "Salmon" est présent
+# Replace cell with"Salmon shark" if "Salmon" is present
 species <- ifelse(sapply(species, contains_Salmon), "Salmon shark", species)
 
 
-#Fonction pour vérifier si "whaler" est présent dans la cellule
+#Function to check if "whaler" is present in cell
 contains_whaler <- function(text) {
   return(grepl("whaler", text))
 }
-# Remplacer la cellule par "Whale shark" si "involvement" est présent
+# Replace cell with"Whale shark" if "involvement" is present
 species <- ifelse(sapply(species, contains_whaler), "Whale shark", species)
 
 
@@ -779,119 +858,129 @@ species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", 
 
 
 attacks$Species <- species
-attacks$Species <- ifelse(is.na(attacks$Species), "Unknown", attacks$Species)
+attacks$Species <- ifelse(is.na(attacks$Species), "Unidentifies shark", attacks$Species)
 
+#_____________________________________________________________________________________________
 
-#________________________________________________________________________________________________________________________
 #ACTIVITY
 
-#when trying to put everything in lower cap, this was the result: Errore in tolower(attacks$Activity) : 
-#stringa multibyte 921 non valida --> so converted everything in ASCII (=American Standard Code for Information Interchange)
+#when trying to put everything in lower cap, this was the result: Errore in tolower(attacks$Activity) :  multibyte string 921 not valid --> therefore, we converted everything in ASCII (=American Standard Code for Information Interchange)
 
 attacks$Activity <- iconv(attacks$Activity, to = "ASCII", sub = " ")
 attacks$Activity <- gsub("[^ -~]", "", attacks$Activity)
 
 attacks$Activity <- tolower(attacks$Activity)
 
-#when running a table of all activities, we can see that we can group them in some categories: 
-#diving, race, windsurfing, walking, wading, wade fishing, touching, swimming, surfing, surf,
-# standing, spearfishing, snorkeling,  scuba diving, playing, paddle, murder, kayaking, kayak, floating, fishing,
+#when running a table of all activities, we can see that we can group them in some categories: diving, race, windsurfing, walking, wading, wade fishing, touching, swimming, surfing, surf, standing, spearfishing, snorkeling,  scuba diving, playing, paddle, murder, kayaking, kayak, floating, fishing, so that we have standard categories.
 
-attacks$Activity <- gsub("[^A-Za-z ]", "", attacks$Activity)
+attacks$Activity <- gsub("[^A-Za-z ]", "", attacks$Activity) 
 
 
-kept_activities <- c("diving", "race", "windsurfing", "walking", "wading", "wade fishing", "touching", "swimming", "surfing", "surf",
-                     "standing", "spearfishing", "snorkeling", "scuba diving", "playing", "paddle", "murder", "kayaking", "kayak", "floating", "fishing")
+kept_activities <- c("diving", "race", "windsurfing", "walking", "wading", "wade fishing", "touching", "swimming", "surfing", "surf", "standing", "spearfishing", "snorkeling", "scuba diving", "playing", "paddle", "murder", "kayaking", "kayak", "floating", "fishing")
 
-# Your column name
-column_name <- "Activity"
 
-# Create a regular expression pattern that matches any of the specific words
+# We create an expression pattern that matches any of the specific words
 pattern <- paste(kept_activities, collapse = "|")
 
-# Extract only the specific words from the column and replace the rest with an empty string
+# Extract only the specific words (kept_activities) from the column and replace the rest with an empty string
 attacks$Activity <- str_extract(attacks$Activity, paste0("\\b(?:", pattern, ")\\b"))
+
 attacks <- attacks %>%
   mutate(Activity = str_replace_all(Activity, "\\bkayaking\\b", "kayak")) %>%
   mutate(Activity = str_replace_all(Activity, "\\bsurfing\\b", "surf"))
 
-attacks$Activity[is.na(attacks$Activity)] <- "other"
+attacks$Activity[is.na(attacks$Activity)] <- "other" # for all activities that are not part of the list or for NA, we just put Other, since no information is available
 
-#________________________________________________________________________________________________________________________
+
+#_____________________________________________________________________________________________
 
 #FATAL 
-
-table(attacks$Fatal..Y.N.) #to check if categories have mistakes etc
-
+ #When we run a table for the Fatality column, we see that almost observation follow the same category (Y = yes, N = No, Unknwn). An observation has a 2017, which is probably a typo (which we replace by empty case) while another one has an M. We want to believe that it was a typo as well, and that "M" was typed instead of "N".
 attacks$Fatal..Y.N. <- gsub("2017", "", attacks$Fatal..Y.N.)
 attacks$Fatal..Y.N. <- gsub("M", "N", attacks$Fatal..Y.N.)
 
 attacks$Fatal..Y.N. <-na_if(attacks$Fatal..Y.N., "")
+
+#For the rest of NA, we have no information, so we took of these few observations.
 attacks <- subset(attacks, !is.na(Fatal..Y.N.))
+#Replace Yes by 1, 0 otherwise
+attacks$Fatal..Y.N. <- ifelse(attacks$Fatal..Y.N. == "Y", 1, 0)
 
 names(attacks)[names(attacks) == "Fatal..Y.N."] <- "Fatality"
 
-#________________________________________________________________________________________
-#TYPE
-#Regroup some words under the same word "Boat"
-attacks$Type <- gsub("Boatomg|Boating", "Boat", attacks$Type)
 
-#________________________________________________________________________________________________________________________
+#_____________________________________________________________________________________________
 #final check up:
+
+#We run a table for all columns, in order to check if columns have any missing value or if we still have other mistakes. 
 
 table(attacks$Date) #this one is fine
 table(attacks$Year) #this one is fine
+table(attacks$Type) #here we have boating and boat which mean the same thing. Let us group them
+attacks$Type <- gsub("Boating", "Boat", attacks$Type)
+attacks$Type <- gsub("Boatomg", "Boat", attacks$Type)
 table(attacks$Type) #this one is fine
 table(attacks$Country)#this one is fine
 table(attacks$Activity)#this one is fine
 table(attacks$Age)#this one is fine
 table(attacks$Fatality)#this one is fine
-table(attacks$Time)#this one is fine
 table(attacks$Species)#this one is fine
 
 
-#________________________________________________________________________________________________________________________
-#ADD ISO CODE TO MAKE COUNTRIES IN COMMON
+#With the following code, we will add a new column which will associate each country with its ISO code. This is a very important step for the cleaning if the enxt sections, because il will allow us to match the different datasets. 
 
 # Get ISO country codes
-library(countrycode)
 iso_codes <- countrycode(attacks$Country, "country.name", "iso3c")
 attacks$ISO_Code <- countrycode(attacks$Country, "country.name", "iso3c")
 
-#We can see that there are 23 countries with no ISO Code. We will fix them by hand.
+#Through the following function we can spot NAs. We can see that there are 23 countries with no ISO Code. We will fix them by hand. 
 rows_with_na <- which(is.na(attacks$ISO_Code))
-rows_with_na
 
 attacks$ISO_Code[attacks$Country %in% c("ENGLAND", "SCOTLAND", "BRITISH ISLES") & is.na(attacks$ISO_Code)] <- "GB"
 attacks$ISO_Code[attacks$Country %in% c("AZORES") & is.na(attacks$ISO_Code)] <- "PRT"
 attacks$ISO_Code[attacks$Country %in% c("ST. MAARTIN", "ST. MARTIN") & is.na(attacks$ISO_Code)] <- "MAF"
 attacks$ISO_Code[attacks$Country %in% c("OKINAWA") & is.na(attacks$ISO_Code)] <- "JPN"
 attacks$ISO_Code[attacks$Country %in% c("MICRONESIA") & is.na(attacks$ISO_Code)] <- "FSM"
-
 attacks <- subset(attacks, !is.na(ISO_Code))
 
-#________________________________________________________________________________________________________________________
 
-#                           C L E A N I N G   OF    T E M P E R A T U R E S
+```
 
-#________________________________________________________________________________________________________________________
 
-library(dplyr)
+
+```{r, echo=TRUE}
+
+DT::datatable(attacks, options = list(pageLength = 10))
+
+
+```
+
+## 3.2 Temperatures Cleaning
+
+The main mission for this dataset was to change the entire structure of the dataset. Originally, the dataset had the years as columns (one column for each year), while the rows were represented by the different countries; the temperature observations were presented by month, quarter and year. Furthermore, for each country and each month/quarter/year, the dataset shows both the change in temperatures and the standard deviation.
+
+To proceed with the cleaning, we eliminated the rows corresponding to the standard deviation (we will not work with it), and the monthly and quarterly observations: we are only interested in yearly temperature variations.
+
+We then rotated the dataset so as to have all the years under a single column; we subsequently matched each country and year with its temperature change observation. Finally we added the ISO code to merge with the other datasets.
+
+```{r, echo=TRUE, warning=FALSE}
+
 temperature <- read_xlsx("Temperature.xlsx")
 
-#it did not read the "°C" on the column Unit, so I'll change it manually
+#R did not read the "°C" on the column Unit, so we changed it manually
 
 temperature <- temperature %>% mutate(Unit = "°C")
 
-#I take off all the columns that we do not need 
+#We take off all the columns that we do not need for our study
 
 temperature <- temperature %>% select(-'Area Code (M49)', -'Months Code', -'Element Code')
 
-#eliminate all columns having an F at the end
+#We wliminate all columns having an F at the end (For each year there are 2 columns (ex: 1961 - 1961F; 1962 - 1962F). The column with the F at the end of the Year is a column where only the letter E appears for each row. We tried to look for its meaning on the FAO website but we did not succeed. Therefore, we removed it. What is more, it is important to notice that it was in any case unimportant for our work).
+
 columns_to_remove <- grep("F$", names(temperature), value = TRUE)
 temperature <- temperature[, !(names(temperature) %in% columns_to_remove)]
 
-# keep only meteorological year, we dont need to work with monthly stuff
+# We keep only meteorological year, we don't need to work with monthly and seasonal data.
 
 target_name <- "Meteorological year"
 temperature <- temperature[temperature$Months == target_name, ]
@@ -901,18 +990,18 @@ temperature <- temperature[temperature$Element == target_name2, ]
 
 
 
-#  take off cols that I dont need, take off NA and transforsm year cols so that i take off Y. in this
-#way i can match with the main dataset
+#  We take off the rest of the columns that we do not need
 
 temperature <- temperature %>% select(-'Area Code', -'Months', -'Element', -'Unit')
+
+#The column of each year starts with an Y (Y1961, Y1961...). We take it off, so that we can easily match data with other datasets.
 
 new_colnames <- gsub("Y", "", colnames(temperature))
 colnames(temperature) <- new_colnames
 temperature <- na.omit(temperature)
 
 
-# I need to change columns and rows so that the common variable (year) is on the left side
-
+# We transpose the dataset so that columns become rows. With this function we have a single column, where each row corresponds to a year, but countries became the columns now. We will work on this later in the code.
 temperature <- t(temperature)
 
 # I want the first row to be the header
@@ -926,7 +1015,7 @@ colnames(clean_temperature) <- toupper(colnames(clean_temperature))
 
 library(tidyr)
 
-# Convert the matrix/array to a data frame
+# Convert the matrix/array "clean_temperatures" to a data frame
 temperature <- as.data.frame(clean_temperature)
 
 # Add 'Year' as a separate column
@@ -934,43 +1023,39 @@ temperature$Year <- rownames(clean_temperature)
 
 # Reshape the data from wide to long format
 temperature <- tidyr::pivot_longer(temperature, 
-                                   cols = -Year, 
-                                   names_to = "Country", 
-                                   values_to = "Temperature")
+                                     cols = -Year, 
+                                     names_to = "Country", 
+                                     values_to = "Temperature")
 
 # Reorder columns as per your desired format
 temperature <- temperature[c("Year", "Country", "Temperature")]
 
-
+#As we said at the beginning, we only work with data from 1970
 temperature <- temperature %>% filter(Year >= 1970)
 temperature$Year <- as.numeric(temperature$Year)
 
 temperature <- temperature %>% 
   mutate(Country = ifelse(Country == "UNITED STATES OF AMERICA", "USA", Country))
 
-temperature$ISO_Code <- countrycode(temperature$Country, "country.name", "iso3c")
+#As for the attacks dataset, we add a column for the ISO code.
 
+temperature$ISO_Code <- countrycode(temperature$Country, "country.name", "iso3c")
 temperature$ISO_Code[temperature$Country %in% c("MICRONESIA") & is.na(temperature$ISO_Code)] <- "FSM"
 
-#now that i put iso, i can remove the country one
+#Now that we put ISO code, we can remove the country column
 temperature <- temperature %>% select(-'Country')
 
-#________________________________________________________________________________________________________________________
-#MERGE FIRST TWO DATA SETS
-
-# Assuming 'Year' and 'Country' are the columns in both datasets for matching
-merged_data <- left_join(attacks, temperature, by = c("Year", "ISO_Code"))
-
-sum(is.na(merged_data$Temperature)) 
+DT::datatable(temperature, options = list(pageLength = 10))
 
 
+```
 
-#________________________________________________________________________________________________________________________
+## 3.3 Sea Level Cleaning
 
-#                           C L E A N I N G   OF    S E A    L E V E L
+We choose a data set about the sea level change observed during the last years. We start analyzing the sea level changes since 1993 because we did not find any data of years before. 
+In this data set we had few columns but we only kept 2 columns that were the more relevant for us: the year and the GMSL_GIA. This last column is the global mean of sea level including the glacial isostatic adjustement (GIA). We choose the column with GIA and not without because this show the response of solid Earth to the past changes in surface loading by ice and water such as the glaciation and deglaciation.
 
-#________________________________________________________________________________________________________________________
-
+```{r, echo=TRUE, warning=FALSE}
 
 sealevel <- read.csv("sealevel.csv")
 
@@ -990,113 +1075,65 @@ sealevel <- na.omit(sealevel)
 column <- gsub("2","",colnames(sealevel))
 colnames(sealevel) <- column
 
-#________________________________________________________________________________________________________________________
-#MERGE PREVIOUS AND NEW
-
-# Assuming 'Year' is the columns in both datasets for matching
-merged_data2 <- left_join(merged_data, sealevel, by = c("Year"))
+DT::datatable(sealevel, options = list(pageLength = 10))
 
 
+```
 
-#________________________________________________________________________________________________________________________
+## 3.4 Greenhouse Gas Emissions Cleaning
 
-#                           C L E A N I N G   OF    CO2      L E V E L
+Finally, the GHG emissions dataset was the easiest  to clean. Indeed, we already have a column for the ISO code, so we simply had to filter the years so that the observations began in 1970.
 
-#_________________________________________________________________________________________________________________________
-if (!require(dplyr)) {
-  install.packages("dplyr")
-}
-
-# Charger le package dplyr
-library(dplyr)
-
+```{r, echo=TRUE, warning=FALSE}
 co2 <- read.csv("CO2.csv")
 
 # Change names of columns in order to have the same columns that in the other datasets
-
-names(co2)[names(co2) == "year"] <- "Year"
-names(co2)[names(co2) == "Annual.CO..emissions"] <- "Annual CO2 Emissions"
 names(co2)[names(co2) == "Entity"] <- "Country"
+names(co2)[names(co2) == "Annual.CO..emissions"] <- "Annual CO2 Emissions"
 names(co2)[names(co2) == "Code"] <- "ISO_Code"
 
 
 
-# keep the 4 columns we are interested to analyze
-
-co2 <- subset(co2, select = c("ISO_Code", "Year", "Annual CO2 Emissions", "Country"))
-
+# keep the 3 columns we are interested to analyze
+co2 <- subset(co2, select = c("ISO_Code", "Year", "Annual CO2 Emissions"))
 
 
 # only keep information starting in 1970 because we want to look at the evolution of 
 # the last 50 years
 co2<- co2[co2$Year >= 1970, ]
 
-#co2$ISO_Code <- na_if(co2$ISO_Code, "")
-
-co2$ISO_Code <- ifelse(co2$ISO_Code == "", NA, co2$ISO_Code)
-
+co2$ISO_Code <- na_if(co2$ISO_Code, "")
 
 co2 <- subset(co2, !is.na(ISO_Code))
 
-#________________________________________________________________________________________________________________________
-#MERGE FIRST THREE DATA SETS
+DT::datatable(co2, options = list(pageLength = 10))
+
+
+```
+
+## 3.5 Merged Data Set
+
+After cleaning the four datasets, we have finally merged them. This step is essential to be able to run regression across variables that came from multiple datasets. 
+
+```{r, echo=TRUE, warning=FALSE}
+
+#MERGE FIRST TWO DATA SETS
+
+# Assuming 'Year' and 'Country' are the columns in both datasets for matching
+merged_data <- left_join(attacks, temperature, by = c("Year", "ISO_Code"))
+
+#MERGE WITH THIRD
+
+# Assuming 'Year' is the columns in both datasets for matching
+merged_data2 <- left_join(merged_data, sealevel, by = c("Year"))
+
+#MERGE WITH FOURTH
 
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
 merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
-
-#Change name of a column
-colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
-
-#Delete a useless column
-merged_data3 <- select(merged_data3, -Country.y)
 merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
 
-
-#for merged_data3, which we will use for our regressions, we need numerical variables
-#therefore, we will make changes in some categorical ones
-
-#TYPE
-
-#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
-# Provoked to 4, Questionable to 5 and Sea Disaster to 6
-categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
-merged_data3$Type <- factor(merged_data3$Type, levels = names(categories))
-merged_data3$Type <- as.numeric(merged_data3$Type)
-
-#TIME
-
-# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
-# evening to 2 and night to 3
-merged_data3$Time <- as.numeric(factor(merged_data3$Time, levels = c("morning", "afternoon", "evening", "night")))
+DT::datatable(merged_data3, options = list(pageLength = 10))
 
 
-
-#SEX
-
-merged_data3$Sex <- ifelse(merged_data3$Sex == "M", 0, 
-                      ifelse(merged_data3$Sex == "F", 1, 2))
-
-
-#SPECIES
-
-
-merged_data3 <- merged_data3 %>%
-  mutate(Species = as.numeric(factor(Species)))
-
-# Get the top 5 species
-top_species <- merged_data3 %>%
-  count(Species, sort = TRUE) %>%
-  slice_head(n = 5)
-
-# Create a logical condition to include only the top 5 species
-condition <- merged_data3$Species %in% top_species$Species
-
-# Subset the data based on the condition
-species_filtered_data <- merged_data3[condition, ]
-
-
-
-#FATALITY
-
-
-merged_data3$Fatality <- ifelse(merged_data3$Fatality == "Y", 1, 0)
+```

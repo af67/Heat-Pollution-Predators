@@ -6,7 +6,7 @@
 packages <- c(
   "here", # for the project's organization
   "tidyverse", # for wrangling
-  "scales", # for plotting
+   "scales", # for plotting
   "knitr", "readxl", "dplyr", "tidyr", "stringr", "countrycode", "ggplot2", "plotly",
   "stargazer", "gtsummary", "corrplot", "gridExtra", "leaflet", "viridisLite", "htmltools",
   "RColorBrewer", "car"
