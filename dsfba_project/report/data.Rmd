@@ -1133,8 +1133,13 @@ merged_data2 <- left_join(merged_data, sealevel, by = c("Year"))
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
 merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
 merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
+# Assuming 'Year' and 'Country' are the columns in both datasets for matching
+merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
+
+#Change name of a column
+colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
+
 
 DT::datatable(merged_data3, options = list(pageLength = 10))
-
 
 ```
