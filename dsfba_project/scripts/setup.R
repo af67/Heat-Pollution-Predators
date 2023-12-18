@@ -59,3 +59,6 @@ sealevel <- read.csv(here::here("data/sealevel.csv"))
 
 #CO2 dataset
 co2 <- read.csv(here::here("data/CO2.csv"))
+
+#map dataset
+map <- read.csv(here::here("data/map.csv"))
