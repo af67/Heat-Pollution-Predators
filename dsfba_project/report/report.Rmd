@@ -1,0 +1,18 @@
+---
+title: "<span style='color:#114F80; font-family: Impact, sans-serif;'>Heat and Predators: Understanding Shark Attacks in a Complex Environment</span>"
+author: "Noel Demko, Manal Moubtassim, Jean Carlos Perez Perilla, Elias Zakarya"
+date: "25/10/2023"
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_depth: 3
+    number_sections: no
+    toc_float:
+      collapsed: yes
+      smooth_scroll: yes
+  
+---
+
+```{r child = c('intro.Rmd', 'data.Rmd')}
+```
