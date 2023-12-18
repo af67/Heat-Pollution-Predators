@@ -17,8 +17,7 @@ colnames(map)[colnames(map) == 'country'] <- 'Country'
 map$Country <- toupper(map$Country)
 
 map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
-
-merged_map <- merge(merged_data3,  map, by='Country', all=FALSE)
+merged_map <- merge(merged_data3, map, by = "Country", all = FALSE)
 
 # Create a new variable representing the nb of attacks per country
 results <- merged_map %>%
