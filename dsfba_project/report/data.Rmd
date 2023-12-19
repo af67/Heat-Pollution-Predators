@@ -132,7 +132,7 @@ For our work, we have decided to only study the phenomenon of shark attacks from
 
 ```{r results='hide', warning=FALSE}
 
-attacks <- read.csv("attacks1.csv")
+attacks <- read.csv(here::here("data/attacks1.csv"))
 attacks <- attacks[1:3406, ]
 
 #We drop the columns that we do not need. The country is enough for our study, so we will not take into consideration the precise areas. The injury is not useful as well, indeed, the fatality column already gives us enough information. The other columns all contain information that are not useful for a research.
@@ -980,7 +980,7 @@ We then rotated the dataset so as to have all the years under a single column; w
 
 ```{r, echo=TRUE, warning=FALSE}
 
-temperature <- read_xlsx("Temperature.xlsx")
+temperature <- read_xlsx(here::here("data/Temperature.xlsx"))
 
 #R did not read the "°C" on the column Unit, so we changed it manually
 
@@ -1072,7 +1072,7 @@ In this data set we had few columns but we only kept 2 columns that were the mor
 
 ```{r, echo=TRUE, warning=FALSE}
 
-sealevel <- read.csv("sealevel.csv")
+sealevel <- read.csv(here::here("data/sealevel.csv"))
 
 # keep the 2 columns we are interested to analyze because the other are irrelevant for our project
 sealevel <- subset(sealevel, select = c(Year, GMSL_GIA))
@@ -1100,7 +1100,7 @@ DT::datatable(sealevel, options = list(pageLength = 10))
 Finally, the GHG emissions dataset was the easiest  to clean. Indeed, we already have a column for the ISO code, so we simply had to filter the years so that the observations began in 1970.
 
 ```{r, echo=TRUE, warning=FALSE}
-co2 <- read.csv("CO2.csv")
+co2 <- read.csv(here::here("data/CO2.csv"))
 
 # Change names of columns in order to have the same columns that in the other datasets
 names(co2)[names(co2) == "Entity"] <- "Country"
