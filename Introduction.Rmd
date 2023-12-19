@@ -703,11 +703,6 @@ attacks$Time[position_of_na] <- sample(
 )
 
 
-# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
-# evening to 2 and night to 3
-attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
-
-
 #_____________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
@@ -1187,6 +1182,7 @@ After cleaning the four datasets, we have finally merged them. This step is esse
 
 ```{r, echo=TRUE, warning=FALSE}
 
+
 #MERGE FIRST TWO DATA SETS
 
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
@@ -1202,11 +1198,61 @@ merged_data2 <- left_join(merged_data, sealevel, by = c("Year"))
 # Assuming 'Year' and 'Country' are the columns in both datasets for matching
 merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
 merged_data3$Temperature <- as.numeric(as.character(merged_data3$Temperature))
+# Assuming 'Year' and 'Country' are the columns in both datasets for matching
+merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
+
+#Change name of a column
+colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
+merged_data3$Temperature <- as.numeric(merged_data3$Temperature)
+
+
+#for merged_data3, which we will use for our regressions, we need numerical variables
+#therefore, we will make changes in some categorical ones
+
+#TYPE
+
+#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
+# Provoked to 4, Questionable to 5 and Sea Disaster to 6
+categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
+merged_data3$Type <- factor(merged_data3$Type, levels = names(categories))
+merged_data3$Type <- as.numeric(merged_data3$Type)
+
+#TIME
+
+# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
+# evening to 2 and night to 3
+merged_data3$Time <- as.numeric(factor(merged_data3$Time, levels = c("morning", "afternoon", "evening", "night")))
+
+
+#SEX
+
+merged_data3$Sex <- ifelse(merged_data3$Sex == "M", 0, 
+                      ifelse(merged_data3$Sex == "F", 1, 2))
+
+
+#SPECIES
+
+
+merged_data3 <- merged_data3 %>%
+  mutate(Species = as.numeric(factor(Species)))
+
+# Get the top 5 species
+top_species <- merged_data3 %>%
+  count(Species, sort = TRUE) %>%
+  slice_head(n = 5)
+
+# Create a logical condition to include only the top 5 species
+condition <- merged_data3$Species %in% top_species$Species
+
+# Subset the data based on the condition
+species_filtered_data <- merged_data3[condition, ]
+
+
 
 DT::datatable(merged_data3, options = list(pageLength = 10))
 
-
 ```
+
 # 4. <strong>EDA</strong>
 
 ## 4.1 Evolution of shark attacks through the years
@@ -1640,161 +1686,6 @@ INTERACTIVE MAP
 
 
 # 5. <strong>Analysis</strong>
-
-## 5.1 RQ1: Which are the primary factors influencing the occurrence of shark attacks?
-
-RQ2: Which are the primary factors influencing the occurrence of shark attacks?
-After a deep Exploratory Data Analysis we thought about the relevance of some factors that might influence directly the occurrence of shark attacks. Directly in the sense that these are variables that were found in the main data set and not in a secondary one. Let's begin then:
-
-Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
-```{r}
-#Before doing the regression, we will do a correlation matrix of the numerical variables
-numeric_columns <- sapply(attacks, is.numeric)
-
-#Let's choose the numeric columns only
-numeric_data <- attacks[, numeric_columns]
-
-# Calculate the correlation matrix
-correlation_matrix <- cor(numeric_data)
-
-# Show the correlation matrix
-print(correlation_matrix)
-```
--	Thanks to this correlation matrix, we can affirm that:
-o	Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
-o	Age has a slightly positive correlation (0.11) with Time almost.
-o	The variable Type has a slight positive correlation with Age and Species while it has a slight negative correlation with Year, Species and Sex.
-o	There is a negative correlation between Year and Species.
-o	The following variables have no significant correlation with the other numeric variables, due to the value of the coefficient close to 0: Sex and Type.
-
-The regression that we will use is the following one:
-
-\[ \hat{Y} = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4 + \beta_5 X_5 + \beta_6 X_6 + \epsilon \] 
-
-where: 
-
-1. \(\hat{Y}\) = Frequency of Shark Attacks 
-2. \(X_{\text{1}}\) = Year 
-3. \(X_{\text{2}}\) = Sex 
-4. \(X_{\text{3}}\) = Age 
-5. \(X_{\text{4}}\) = Species 
-6.\(X_{\text{5}}\) = Type 
-7. \(X_{\text{6}}\) = Time 
-8. \(\epsilon\) = Residual Error
-
-
-Let's do our main regression based on all the countries
-```{r}
-# Let's do an overall multiple regression model
-#model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
-
-# Print the summary of the regression model
-#summary(model)
-```
--	We just did a linear regression where the response variable is Attackscountry predicted by the following variables: Year, Sex, Age, Time, Type and Species.
--	The intercept represents the predicted value of Attackscountry when almost all variables are zero except Age that could not be zero.
--	The variable Year is statistically significant (p-value < 0.05), indicating that there is a significant relationship between the Year and the number of shark attacks.  The variable Type is statistically significant at the 0.1 level.
--	The variable Age is also statistically significant at the same level (0.1%).
--	In the other side, the variables that are not statistically significant at this level are: Sex and Species.
--	The R-squared in this model is of 5.2 %. Thus, 5.2% of the variance in the response variable (Attackscountry) is explained by this model. The adjusted R-squared is similar, 5 %. This model does not explain a large portion of the variability of this variable.
--	Concerning the F-statistic we can say that there is a low p-value suggesting that at least one predictor variable is significantly related to the response variable. 
-
-
-This first regression will be based only on the USA
-
-
--	We focus on the country that has the most shark attacks in the world according to our main dataset.
--	None of the predictor variables are statistically significant predicting the number of shark attacks in the USA. 
--	This model fits the data concerning USA very well, because of the high R-Squared value (0.5) and the small residuals. Does this model fit well or is there some multicollinearity?
--	According to the VIF analysis, the values are low. As they are below 5, we cannot say that there is high multicollinearity between some variables because here all the values are close to 1. Each variable contributes relatively independently to explaining the variability of Attackscountry.
-
-
-In order to have a better model by doing a forward selection where we will take the model with the lowest AIC.
-
-In order to have a better model by doing a forward selection where we will take the model with the lowest AIC.
-
-Here we have the AIC values for each model:
-1. Model with Year only: AIC = -66827.49
-2. Model with Year and Sex: AIC = -66825.83
-3. Model with Year, Sex, and Age: AIC = -66824.46
-4. Model with Year, Sex, Age, and Species: AIC = -66822.72
-5. Model with Year, Sex, Age, Species and Time: AIC = -66820.77
-6. Model with Year, Sex, Age, Species, Time and Type: AIC = -66818.77
-
-As said previously, we chose the model with the lowest AIC indicating a better fit of the model, but we decided to choose it because the model includes more variables than the others, thus best explaining the variability in the data.
-
-
-
-
-This second regression will be based only on Australia
-
--	We focus on the second country that has the most shark attacks in the world according to our main dataset.
--	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively.
-
-
-
--	In this case, for each model we have the same AIC, that has a value of -66818.77. Increasing the number of variables that we add in the model does not seem to improve the significance of the model. As the AIC value is the same, we prefer to have as many variables as possible.
--	The model with all the variables will explain almost 50% of the variability. But this value is high, but according to the VIF analysis, there is no high multicollinearity between variables. We can conclude saying that this model fits well.
-
-Let's focus on both countries
-
-
-```{r}
-# This regression will be based on both USA and AUSTRALIA
-#combined_data <- merged_map %>%
- # filter(Country %in% c("USA", "AUSTRALIA"))
-
-# Run the regression based on both USA and AUSTRALIA
-#model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, #data = combined_data)
-
-# Print the results
-#print("Regression for USA and AUSTRALIA:")
-#print(summary(model_combined))
-```
--	We focus on the two countries that have the most shark attacks in the world according to our main dataset.
--	Year and Sex are the two variables in this model that are not statistically significant while the others are, at different thresholds. Age and Species are statistically significant at 0.1%, while Time is statistically significant at 10%. The variable Type is statistically significant at 5%.
--	The variability of Attackscountry has a value of 5.25% (R^2) and is explained by the model. We conclude that this model is better explained by another model that contains more useful variables.
-
-
-```{r}
-#Model combined, AIC 
-
-# Include the intercept in the initial model
-#current_model3 <- lm(Attackscountry ~ 1, data = combined_data)
-
-# List to store models at each step
-##selected_models3 <- list()
-
-# Variables to add
-#variables_to_add3 <- c("Year", "Sex", "Age", "Species", "Time", "Type")
-
-# Forward selection loop
-#for (variable in variables_to_add3) {
-  # Add a variable to the formula
- # formula <- as.formula(paste(". ~ . +", variable))
- # current_model3 <- update(current_model3, formula)
-  
-  # Store the current model in the list
- # selected_models[[variable]] <- current_model3
-  
-  # Calculate AIC
- # aic_value2 <- AIC(current_model3)
-  
-  # Print the summary of the current model and AIC value
-  #cat("Variable added:", variable, " | AIC:", aic_value, "\n")
-  #print(summary(current_model3))}
-```
--	Here we have the same AIC value for each model: -66818.77. As said previously, we decide to use the model containing the most variables.
-
-
-We have done the following type of models of this first regression that will help us to answer this first research question:
--	Overall: all countries that we have on our merged dataset.
--	Focus on USA.
--	Focus on Australia.
--	Focus on the two countries above.
-
-Each type of model according to their focus has its own primary factors influencing the occurrence of shark attacks. For example, in the first one (Overall), Age, Year, Type and Time are the factors that influence the attacks. But the two that are highly significant are Age and Year. In the 4th one, the one that is focused on both countries, the main factors are Age, Species, Type and Time. In conclusion, Age, Type and Time are highly significant predictors, thus they strongly influence the occurrence of shark attacks from a statistical point of view. 
-We did not consider models focus on one country because they are not that relevant. We choose to analyze more than 1 country because it makes more sense. We analyzed the two countries with the most shark attacks because we had the most data about these countries. It gives us more details and the significative factors that influence the shark attacks. We reduce the complexity of our model because of the focus on the regions with the most attacks, so it makes our results more relevant.
 
 ## 5.2 RQ2: Which are the factors leading to the fatality of a shark attack?
 
