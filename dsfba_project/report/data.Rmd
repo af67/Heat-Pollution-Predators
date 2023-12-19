@@ -18,7 +18,7 @@ Even though the dataset is owned by the SRI, we have downloaded it through the f
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
 Variables <- c("Case Number", "Date", "Year", "Type", "Country", "Area", "Location", "Activity", "Name", "Sex", "Age", "Injury", "Fatal", "Time", "Species", "Investigator.or.Source", "pdf", "href.formula", "Case Number 2")
-Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same aas the first one)")
+Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same as the first one)")
 
 
 Table1 <- data.frame(Variable = Variables, Description = Description)
@@ -860,6 +860,21 @@ species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", 
 
 attacks$Species <- species
 attacks$Species <- ifelse(is.na(attacks$Species), "Unidentifies shark", attacks$Species)
+
+
+attacks <- attacks %>%
+  mutate(Species = as.numeric(factor(Species)))
+
+# Get the top 5 species
+top_species <- attacks %>%
+  count(Species, sort = TRUE) %>%
+  slice_head(n = 5)
+
+# Create a logical condition to include only the top 5 species
+condition <- attacks$Species %in% top_species$Species
+
+# Subset the data based on the condition
+filtered_data <- attacks[condition, ]
 
 #_____________________________________________________________________________________________
 
