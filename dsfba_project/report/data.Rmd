@@ -2,6 +2,7 @@
 source(here::here("scripts/setup.R"))
 ```
 
+
 # 2. <strong>Data Sets</strong>
 
 In the second section of our work, we will present the datasets that are necessary to answer our research questions. These datasets serve as the foundation for our investigation and provide the data required to draw insightful and important findings.
@@ -18,7 +19,7 @@ Even though the dataset is owned by the SRI, we have downloaded it through the f
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
 Variables <- c("Case Number", "Date", "Year", "Type", "Country", "Area", "Location", "Activity", "Name", "Sex", "Age", "Injury", "Fatal", "Time", "Species", "Investigator.or.Source", "pdf", "href.formula", "Case Number 2")
-Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same as the first one)")
+Description <- c("Case Number of accident", "Date of the accident", "Year of accident", "Whether the victim provoked the shark or not", "Country of accident", "Region", "Location", "Activity the victim was doing before accident","Name of the victim", "Sex of the victim", "Age of the victim","Injury provoked by the accident", "Whether the accident led to death or not (Binary variable)", "Time of accident", "Shark Species", "Investigator of the accident", "Pdf information of the accident", "Pdf link of the accident", "Case number (same aas the first one)")
 
 
 Table1 <- data.frame(Variable = Variables, Description = Description)
@@ -101,6 +102,25 @@ knitr::kable(Table4)
 The first step of our work is data cleaning. While collecting data for a study, it might happen to have some variables with missing information, worthless data or spelling mistakes In order to run a regression, it is fundamental that each column within a data set has no missing values and that information is written following the same format. This procedure takes the name of data cleaning, and it will cover the whole subsection. 
 
 Please be aware that at the beginning of each subsection we only provide <strong>general</strong> instructions of our cleaning. Through the code, you will get additional in-depth explanations of each step we took.
+ 
+
+```{r message=FALSE}
+#We start by selecting the packages that we will need to run our functions
+library(tidyverse)
+library(knitr)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(countrycode)
+library(ggplot2)
+library(plotly)
+library(stargazer)
+library(gtsummary)
+library(corrplot)
+library(gridExtra)
+
+```
 
 
 ## 3.1 Attacks Cleaning
@@ -111,7 +131,8 @@ For our work, we have decided to only study the phenomenon of shark attacks from
 
 
 ```{r results='hide', warning=FALSE}
-attacks <- read.csv(here::here("data/attacks1.csv"))
+
+attacks <- read.csv("attacks1.csv")
 attacks <- attacks[1:3406, ]
 
 #We drop the columns that we do not need. The country is enough for our study, so we will not take into consideration the precise areas. The injury is not useful as well, indeed, the fatality column already gives us enough information. The other columns all contain information that are not useful for a research.
@@ -632,16 +653,9 @@ attacks$Time[position_of_na] <- sample(
 )
 
 
-# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
-# evening to 2 and night to 3
-attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon", "evening", "night")))
-
-
 #_____________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
-attacks$Sex <- gsub("lli", "", attacks$Sex)
-attacks$Sex <- gsub("M ", "M", attacks$Sex)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
@@ -652,9 +666,7 @@ attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
 
 #Creation of a variable species where we delete all the numbers that concern the size of the shark
-attacks$Species <- str_remove_all(attacks$Species, "[[:digit:]]")
-
-attacks$Species <- gsub("\\d", "", attacks$Species)
+species <- gsub("[0-9]", "", attacks$Species)
 
 #If there is an empty cell, we will put NA
 species = na_if(attacks$Species, "")
@@ -968,7 +980,7 @@ We then rotated the dataset so as to have all the years under a single column; w
 
 ```{r, echo=TRUE, warning=FALSE}
 
-temperature <- read_xlsx(here::here("data/Temperature.xlsx"))
+temperature <- read_xlsx("Temperature.xlsx")
 
 #R did not read the "°C" on the column Unit, so we changed it manually
 
@@ -1060,7 +1072,7 @@ In this data set we had few columns but we only kept 2 columns that were the mor
 
 ```{r, echo=TRUE, warning=FALSE}
 
-sealevel <- read.csv(here::here("data/sealevel.csv"))
+sealevel <- read.csv("sealevel.csv")
 
 # keep the 2 columns we are interested to analyze because the other are irrelevant for our project
 sealevel <- subset(sealevel, select = c(Year, GMSL_GIA))
@@ -1088,7 +1100,7 @@ DT::datatable(sealevel, options = list(pageLength = 10))
 Finally, the GHG emissions dataset was the easiest  to clean. Indeed, we already have a column for the ISO code, so we simply had to filter the years so that the observations began in 1970.
 
 ```{r, echo=TRUE, warning=FALSE}
-co2 <- read.csv(here::here("data/CO2.csv"))
+co2 <- read.csv("CO2.csv")
 
 # Change names of columns in order to have the same columns that in the other datasets
 names(co2)[names(co2) == "Entity"] <- "Country"
@@ -1119,6 +1131,7 @@ DT::datatable(co2, options = list(pageLength = 10))
 After cleaning the four datasets, we have finally merged them. This step is essential to be able to run regression across variables that came from multiple datasets. 
 
 ```{r, echo=TRUE, warning=FALSE}
+
 
 #MERGE FIRST TWO DATA SETS
 
@@ -1161,7 +1174,6 @@ merged_data3$Type <- as.numeric(merged_data3$Type)
 merged_data3$Time <- as.numeric(factor(merged_data3$Time, levels = c("morning", "afternoon", "evening", "night")))
 
 
-
 #SEX
 
 merged_data3$Sex <- ifelse(merged_data3$Sex == "M", 0, 
@@ -1184,13 +1196,6 @@ condition <- merged_data3$Species %in% top_species$Species
 
 # Subset the data based on the condition
 species_filtered_data <- merged_data3[condition, ]
-
-
-
-#FATALITY
-
-
-merged_data3$Fatality <- ifelse(merged_data3$Fatality == "Y", 1, 0)
 
 
 
