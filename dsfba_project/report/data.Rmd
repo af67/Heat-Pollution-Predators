@@ -863,21 +863,6 @@ species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", 
 attacks$Species <- species
 attacks$Species <- ifelse(is.na(attacks$Species), "Unidentifies shark", attacks$Species)
 
-
-attacks <- attacks %>%
-  mutate(Species = as.numeric(factor(Species)))
-
-# Get the top 5 species
-top_species <- attacks %>%
-  count(Species, sort = TRUE) %>%
-  slice_head(n = 5)
-
-# Create a logical condition to include only the top 5 species
-condition <- attacks$Species %in% top_species$Species
-
-# Subset the data based on the condition
-filtered_data <- attacks[condition, ]
-
 #_____________________________________________________________________________________________
 
 #ACTIVITY
