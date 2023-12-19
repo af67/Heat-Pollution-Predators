@@ -452,7 +452,7 @@ attacks <- subset(attacks, !is.na(Age))
 #________________________________________________________________________________________________________________________
 
 
-#NOW WORK ON TIME
+#NOW WE WORK ON TIME
 
 #sometimes hours are written in a different format compared to most of the others, which follow the format
 #13h30. Since they are not a lot we just replaced them manually

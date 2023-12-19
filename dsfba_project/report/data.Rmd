@@ -640,6 +640,8 @@ attacks$Time <- as.numeric(factor(attacks$Time, levels = c("morning", "afternoon
 #_____________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
+attacks$Sex <- gsub("lli", "", attacks$Sex)
+attacks$Sex <- gsub("M ", "M", attacks$Sex)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
@@ -1153,6 +1155,58 @@ merged_data3 <- left_join(merged_data2, co2, by = c("Year", "ISO_Code"))
 
 #Change name of a column
 colnames(merged_data3)[colnames(merged_data3) == 'Country.x'] <- 'Country'
+merged_data3$Temperature <- as.numeric(merged_data3$Temperature)
+
+
+#for merged_data3, which we will use for our regressions, we need numerical variables
+#therefore, we will make changes in some categorical ones
+
+#TYPE
+
+#Let's transform the Type variable on numeric. 1 corresponds to Boat, 2 to Unprovoked, Invalid to 3
+# Provoked to 4, Questionable to 5 and Sea Disaster to 6
+categories <- c("Boat" = 1, "Unprovoked" = 2, "Invalid" = 3, "Provoked" = 4, "Questionable" = 5, "Sea Disaster" = 6)
+merged_data3$Type <- factor(merged_data3$Type, levels = names(categories))
+merged_data3$Type <- as.numeric(merged_data3$Type)
+
+#TIME
+
+# Let's focus on the transformation of time where morning correspond to 0, afternoon to 1,
+# evening to 2 and night to 3
+merged_data3$Time <- as.numeric(factor(merged_data3$Time, levels = c("morning", "afternoon", "evening", "night")))
+
+
+
+#SEX
+
+merged_data3$Sex <- ifelse(merged_data3$Sex == "M", 0, 
+                      ifelse(merged_data3$Sex == "F", 1, 2))
+
+
+#SPECIES
+
+
+merged_data3 <- merged_data3 %>%
+  mutate(Species = as.numeric(factor(Species)))
+
+# Get the top 5 species
+top_species <- merged_data3 %>%
+  count(Species, sort = TRUE) %>%
+  slice_head(n = 5)
+
+# Create a logical condition to include only the top 5 species
+condition <- merged_data3$Species %in% top_species$Species
+
+# Subset the data based on the condition
+species_filtered_data <- merged_data3[condition, ]
+
+
+
+#FATALITY
+
+
+merged_data3$Fatality <- ifelse(merged_data3$Fatality == "Y", 1, 0)
+
 
 
 DT::datatable(merged_data3, options = list(pageLength = 10))
