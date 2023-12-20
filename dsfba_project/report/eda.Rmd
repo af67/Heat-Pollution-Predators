@@ -98,6 +98,7 @@ interactive_plot <- ggplotly(plot2)
 interactive_plot
 
 ```
+## 4.3 Sex of the victims
 
 <strong>Better understanding of the attacks and the sex of the victims</strong>
 
@@ -129,6 +130,7 @@ interactive_bar_plot_sex_attacks <- ggplotly(
 interactive_bar_plot_sex_attacks
 
 ```
+## 4.4 Continental distribution of the attacks
 
 <strong>What are the continents that have the most attacks?</strong>
 
@@ -172,7 +174,7 @@ interactive_bar_plot_region_attacks
 ```
 
 
-## 4.3 Fatality of shark attacks
+## 4.5 Fatality of shark attacks
 
 <strong>Are shark attacks more likely to lead to death?</strong> 
 
@@ -205,6 +207,7 @@ plot4 <- ggplot(summary_df, aes(x = Var1, y = Freq, fill = Var2)) +
 
 plot4
 ```
+## 4.6 Activities related to the attacks
 
 <strong>What are the activities with the most attacks?</strong>
 
@@ -236,10 +239,11 @@ interactive_top_activities_attacks
 
 
 ```
+## 4.7 Monthly distribution of the attacks
 
-What is the monthly distribution of shark attacks?
+<strong>What is the time of the year that have the most shark attacks?</strong>
 
-As illustrated in this graph, there is a tendency for shark attacks to occur more frequently during the summer months compared to the rest of the year.
+As illustrated in this graph, there is a tendency for shark attacks to occur more frequently during the summer months compared to the rest of the year. It seems pretty logical as there is more people in the water during summer time.
 
 ```{r, echo=TRUE}
 
@@ -263,7 +267,7 @@ interactive_attacks_per_months
 ```
 
 
-## 4.4 Evolution of temperatures through the years
+## 4.8 Evolution of temperatures through the years
 
 The graph below illustrates the change in global temperature throughout the last few decades, showing an overall increase in temperature over the 50-year period. Despite some fluctuations, the upward trend indicates a clear warming pattern, with a notable acceleration following the 1980s and one of the two most significant rises occurring in the recent decade.
 
@@ -295,7 +299,7 @@ interactive_plot
 ```
 
 
-## 4.5 Evolution of sea level through the yars
+## 4.9 Evolution of sea level through the yars
 
 This line graph depicts the trend of rising sea levels from around the ‘90s until the early 2020s, showing some fluctuations initially, and a notable upward trend thereafter. The early 2000s represent a steady rate of increase, with a minor decrease in the early 2010s. This pattern appears to be somewhat consistent with global temperature changes, and a steepening rise in the last couple of years indicate a complementary relation with the increasing temperature levels.
 
@@ -309,7 +313,7 @@ interactive_plot <- ggplotly(plot6)
 interactive_plot
 ```
 
-## 4.6 CO2 emissions insights
+## 4.10 CO2 emissions insights
 
 <strong>Trend of CO2 emissions per year</strong> 
 
@@ -414,6 +418,9 @@ interactive_top30_countries_co2 <- ggplotly(
 # Display the interactive bar plot
 print(interactive_top30_countries_co2)
 ```
+## 4.11 Relationships plots between our variables
+
+Now that we have a better understanding of our variables, we can analyse their relationships.
 
 <strong>How is the relationship between the attacks and the age of the victims?</strong>
 
