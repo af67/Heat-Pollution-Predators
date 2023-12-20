@@ -1286,21 +1286,30 @@ Conversely, the decreased number of assaults that occur at night may be related 
 Lastly, we suppose that the medium frequencies of the morning and evening might correspond to transitional periods when shark and human behavior are changing.
 
 ```{r, echo=TRUE}
-bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3", "#a6d854")
+bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
 
-barplot1 <- barplot(table(attacks$Time),
-        col = bar_colors,
-        xlab = "Time of Day", ylab = "Frequency of Attacks",
-        main = "Frequency of Shark Attacks by Time of Day",
-        border = "white",  # White borders for bars
-        ylim = c(0, max(table(attacks$Time)) + 5),  # Adjust y-axis limits
-        space = 0.5,  # Adjust space between bars
-        cex.names = 0.8,  # Adjust font size of axis labels
-        font.axis = 2,  # Bold axis labels
-        args.legend = list(title = "Time of Day", cex = 0.8),  # Legend settings
-        beside = TRUE)
+# Create a sorted table
+sorted_table <- table(attacks$Time)
+sorted_table <- sorted_table[order(-sorted_table)]
 
-barplot1
+# Create a bar plot with the sorted data
+barplot1 <- barplot(sorted_table,
+                    col = bar_colors,
+                    xlab = "Time of Day", ylab = "Frequency of Attacks",
+                    main = "Frequency of Shark Attacks by Time of Day",
+                    border = "white",
+                    ylim = c(0, 1800),
+                    space = 0.5,
+                    cex.names = 0.8,
+                    font.axis = 2,
+                    beside = TRUE)
+
+
+# Add text labels with frequencies on the bars
+text_labels <- sorted_table
+text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, col = "black")
+
+
 
 ```
 

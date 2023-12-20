@@ -96,7 +96,6 @@ knitr::kable(Table4)
 ```
 
 
-
 # 3. <strong>Data Wrangling</strong>
 
 The first step of our work is data cleaning. While collecting data for a study, it might happen to have some variables with missing information, worthless data or spelling mistakes In order to run a regression, it is fundamental that each column within a data set has no missing values and that information is written following the same format. This procedure takes the name of data cleaning, and it will cover the whole subsection. 
@@ -960,6 +959,8 @@ attacks$ISO_Code[attacks$Country %in% c("OKINAWA") & is.na(attacks$ISO_Code)] <-
 attacks$ISO_Code[attacks$Country %in% c("MICRONESIA") & is.na(attacks$ISO_Code)] <- "FSM"
 attacks <- subset(attacks, !is.na(ISO_Code))
 
+final_attacks_cleaned <- attacks
+
 
 ```
 
@@ -1062,6 +1063,8 @@ temperature$ISO_Code[temperature$Country %in% c("MICRONESIA") & is.na(temperatur
 #Now that we put ISO code, we can remove the country column
 temperature <- temperature %>% select(-'Country')
 
+final_temperature_cleaned <- temperature
+
 DT::datatable(temperature, options = list(pageLength = 10))
 
 
@@ -1091,6 +1094,8 @@ sealevel <- na.omit(sealevel)
 #Change name of column Year
 column <- gsub("2","",colnames(sealevel))
 colnames(sealevel) <- column
+
+final_sealevel_cleaned <- sealevel
 
 DT::datatable(sealevel, options = list(pageLength = 10))
 
@@ -1122,6 +1127,9 @@ co2<- co2[co2$Year >= 1970, ]
 co2$ISO_Code <- na_if(co2$ISO_Code, "")
 
 co2 <- subset(co2, !is.na(ISO_Code))
+
+final_ghg_cleaned <- co2
+
 
 DT::datatable(co2, options = list(pageLength = 10))
 

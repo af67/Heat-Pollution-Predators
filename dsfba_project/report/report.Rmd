@@ -14,5 +14,5 @@ output:
   
 ---
 
-```{r child = c('intro.Rmd', 'data.Rmd', 'eda.Rmd')}
+```{r child = c('intro.Rmd', 'data.Rmd', 'eda.Rmd', 'concl.Rmd')}
 ```

@@ -870,6 +870,8 @@ attacks$ISO_Code[attacks$Country %in% c("MICRONESIA") & is.na(attacks$ISO_Code)]
 
 attacks <- subset(attacks, !is.na(ISO_Code))
 
+final_attacks_cleaned <- attacks #final dataset
+
 #________________________________________________________________________________________________________________________
 
 #                           C L E A N I N G   OF    T E M P E R A T U R E S
@@ -954,6 +956,7 @@ temperature$ISO_Code[temperature$Country %in% c("MICRONESIA") & is.na(temperatur
 
 #now that i put iso, i can remove the country one
 temperature <- temperature %>% select(-'Country')
+final_temperature_cleaned <- temperature
 
 #________________________________________________________________________________________________________________________
 #MERGE FIRST TWO DATA SETS
@@ -962,7 +965,6 @@ temperature <- temperature %>% select(-'Country')
 merged_data <- left_join(attacks, temperature, by = c("Year", "ISO_Code"))
 
 sum(is.na(merged_data$Temperature)) 
-
 
 
 #________________________________________________________________________________________________________________________
@@ -989,6 +991,8 @@ sealevel <- na.omit(sealevel)
 #Change name of column Year
 column <- gsub("2","",colnames(sealevel))
 colnames(sealevel) <- column
+
+final_sealevel_cleaned <- sealevel
 
 #________________________________________________________________________________________________________________________
 #MERGE PREVIOUS AND NEW
@@ -1038,6 +1042,7 @@ co2$ISO_Code <- ifelse(co2$ISO_Code == "", NA, co2$ISO_Code)
 
 co2 <- subset(co2, !is.na(ISO_Code))
 
+final_ghg_cleaned <- co2
 #________________________________________________________________________________________________________________________
 #MERGE FIRST THREE DATA SETS
 
