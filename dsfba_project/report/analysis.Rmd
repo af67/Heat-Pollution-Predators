@@ -313,7 +313,7 @@ print(summary(model_combined))
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
-stargazer(model_combines,
+stargazer(model_combined,
           title = 'Regression on the main factors influencing shark attacks focused on the USA and AUSTRALIA',
           type = 'html',
           digits = 3)
