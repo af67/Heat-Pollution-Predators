@@ -8,14 +8,8 @@ packages <- c(
   "tidyverse", # for wrangling
   "scales", # for plotting
   "knitr", "readxl", "dplyr", "tidyr", "stringr", "countrycode", "ggplot2", "plotly",
-<<<<<<< Updated upstream
-  "stargazer", "gtsummary", "corrplot", "gridExtra", "leaflet", "viridisLite", "htmltools",
-  "RColorBrewer", "car", "DT", "htmlwidgets"
-=======
   "stargazer", "gtsummary", "corrplot", "gridExtra", "viridisLite", "htmltools",
-  "RColorBrewer", "car", "DT"
->>>>>>> Stashed changes
-)
+  "RColorBrewer", "car", "DT", "htmlwidgets")
 purrr::walk(packages, library, character.only = TRUE)
 
 ######################################################

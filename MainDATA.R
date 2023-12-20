@@ -24,7 +24,7 @@ library(plotly)
 library(here)
 
 
-attacks <- read.csv("attacks1.csv")
+attacks <- read.csv(here::here("data/attacks1.csv"))
 attacks <- attacks[1:3406, ]
 #________________________________________________________________________________________________________________________
 #we drop the columns that we do not need
@@ -877,7 +877,7 @@ attacks <- subset(attacks, !is.na(ISO_Code))
 #________________________________________________________________________________________________________________________
 
 library(dplyr)
-temperature <- read_xlsx("Temperature.xlsx")
+temperature <- read_xlsx(here::here("data/Temperature.xlsx"))
 
 #it did not read the "°C" on the column Unit, so I'll change it manually
 
@@ -972,7 +972,7 @@ sum(is.na(merged_data$Temperature))
 #________________________________________________________________________________________________________________________
 
 
-sealevel <- read.csv("sealevel.csv")
+sealevel <- read.csv(here::here("data/sealevel.csv"))
 
 # keep the 2 columns we are interested to analyze because the other are irrelevant for our project
 sealevel <- subset(sealevel, select = c(Year, GMSL_GIA))
@@ -1010,7 +1010,7 @@ if (!require(dplyr)) {
 # Charger le package dplyr
 library(dplyr)
 
-co2 <- read.csv("CO2.csv")
+co2 <- read.csv(here::here("data/CO2.csv"))
 
 # Change names of columns in order to have the same columns that in the other datasets
 
