@@ -3,7 +3,7 @@
 
 #EDA
 
-#1. See the evolution of shark attacks throughout the years
+#1. See the evolution of shark attacks throughout the years DONE
 
 # Check the column names in your dataset
 colnames(attacks)
@@ -17,7 +17,7 @@ ggplot(data = attacks, aes(x = Year)) +
   labs(title = "Shark Attacks Evolution Over Years", x = "Year", y = "Number of Attacks")
 
 
-#2. See what are the countries with most shark attacks
+#2. See what are the countries with most shark attacks DONE
 
 shark_attacks_by_country <- attacks %>%
   group_by(Country) %>%
@@ -41,7 +41,7 @@ interactive_plot <- ggplotly(plot2)
 interactive_plot
 
 
-#3. WHAT TIME
+#3. WHAT TIME DONE
 
 bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
 
@@ -68,7 +68,7 @@ text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, c
 
 
 
-#5. See the evolution of the level of co2 emission throughout the years
+#5. See the evolution of the level of co2 emission throughout the years DONE
 
 
 # Create an interactive line plot with backticks to show the trend in co2 emissions throughout the years
@@ -113,7 +113,7 @@ interactive_top30_countries_co2 <- ggplotly(
 print(interactive_top30_countries_co2)
 
 
-#6B. Continents with most co2 emissions
+#6B. Continents with most co2 emissions DONE
 
 #The goal now is to regroup countries by continents and be able to have a better idea of where are most of the emissions coming from around the globe
 
@@ -173,7 +173,7 @@ interactive_co2_continent <- ggplotly(
 print(interactive_co2_continent)
 
 
-#7. See the evolution of sea level throughout the years
+#7. See the evolution of sea level throughout the years DONE
 
 # Create a line plot
 interactive_sealevel <- ggplotly(
@@ -187,7 +187,7 @@ print(interactive_sealevel)
 
 
 
-#8. See the evolution in temperature by countries throughout the years
+#8. See the evolution in temperature by countries throughout the years DONE
 
 # Filter out NA values and non-numeric values in the Temperature column
 temperature_data_filtered <- temperature %>%
@@ -215,7 +215,7 @@ interactive_temperature <- ggplotly(
 print(interactive_temperature)
 
 
-#9. Shows the relationship between the attacks and the age of the victims
+#9. Shows the relationship between the attacks and the age of the victims DONE
 
 
 # Create a summary table with the count of attacks for each age
@@ -237,7 +237,7 @@ interactive_attacks_age <- ggplotly(
 print(interactive_attacks_age)
 
 
-#10. Better understanding of the attacks and sex of the victims
+#10. Better understanding of the attacks and sex of the victims DONE
 
 # Create a summary table with the count of attacks for each sex
 attacks_summary_sex <- attacks %>%
@@ -265,7 +265,7 @@ print(interactive_bar_plot_sex_attacks)
 
 
 
-#11. Want to know where are the regions (continents) with the most attacks
+#11. Want to know where are the regions (continents) with the most attacks DONE
 
 #Create a new column in attacks that represents the continents
 attacks_grouped <- attacks %>%
@@ -301,7 +301,7 @@ print(interactive_bar_plot_region_attacks)
 
 
 
-#12. Does sea level and the number of shark attacks have a relationship
+#12. Does sea level and the number of shark attacks have a relationship DONE
 
 # Calculate the number of attacks per year
 attacks_summary <- attacks %>%
@@ -327,7 +327,7 @@ interactive_scatter_plot_sea_level_attacks <- ggplotly(
 print(interactive_scatter_plot_sea_level_attacks)
 
 
-#13. Relationship between temperature change and the number of shark attacks
+#13. Relationship between temperature change and the number of shark attacks DONE
 
 # Identify non-numeric values in the Temperature column
 non_numeric_temp <- temperature %>%
@@ -373,7 +373,7 @@ interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
 print(interactive_scatter_plot_worldtemperature_attacks)
 
 
-#14. What are the activities with the most attacks
+#14. What are the activities with the most attacks DONE
 
 # Check the top activities with the most attacks
 top_activities <- attacks %>%
@@ -399,7 +399,7 @@ interactive_top_activities_attacks
 
 
 
-#15. See the evolution of shark attacks throughout the years with sex 
+#15. See the evolution of shark attacks throughout the years with sex DONE
 
 # Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
 attacks_evolution_sex <- ggplot(data = attacks, aes(x = Year, fill = Sex)) +
