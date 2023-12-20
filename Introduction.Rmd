@@ -716,8 +716,7 @@ attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
 
 #Creation of a variable species where we delete all the numbers that concern the size of the shark
-species <- str_replace_all(attacks$Species, "\\d", "")
-
+attacks$Species <- str_remove_all(attacks$Species, "[[:digit:]]")
 
 #If there is an empty cell, we will put NA
 species = na_if(attacks$Species, "")
