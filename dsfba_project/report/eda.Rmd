@@ -392,7 +392,7 @@ Here is a plot to further illustrate the distribution of CO2 emissions in the wo
 
 ```{r}
 # Create a bar plot
-ggplot(data = co2, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
+ggplot(data = final_co2_cleaned, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
   geom_bar(stat = "identity", fill = "skyblue") +
   labs(title = "Top Countries with the Most CO2 Emissions", x = "Countries", y = "Annual CO2 Emissions") +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
