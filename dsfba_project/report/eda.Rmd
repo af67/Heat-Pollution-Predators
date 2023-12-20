@@ -335,7 +335,9 @@ print(interactive_bar_plot_region_attacks)
 
 ```
 
-Does sea level and the number of shark attacks have a relationship
+Does sea level and the number of shark attacks have a relationship?
+
+
 ```{r, echo=TRUE}
 # Calculate the number of attacks per year
 attacks_summary <- attacks %>%
@@ -464,6 +466,8 @@ interactive_attacks_evolution_sex
 ```
 
 Shark attacks monthly repartition
+
+
 
 ```{r, echo=TRUE}
 
