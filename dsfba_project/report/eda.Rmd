@@ -16,12 +16,20 @@ For the other two periods, we will discover the reasons during a more in-depth a
 
 ```{r, echo=TRUE}
 
-plot1 <- ggplot(data = attacks, aes(x = Year)) +
-  geom_smooth(stat = "count", aes(group = 1), color = "blue", size = 1) +
-  geom_bar(stat = "count", fill = "red") +
-  labs(title = "Shark Attacks Evolution Over Years", x = "Year", y = "Number of Attacks")
+# Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
+attacks_evolution_sex <- ggplot(data = final_attacks_cleaned, aes(x = Year, fill = Sex)) +
+  geom_bar(position = "stack", color = "white") +
+  labs(title = "Shark Attacks Evolution Over Years by Sex",
+       x = "Year",
+       y = "Number of Attacks",
+       fill = "Sex") +
+  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
+  theme_minimal()
 
-plot1
+
+interactive_attacks_evolution_sex <- ggplotly(attacks_evolution_sex)
+interactive_attacks_evolution_sex
+
 ```
 
 ## 4.2 Pattern of shark attacks frequencies
@@ -91,6 +99,79 @@ interactive_plot
 
 ```
 
+<strong>Better understanding of the attacks and the sex of the victims</strong>
+
+We initially believed that men experienced attacks more frequently, but our surprise grew when we examined this chart. It highlights a substantial disparity in the distribution of attacks between men and women.
+
+```{r, echo=TRUE}
+# Create a summary table with the count of attacks for each sex
+attacks_summary_sex <- final_attacks_cleaned %>%
+  group_by(Sex) %>%
+  summarise(NumAttacks = n())
+
+# Define the desired order of levels
+sex_order <- c("M", "F", "Unknown")
+
+# Convert the 'Sex' variable to a factor with the specified order
+attacks_summary_sex$Sex <- factor(attacks_summary_sex$Sex, levels = sex_order)
+
+# Bar plot to show the distribution of shark attacks by sex
+interactive_bar_plot_sex_attacks <- ggplotly(
+  ggplot(attacks_summary_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
+    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+    labs(title = "Distribution of Shark Attacks by Sex",
+         x = "Sex",
+         y = "Number of Attacks") +
+    scale_fill_manual(values = c("blue", "pink", "gray"))
+)
+
+# Display the interactive bar plot
+interactive_bar_plot_sex_attacks
+
+```
+
+<strong>What are the continents that have the most attacks?</strong>
+
+This plot illustrates the regions with the highest number of attacks since 1970, with North America and Australia & Oceania taking the lead.
+
+```{r, echo=TRUE}
+
+#Create a new column in attacks that represents the continents
+attacks_grouped <- final_attacks_cleaned %>%
+  mutate(Region = case_when(
+    ISO_Code %in% c(NA) ~ "Unknown",
+    ISO_Code %in% c("AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BOL", "BGR", "BFA", "BDI", "KHM", "CMR", "CPV", "CHN", "CXR", "CYP", "HKG", "IND", "IDN", "IRN", "IRQ", "ISR", "JOR", "JPN", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "OMN", "PAK", "PSE", "PHL", "QAT", "SAU", "SGP", "KOR", "LKA", "TUR", "SYR", "TWN", "TJK", "THA", "TKM", "ARE", "UZB", "YEM", "VNM") ~ "Asia",
+    ISO_Code %in% c("ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BWA", "HRV", "CZE", "DNK", "EST", "FIN", "FRO", "FRA", "GEO", "DEU", "GRC", "GRL", "GLP", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LIE", "LUX", "MLT", "MDA", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR") ~ "Europe",
+    ISO_Code %in% c("DZA", "AGO", "BEN", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "TLS", "EGY", "ERI", "SWZ", "ETH", "GNQ", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MTQ", "MRT", "MUS", "MYT", "MAR", "MOZ", "NAM", "NER", "NGA", "REU", "RWA", "SHN", "SEN", "SYC", "SLE", "STP", "ZAF", "SOM", "SSD", "SDN", "SUR", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE") ~ "Africa",
+    ISO_Code %in% c("AIA", "ATG", "ABW", "BHS", "BMU", "BRB", "BLZ", "VGB", "BRN", "CAN", "CRI", "CUB", "CUW", "DMA", "DOM", "SLV", "GRD", "GTM", "HTI", "HND", "JAM", "MSR", "MEX", "USA", "NIC", "PAN", "KNA", "LCA", "SPM", "VCT", "SXM", "TCA", "TTO") ~ "North America",
+    ISO_Code %in% c("ARG", "COL", "CHL", "ECU", "GUF", "GUY", "PRY", "PER", "URY", "VEN", "BRA", "BES") ~ "South America",
+    ISO_Code %in% c("AUS", "COK", "FJI", "PYF", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL", "NIU", "PLW", "PNG", "WSM", "SLB", "TON", "TUV", "VUT", "WLF") ~ "Australia & Oceania",
+    ISO_Code %in% c("ATA") ~ "Antarctica"
+  ))
+
+
+# Filter data to include only valid regions (excluding "Unknown")
+filtered_attacks_region <- attacks_grouped %>% 
+  filter(!is.na(Region) & Region != "Unknown")
+
+# Bar plot to show the distribution of shark attacks by region
+interactive_bar_plot_region_attacks <- ggplotly(
+  ggplot(filtered_attacks_region, aes(x = Region, fill = Region)) +
+    geom_bar() +
+    labs(title = "Distribution of Shark Attacks by Region",
+         x = "Region",
+         y = "Number of Attacks") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
+)
+
+
+# Display the interactive bar plot
+interactive_bar_plot_region_attacks
+
+
+```
+
+
 ## 4.3 Fatality of shark attacks
 
 <strong>Are shark attacks more likely to lead to death?</strong> 
@@ -125,7 +206,61 @@ plot4 <- ggplot(summary_df, aes(x = Var1, y = Freq, fill = Var2)) +
 plot4
 ```
 
+<strong>What are the activities with the most attacks?</strong>
 
+Identifying the activities most commonly targeted by shark attacks was a crucial aspect of our analysis. The results underscore that among various water-related activities, surfing stands out as the predominant target, with 903 attacks recorded since 1970, making it the preferred activity for sharks. This is not a surprise as the similarity in shape between a surfboard and a seal may lead sharks to mistake the two, providing a plausible explanation for the higher incidence of attacks during surfing.
+
+```{r, echo=TRUE}
+
+# Check the top activities with the most attacks
+top_activities <- final_attacks_cleaned %>%
+  group_by(Activity, Sex) %>%
+  summarize(Number_of_Attacks = n()) %>%
+  arrange(desc(Number_of_Attacks)) %>%
+  top_n(30)  # Adjust the number if you want more or fewer top activities
+
+# Plot the results
+top_activities_attacks <- ggplot(top_activities, aes(x = reorder(Activity, -Number_of_Attacks), y = Number_of_Attacks, fill = Sex)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Top Activities with the Most Attacks",
+       x = "Activities",
+       y = "Number of Attacks",
+       fill = "Sex") +
+  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+interactive_top_activities_attacks <- ggplotly(top_activities_attacks)
+interactive_top_activities_attacks
+
+
+```
+
+What is the monthly distribution of shark attacks?
+
+As illustrated in this graph, there is a tendency for shark attacks to occur more frequently during the summer months compared to the rest of the year.
+
+```{r, echo=TRUE}
+
+
+#Here it is great but I tried to class the months in order but it has not worked yet
+
+# Create a plot to show the repartition of shark attacks per month by sex
+attacks_per_months <- ggplot(data = final_attacks_cleaned, aes(x = factor(Date), fill = Sex)) +
+  geom_bar(position = "stack", color = "white") +
+  labs(title = "Shark Attacks Repartition by Month and Sex",
+       x = "Month",
+       y = "Number of Attacks",
+       fill = "Sex") +
+  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
+  theme_minimal()
+
+
+interactive_attacks_per_months <- ggplotly(attacks_per_months)
+interactive_attacks_per_months
+
+```
 
 
 ## 4.4 Evolution of temperatures through the years
@@ -247,8 +382,42 @@ interactive_plot <- ggplotly(plot2)
 interactive_plot
 ```
 
+<strong>What are the countries with the most CO2 emissions?</strong>
 
-Shows the relationship between the attacks and the age of the victims 
+Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. However, without surprise, the two biggest pollutant name of the world are from North America and Asia.
+
+```{r}
+# Create a bar plot
+ggplot(data = co2, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top Countries with the Most CO2 Emissions", x = "Countries", y = "Annual CO2 Emissions") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Filter out 'OWID_WRL' from the data
+co2_filtered_wrl <- co2 %>% filter(ISO_Code != "OWID_WRL")
+
+# Select the top 30 countries based on CO2 emissions
+top30_countries <- co2_filtered_wrl %>%
+  group_by(ISO_Code) %>%
+  summarize(`Annual CO2 Emissions` = sum(`Annual CO2 Emissions`)) %>%
+  arrange(desc(`Annual CO2 Emissions`)) %>%
+  top_n(30)
+
+# Create an interactive bar plot
+interactive_top30_countries_co2 <- ggplotly(
+  ggplot(data = top30_countries, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
+    geom_bar(stat = "identity", fill = "skyblue") +
+    labs(title = "Top 30 Countries with the Most CO2 Emissions", x = "Countries", y = "Annual CO2 Emissions") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+)
+
+# Display the interactive bar plot
+print(interactive_top30_countries_co2)
+```
+
+<strong>How is the relationship between the attacks and the age of the victims?</strong>
+
+There exists a negative correlation between the age of the victim and the frequency of attacks. This can be attributed to factors such as the higher water engagement of teens and adults below 40 compared to older individuals, leading to a greater involvement in water-related activities.
 
 ```{r, echo=TRUE}
 
@@ -271,77 +440,9 @@ interactive_attacks_age
 
 ```
 
-Better understanding of the attacks and sex of the victims
+<strong>Does sea level and the number of shark attacks have a relationship?</strong>
 
-
-```{r, echo=TRUE}
-# Create a summary table with the count of attacks for each sex
-attacks_summary_sex <- final_attacks_cleaned %>%
-  group_by(Sex) %>%
-  summarise(NumAttacks = n())
-
-# Define the desired order of levels
-sex_order <- c("M", "F", "Unknown")
-
-# Convert the 'Sex' variable to a factor with the specified order
-attacks_summary_sex$Sex <- factor(attacks_summary_sex$Sex, levels = sex_order)
-
-# Bar plot to show the distribution of shark attacks by sex
-interactive_bar_plot_sex_attacks <- ggplotly(
-  ggplot(attacks_summary_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
-    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-    labs(title = "Distribution of Shark Attacks by Sex",
-         x = "Sex",
-         y = "Number of Attacks") +
-    scale_fill_manual(values = c("blue", "pink", "gray"))
-)
-
-# Display the interactive bar plot
-interactive_bar_plot_sex_attacks
-
-```
-
-Want to know where are the regions (continents) with the most attacks
-
-```{r, echo=TRUE}
-
-#Create a new column in attacks that represents the continents
-attacks_grouped <- final_attacks_cleaned %>%
-  mutate(Region = case_when(
-    ISO_Code %in% c(NA) ~ "Unknown",
-    ISO_Code %in% c("AFG", "ARM", "AZE", "BHR", "BGD", "BTN", "BOL", "BGR", "BFA", "BDI", "KHM", "CMR", "CPV", "CHN", "CXR", "CYP", "HKG", "IND", "IDN", "IRN", "IRQ", "ISR", "JOR", "JPN", "KAZ", "KWT", "KGZ", "LAO", "LBN", "MAC", "MYS", "MDV", "MNG", "MMR", "NPL", "PRK", "OMN", "PAK", "PSE", "PHL", "QAT", "SAU", "SGP", "KOR", "LKA", "TUR", "SYR", "TWN", "TJK", "THA", "TKM", "ARE", "UZB", "YEM", "VNM") ~ "Asia",
-    ISO_Code %in% c("ALB", "AND", "AUT", "BLR", "BEL", "BIH", "BWA", "HRV", "CZE", "DNK", "EST", "FIN", "FRO", "FRA", "GEO", "DEU", "GRC", "GRL", "GLP", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LIE", "LUX", "MLT", "MDA", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "ROU", "RUS", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR") ~ "Europe",
-    ISO_Code %in% c("DZA", "AGO", "BEN", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "TLS", "EGY", "ERI", "SWZ", "ETH", "GNQ", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MTQ", "MRT", "MUS", "MYT", "MAR", "MOZ", "NAM", "NER", "NGA", "REU", "RWA", "SHN", "SEN", "SYC", "SLE", "STP", "ZAF", "SOM", "SSD", "SDN", "SUR", "TZA", "TGO", "TUN", "UGA", "ZMB", "ZWE") ~ "Africa",
-    ISO_Code %in% c("AIA", "ATG", "ABW", "BHS", "BMU", "BRB", "BLZ", "VGB", "BRN", "CAN", "CRI", "CUB", "CUW", "DMA", "DOM", "SLV", "GRD", "GTM", "HTI", "HND", "JAM", "MSR", "MEX", "USA", "NIC", "PAN", "KNA", "LCA", "SPM", "VCT", "SXM", "TCA", "TTO") ~ "North America",
-    ISO_Code %in% c("ARG", "COL", "CHL", "ECU", "GUF", "GUY", "PRY", "PER", "URY", "VEN", "BRA", "BES") ~ "South America",
-    ISO_Code %in% c("AUS", "COK", "FJI", "PYF", "KIR", "MHL", "FSM", "NRU", "NCL", "NZL", "NIU", "PLW", "PNG", "WSM", "SLB", "TON", "TUV", "VUT", "WLF") ~ "Australia & Oceania",
-    ISO_Code %in% c("ATA") ~ "Antarctica"
-  ))
-
-
-# Filter data to include only valid regions (excluding "Unknown")
-filtered_attacks_region <- attacks_grouped %>% 
-  filter(!is.na(Region) & Region != "Unknown")
-
-# Bar plot to show the distribution of shark attacks by region
-interactive_bar_plot_region_attacks <- ggplotly(
-  ggplot(filtered_attacks_region, aes(x = Region, fill = Region)) +
-    geom_bar() +
-    labs(title = "Distribution of Shark Attacks by Region",
-         x = "Region",
-         y = "Number of Attacks") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
-)
-
-
-# Display the interactive bar plot
-interactive_bar_plot_region_attacks
-
-
-```
-
-Does sea level and the number of shark attacks have a relationship?
-
+We can discern a positive correlation between the increase in sea levels and the occurrence of shark attacks. This observation is particularly intriguing since we commonly understand that rising sea levels result from global warming. Consequently, it raises the possibility that human influence may be a more significant factor in the surge of shark attacks than previously acknowledged.
 
 ```{r, echo=TRUE}
 # Calculate the number of attacks per year
@@ -370,7 +471,9 @@ interactive_scatter_plot_sea_level_attacks
 
 ```
 
-Relationship between temperature change and the number of shark attacks
+<strong>How is the relationship between temperature change and the number of shark attacks?</strong>
+
+In addition to the previous plot, it is evident that there is a positive correlation between global temperatures and the frequency of shark attacks. This further strengthens the earlier argument, suggesting potentially a stronger human responsibility. 
 
 ```{r, echo=TRUE}
 
@@ -417,80 +520,5 @@ interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
 
 
 interactive_scatter_plot_worldtemperature_attacks
-
-```
-
-What are the activities with the most attacks
-
-```{r, echo=TRUE}
-
-# Check the top activities with the most attacks
-top_activities <- final_attacks_cleaned %>%
-  group_by(Activity, Sex) %>%
-  summarize(Number_of_Attacks = n()) %>%
-  arrange(desc(Number_of_Attacks)) %>%
-  top_n(30)  # Adjust the number if you want more or fewer top activities
-
-# Plot the results
-top_activities_attacks <- ggplot(top_activities, aes(x = reorder(Activity, -Number_of_Attacks), y = Number_of_Attacks, fill = Sex)) +
-  geom_bar(stat = "identity") +
-  labs(title = "Top Activities with the Most Attacks",
-       x = "Activities",
-       y = "Number of Attacks",
-       fill = "Sex") +
-  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
-  theme_minimal() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-interactive_top_activities_attacks <- ggplotly(top_activities_attacks)
-interactive_top_activities_attacks
-
-
-```
-
-See the evolution of shark attacks throughout the years with sex DONE
-
-
-```{r, echo=TRUE}
-
-# Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
-attacks_evolution_sex <- ggplot(data = final_attacks_cleaned, aes(x = Year, fill = Sex)) +
-  geom_bar(position = "stack", color = "white") +
-  labs(title = "Shark Attacks Evolution Over Years by Sex",
-       x = "Year",
-       y = "Number of Attacks",
-       fill = "Sex") +
-  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
-  theme_minimal()
-
-
-interactive_attacks_evolution_sex <- ggplotly(attacks_evolution_sex)
-interactive_attacks_evolution_sex
-
-```
-
-Shark attacks monthly repartition
-
-
-
-```{r, echo=TRUE}
-
-
-#Here it is great but I tried to class the months in order but it has not worked yet
-
-# Create a plot to show the repartition of shark attacks per month by sex
-attacks_per_months <- ggplot(data = final_attacks_cleaned, aes(x = factor(Date), fill = Sex)) +
-  geom_bar(position = "stack", color = "white") +
-  labs(title = "Shark Attacks Repartition by Month and Sex",
-       x = "Month",
-       y = "Number of Attacks",
-       fill = "Sex") +
-  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
-  theme_minimal()
-
-
-interactive_attacks_per_months <- ggplotly(attacks_per_months)
-interactive_attacks_per_months
 
 ```
