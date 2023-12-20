@@ -42,6 +42,7 @@ merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
 
 # Let's have fun with an interactive map
 ma_carte <- leaflet(merged_map) %>%
+  setView(lng = -95, lat = 37, zoom = 2) %>%
   addTiles() %>%
   addCircleMarkers(
     lng = ~lng,
@@ -58,6 +59,14 @@ ma_carte <- leaflet(merged_map) %>%
     labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
     title = "Number of shark attacks"
   )
+
+# Personnaliser le style CSS pour la carte
+ma_carte$dependencies[[1]]$stylesheet <- "leaflet.css"
+
+# Ajouter du style personnalisé
+ma_carte$dependencies[[1]]$inline <- TRUE
+ma_carte$dependencies[[1]]$script <- "$('#map').css({'width': '80%', 'height': '300px', 'float': 'left'});"
+
 
 # Let's see the map
 ma_carte
