@@ -72,6 +72,10 @@ After a deep Exploratory Data Analysis we thought about the relevance of some fa
 
 Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
 ```{r}
+
+data_RQ1 <- merged_data3
+data_RQ1 <- na.omit(data_RQ1) 
+
 #Before doing the regression, we will do a correlation matrix of the numerical variables
 numeric_columns <- sapply(attacks, is.numeric)
 

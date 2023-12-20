@@ -1100,3 +1100,5 @@ species_filtered_data <- merged_data3[condition, ]
 
 
 merged_data3$Fatality <- ifelse(merged_data3$Fatality == "Y", 1, 0)
+
+table(merged_data3$Sex)
