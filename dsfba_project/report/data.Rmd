@@ -656,6 +656,8 @@ attacks$Time[position_of_na] <- sample(
 #_____________________________________________________________________________________________
 #NOW WE WORK ON SEX
 
+attacks$Sex <- gsub("lli", "", attacks$Sex)
+attacks$Sex <- gsub("M ", "M", attacks$Sex)
 attacks$Sex <- na_if(attacks$Sex, "")
 attacks$Sex <- ifelse(is.na(attacks$Sex), "Unknown", attacks$Sex)
 
