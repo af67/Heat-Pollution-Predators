@@ -9,7 +9,7 @@ packages <- c(
   "scales", # for plotting
   "knitr", "readxl", "dplyr", "tidyr", "stringr", "countrycode", "ggplot2", "plotly",
   "stargazer", "gtsummary", "corrplot", "gridExtra", "viridisLite", "htmltools",
-  "RColorBrewer", "car", "DT", "htmlwidgets")
+  "RColorBrewer", "car", "DT", "htmlwidgets", "leaflet")
 purrr::walk(packages, library, character.only = TRUE)
 
 ######################################################
