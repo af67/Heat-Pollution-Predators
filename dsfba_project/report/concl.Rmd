@@ -2,9 +2,9 @@
 source(here::here("scripts/setup.R"))
 ```
 
-# 7. <strong>Conclusion</strong>
+# 6. <strong>Conclusion</strong>
 
-# 8. <strong>References</strong>
+# 7. <strong>References</strong>
 
 CBS News. (2010, October 24). Five Most Dangerous Sharks to Humans. https://www.cbsnews.com/pictures/five-most-dangerous-sharks-to-humans/
 
