@@ -73,20 +73,25 @@ After a deep Exploratory Data Analysis we thought about the relevance of some fa
 Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
 ```{r}
 
-data_RQ1 <- merged_data3
+data_RQ1 <- merged_map
 data_RQ1 <- na.omit(data_RQ1) 
 
-#Before doing the regression, we will do a correlation matrix of the numerical variables
-numeric_columns <- sapply(attacks, is.numeric)
+#Before doing the regression, we will do a correlation matrix of the numerical variables of the main data
+numeric_columns <- sapply(data_RQ1, is.numeric)
 
 #Let's choose the numeric columns only
-numeric_data <- attacks[, numeric_columns]
+numeric_data <- data_RQ1[, numeric_columns]
+
+#We will only keep the variables we are interested in
+selected_columns <- c("Year", "Type", "Sex", "Age", "Time", "Species")
+data_selected <- data_RQ1[, selected_columns]
 
 # Calculate the correlation matrix
-correlation_matrix <- cor(numeric_data)
+correlation_matrix <- cor(data_selected)
 
 # Show the correlation matrix
 print(correlation_matrix)
+
 ```
 -	Thanks to this correlation matrix, we can affirm that:
 o	Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
@@ -113,6 +118,7 @@ where:
 
 Let's do our main regression based on all the countries
 ```{r}
+
 # Let's do an overall multiple regression model
 model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
 
@@ -120,6 +126,18 @@ model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = me
 summary(model)
 
 ```
+
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
+
+stargazer(model,
+          title = 'Regression on the main factors influencing shark attacks',
+          type = 'html',
+          digits = 3)
+```
+
+
 -	We just did a linear regression where the response variable is Attackscountry predicted by the following variables: Year, Sex, Age, Time, Type and Species.
 -	The intercept represents the predicted value of Attackscountry when almost all variables are zero except Age that could not be zero.
 -	The variable Year is statistically significant (p-value < 0.05), indicating that there is a significant relationship between the Year and the number of shark attacks.  The variable Type is statistically significant at the 0.1 level.
@@ -148,6 +166,16 @@ vif_values <- car::vif(model1)
 
 # Show me the results of the VIF
 print(vif_values)
+```
+
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
+
+stargazer(model1,
+          title = 'Regression on the main factors influencing shark attacks focused on the USA',
+          type = 'html',
+          digits = 3)
 ```
 
 
@@ -215,7 +243,15 @@ summary(model2)
 
 ```
 
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
 
+stargazer(model2,
+          title = 'Regression on the main factors influencing shark attacks focused on AUSTRALIA',
+          type = 'html',
+          digits = 3)
+```
 -	We focus on the second country that has the most shark attacks in the world according to our main dataset.
 -	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively.
 
@@ -271,6 +307,16 @@ model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, 
 # Print the results
 print("Regression for USA and AUSTRALIA:")
 print(summary(model_combined))
+```
+
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
+
+stargazer(model_combines,
+          title = 'Regression on the main factors influencing shark attacks focused on the USA and AUSTRALIA',
+          type = 'html',
+          digits = 3)
 ```
 - We focus on the two countries that have the most shark attacks in the world according to our main dataset.
 -	Year and Sex are the two variables in this model that are not statistically significant while the others are, at different thresholds. Age and Species are statistically significant at 0.1%, while Time is statistically significant at 10%. The variable Type is statistically significant at 5%.
@@ -363,7 +409,6 @@ stargazer(model12,
           title = 'Regression on the fatality of shark attacks',
           type = 'html',
           digits = 3)
-
 ```
 
 We will start by analiyzing the significant coefficient.
