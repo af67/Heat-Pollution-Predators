@@ -115,10 +115,6 @@ model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = me
 # Print the summary of the regression model
 summary(model)
 
-stargazer(model,
-          title = 'ON VERRA',
-          type = 'html',
-          digits = 3)
 ```
 -	We just did a linear regression where the response variable is Attackscountry predicted by the following variables: Year, Sex, Age, Time, Type and Species.
 -	The intercept represents the predicted value of Attackscountry when almost all variables are zero except Age that could not be zero.
@@ -142,10 +138,6 @@ model1 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = u
 print("Regression for USA:")
 summary(model1)
 
-stargazer(model1,
-          title = 'ON VERRA',
-          type = 'html',
-          digits = 3)
 
 # Compute the VIF
 vif_values <- car::vif(model1)
@@ -217,10 +209,6 @@ model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = a
 print("Regression for AUSTRALIA:")
 summary(model2)
 
-stargazer(model2,
-          title = 'ON VERRA',
-          type = 'html',
-          digits = 3)
 ```
 
 
