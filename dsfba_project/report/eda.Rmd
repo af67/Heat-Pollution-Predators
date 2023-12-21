@@ -15,6 +15,14 @@ For the last period, the answer is simple: our dataset presents data up to June 
 For the other two periods, we will discover the reasons during a more in-depth analysis
 
 ```{r, echo=TRUE}
+ggplot(data = final_attacks_cleaned, aes(x = Year)) +
+  geom_smooth(stat = "count", aes(group = 1), color = "blue", size = 1) +
+  geom_bar(stat = "count", fill = "red") +
+  labs(title = "Shark Attacks Evolution Over Years", x = "Year", y = "Number of Attacks")
+```
+
+To take a look at how this evolution happens withn males and females, we can run another plot showing that males have always been the sex facing more attacks.
+```{r, echo=TRUE}
 
 # Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
 attacks_evolution_sex <- ggplot(data = final_attacks_cleaned, aes(x = Year, fill = Sex)) +
