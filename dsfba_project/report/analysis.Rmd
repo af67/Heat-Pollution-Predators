@@ -8,7 +8,7 @@ source(here::here("scripts/setup.R"))
 After a deep Exploratory Data Analysis we thought about the relevance of some factors that might influence directly the occurrence of shark attacks. Directly in the sense that these are variables that were found in the main data set and not in a secondary one. Let's begin then:
 
 Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
-```{r}
+```{r, echo= TRUE}
 
 data_RQ1 <- merged_map
 data_RQ1 <- na.omit(data_RQ1) 
@@ -26,16 +26,22 @@ data_selected <- data_RQ1[, selected_columns]
 # Calculate the correlation matrix
 correlation_matrix <- cor(data_selected)
 
-# Show the correlation matrix
-print(correlation_matrix)
+corrplot(
+  correlation_matrix,
+  method = "ellipse",
+  type = "upper",
+  tl.col = "black",
+  tl.srt = 45,
+  addCoef.col = "gray"
+)
 
 ```
--	Thanks to this correlation matrix, we can affirm that:
-o	Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
-o	Age has a slightly positive correlation (0.11) with Time almost.
-o	The variable Type has a slight positive correlation with Age and Species while it has a slight negative correlation with Year, Species and Sex.
-o	There is a negative correlation between Year and Species.
-o	The following variables have no significant correlation with the other numeric variables, due to the value of the coefficient close to 0: Sex and Type.
+Thanks to this correlation matrix, we can affirm that:
+- Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
+- Age has a slightly positive correlation (0.11) with Time almost.
+- The variable Type has a slight positive correlation with Age and Species while it has a slight negative correlation with Year, Species and Sex.
+- There is a negative correlation between Year and Species.
+- The following variables have no significant correlation with the other numeric variables, due to the value of the coefficient close to 0: Sex and Type.
 
 The regression that we will use is the following one:
 
@@ -54,17 +60,14 @@ where:
 
 
 Let's do our main regression based on all the countries
-```{r}
+```{r, echo= TRUE}
 
 # Let's do an overall multiple regression model
 model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
 
-# Print the summary of the regression model
-summary(model)
-
 ```
 
-```{r results='asis', echo=FALSE}
+```{r results='asis', echo=TRUE}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -84,8 +87,8 @@ stargazer(model,
 -	Concerning the F-statistic we can say that there is a low p-value suggesting that at least one predictor variable is significantly related to the response variable. 
 
 
-This first regression will be based only on the USA
-```{r}
+<strong>This first regression will be based only on the USA</strong> 
+```{r, echo=TRUE}
 # USA Regression
 #This first regression will be based only on the USA
 usa_data <- merged_map %>%
@@ -94,18 +97,20 @@ usa_data <- merged_map %>%
 #Regression model of the USA
 model1 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = usa_data)
 
-print("Regression for USA:")
-summary(model1)
-
 
 # Compute the VIF
 vif_values <- car::vif(model1)
 
-# Show me the results of the VIF
-print(vif_values)
 ```
 
-```{r results='asis', echo=FALSE}
+VIF values:
+```{r, echo=FALSE}
+
+knitr::kable(vif_values, col.names = c("Variable", "VIF"))
+
+```
+
+```{r results='asis', echo=TRUE}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -121,7 +126,7 @@ stargazer(model1,
 -	This model fits the data concerning USA very well, because of the high R-Squared value (0.5) and the small residuals. Does this model fit well or is there some multicollinearity?
 -	According to the VIF analysis, the values are low. As they are below 5, we cannot say that there is high multicollinearity between some variables because here all the values are close to 1. Each variable contributes relatively independently to explaining the variability of Attackscountry.
 
-```{r}
+```{r, echo= TRUE}
 # Assuming 'usa_data' is your dataset for the USA
 # Include the intercept in the initial model
 current_model <- lm(Attackscountry ~ 1, data = usa_data)
@@ -155,6 +160,7 @@ In order to have a better model by doing a forward selection where we will take 
 In order to have a better model by doing a forward selection where we will take the model with the lowest AIC.
 
 Here we have the AIC values for each model:
+
 1. Model with Year only: AIC = -66827.49
 2. Model with Year and Sex: AIC = -66825.83
 3. Model with Year, Sex, and Age: AIC = -66824.46
@@ -167,20 +173,17 @@ As said previously, we chose the model with the lowest AIC indicating a better f
 
 
 
-This second regression will be based only on Australia
-```{r}
+<strong> This second regression will be based only on Australia</strong> 
+```{r, echo= TRUE}
 #This second regression will be based only on Australia
 aus_data <- merged_map %>%
   filter(Country == "AUSTRALIA")
 
 model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = aus_data)
 
-print("Regression for AUSTRALIA:")
-summary(model2)
-
 ```
 
-```{r results='asis', echo=FALSE}
+```{r results='asis', echo=TRUE}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -193,7 +196,7 @@ stargazer(model2,
 -	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively.
 
 
-```{r}
+```{r, echo= TRUE}
 # Include the intercept in the initial model
 current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
 
@@ -222,18 +225,22 @@ for (variable in variables_to_add2) {
 
 # Compute the VIF
 vif_values2 <- car::vif(model2)
+```
 
-# Show me the results of the VIF
-print(vif_values2)
+VIF values:
+```{r, echo= FALSE}
+
+knitr::kable(vif_values2, col.names = c("Variable", "VIF"))
+
 ```
 
 -	In this case, for each model we have the same AIC, that has a value of -66818.77. Increasing the number of variables that we add in the model does not seem to improve the significance of the model. As the AIC value is the same, we prefer to have as many variables as possible.
 -	The model with all the variables will explain almost 50% of the variability. But this value is high, but according to the VIF analysis, there is no high multicollinearity between variables. We can conclude saying that this model fits well.
 
 
-Let's focus on both countries
+<strong> Let's focus on both countries</strong> 
 
-```{r}
+```{r, echo= TRUE}
 # This regression will be based on both USA and AUSTRALIA
 combined_data <- merged_map %>%
  filter(Country %in% c("USA", "AUSTRALIA"))
@@ -241,12 +248,9 @@ combined_data <- merged_map %>%
 # Run the regression based on both USA and AUSTRALIA
 model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = combined_data)
 
-# Print the results
-print("Regression for USA and AUSTRALIA:")
-print(summary(model_combined))
 ```
 
-```{r results='asis', echo=FALSE}
+```{r results='asis', echo=TRUE}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -260,7 +264,7 @@ stargazer(model_combined,
 -	The variability of Attackscountry has a value of 5.25% (R^2) and is explained by the model. We conclude that this model is better explained by another model that contains more useful variables.
 
 
-```{r}
+```{r, echo= TRUE}
 #Model combined, AIC 
 
 # Include the intercept in the initial model
@@ -282,11 +286,8 @@ for (variable in variables_to_add3) {
  selected_models[[variable]] <- current_model3
   
   # Calculate AIC
- aic_value2 <- AIC(current_model3)
+ aic_value2 <- AIC(current_model3)}
   
-  # Print the summary of the current model and AIC value
-  cat("Variable added:", variable, " | AIC:", aic_value, "\n")
-  print(summary(current_model3))}
 ```
 -	Here we have the same AIC value for each model: -66818.77. As said previously, we decide to use the model containing the most variables.
 
