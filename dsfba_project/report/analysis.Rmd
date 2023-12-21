@@ -193,7 +193,7 @@ stargazer(model2,
           digits = 3)
 ```
 -	We focus on the second country that has the most shark attacks in the world according to our main dataset.
--	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively.
+-	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively. 
 
 
 ```{r, echo= TRUE}
@@ -236,7 +236,7 @@ knitr::kable(vif_values2, col.names = c("Variable", "VIF"))
 
 -	In this case, for each model we have the same AIC, that has a value of -66818.77. Increasing the number of variables that we add in the model does not seem to improve the significance of the model. As the AIC value is the same, we prefer to have as many variables as possible.
 -	The model with all the variables will explain almost 50% of the variability. But this value is high, but according to the VIF analysis, there is no high multicollinearity between variables. We can conclude saying that this model fits well.
-
+But still, it is not that relevant to analyze only one country.
 
 <strong> Let's focus on both countries</strong> 
 
