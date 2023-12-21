@@ -66,6 +66,39 @@ barplot1 <- barplot(sorted_table,
 text_labels <- sorted_table
 text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, col = "black")
 
+#4. Fatality
+
+# Get the top 10 shark species
+top_10_sharks <- head(names(sort(table(final_attacks_cleaned$Species), decreasing = TRUE)), 10)
+
+# Subset the data to include only the top 10 shark species
+final_attacks_top_10 <- final_attacks_cleaned[final_attacks_cleaned$Species %in% top_10_sharks, ]
+
+# Create the summary table for the top 10 shark species
+summary_table_top_10 <- table(final_attacks_top_10$Species, final_attacks_top_10$Fatality)
+
+# Convert the summary table to a data frame
+summary_df_top_10 <- as.data.frame(summary_table_top_10)
+
+# Create the ggplot with the top 10 shark species
+plot_top_10 <- ggplot(summary_df_top_10, aes(x = Var1, y = Freq, fill = Var2)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Fatality by Top 10 Types of Shark",
+    x = "Type of Shark",
+    y = "Frequency",
+    fill = "Legend"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_fill_manual(
+    name = "Was the shark attack fatal?",
+    values = c("blue", "pink", "yellow"),
+    labels = c("Yes", "No", "Unknown")
+  )
+
+# Display the plot
+print(plot_top_10)
+
 
 
 #5. See the evolution of the level of co2 emission throughout the years DONE
