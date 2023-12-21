@@ -118,14 +118,8 @@ print(interactive_co2_evolution)
 
 #6A. See what are the countries with the most co2 emission
 
-# Create a bar plot
-ggplot(data = co2, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  labs(title = "Top Countries with the Most CO2 Emissions", x = "Countries", y = "Annual CO2 Emissions") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 # Filter out 'OWID_WRL' from the data
-co2_filtered_wrl <- co2 %>% filter(ISO_Code != "OWID_WRL")
+co2_filtered_wrl <- final_ghg_cleaned %>% filter(ISO_Code != "OWID_WRL")
 
 # Select the top 30 countries based on CO2 emissions
 top30_countries <- co2_filtered_wrl %>%

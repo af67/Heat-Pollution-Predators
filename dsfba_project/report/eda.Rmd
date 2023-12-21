@@ -402,12 +402,6 @@ interactive_plot
 Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. However, without surprise, the two biggest pollutant name of the world are from North America and Asia.
 
 ```{r}
-# Create a bar plot
-ggplot(data = final_ghg_cleaned, aes(x = reorder(ISO_Code, -`Annual CO2 Emissions`), y = `Annual CO2 Emissions`)) +
-  geom_bar(stat = "identity", fill = "skyblue") +
-  labs(title = "Top Countries with the Most CO2 Emissions", x = "Countries", y = "Annual CO2 Emissions") +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
 # Filter out 'OWID_WRL' from the data
 co2_filtered_wrl <- final_ghg_cleaned %>% filter(ISO_Code != "OWID_WRL")
 
@@ -427,7 +421,8 @@ interactive_top30_countries_co2 <- ggplotly(
 )
 
 # Display the interactive bar plot
-print(interactive_top30_countries_co2)
+interactive_top30_countries_co2
+
 ```
 ## 4.11 Relationships plots between our variables
 
