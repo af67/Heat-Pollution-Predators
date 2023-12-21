@@ -36,6 +36,8 @@ corrplot(
 )
 
 ```
+
+
 Thanks to this correlation matrix, we can affirm that:
 - Year has a slight positive correlation (0.13) with Age. The older the individual, there is a slight increase in the likelihood of being tied up by a shark, probably due to the activity the individual was doing such as surfing or swimming over time. In another side, there is a negative correlation (-0.1) with Species. 
 - Age has a slightly positive correlation (0.11) with Time almost.
@@ -54,7 +56,7 @@ where:
 3. \(X_{\text{2}}\) = Sex 
 4. \(X_{\text{3}}\) = Age 
 5. \(X_{\text{4}}\) = Species 
-6.\(X_{\text{5}}\) = Type 
+6. \(X_{\text{5}}\) = Type 
 7. \(X_{\text{6}}\) = Time 
 8. \(\epsilon\) = Residual Error
 
@@ -293,10 +295,11 @@ for (variable in variables_to_add3) {
 
 
 We have done the following type of models of this first regression that will help us to answer this first research question:
--	Overall: all countries that we have on our merged dataset.
--	Focus on USA.
--	Focus on Australia.
--	Focus on the two countries above.
+
+- Overall: all countries that we have on our merged dataset.
+- Focus on USA.
+- Focus on Australia.
+- Focus on the two countries above.
 
 Each type of model according to their focus has its own primary factors influencing the occurrence of shark attacks. For example, in the first one (Overall), Age, Year, Type and Time are the factors that influence the attacks. But the two that are highly significant are Age and Year. In the 4th one, the one that is focused on both countries, the main factors are Age, Species, Type and Time. In conclusion, Age, Type and Time are highly significant predictors, thus they strongly influence the occurrence of shark attacks from a statistical point of view. 
 We did not consider models focus on one country because they are not that relevant. We choose to analyze more than 1 country because it makes more sense. We analyzed the two countries with the most shark attacks because we had the most data about these countries. It gives us more details and the significative factors that influence the shark attacks. We reduce the complexity of our model because of the focus on the regions with the most attacks, so it makes our results more relevant.
@@ -345,15 +348,14 @@ options(scipen = 1000)
 
 stargazer(model12,
           title = 'Regression on the fatality of shark attacks',
-          type = 'html',
-          digits = 3)
+          type = 'html')
 ```
 
 We will start by analiyzing the significant coefficient.
 
 The intercept of 55.643 is the estimated log-odds of fatality when all predictors are zero. Since, our variable of interest is a binomal one, it can be difficult to interpret this log-odds directly, though, and it might not be clear how it affects the likelihood of death. This value needs a deepen econometric study in order to be comprehended. 
 
-The coefficient for 'Year' is -0.030, suggesting that  the likelihood of a fatal outcome in shark attacks decreases by around 0.0324.as the year increases. This trend may be caused by developments in emergency medical response and care, public education and awareness campaigns about shark safety, enhanced beach surveillance and warning systems, or adjustments in recreational activities and behavior near coastal areas.
+The coefficient for 'Year' is -0.029, suggesting that  the likelihood of a fatal outcome in shark attacks decreases by around 0,29% as the year increases. This trend may be caused by developments in emergency medical response and care, public education and awareness campaigns about shark safety, enhanced beach surveillance and warning systems, or adjustments in recreational activities and behavior near coastal areas.
 
 The 'Age' coefficient is 0.027, indicating that for each unit increase in age, the log-odds of fatality increase by 0.0269. One explanation for this correlation may be that older people have less physical strength and agility, which makes it harder for them to flee from or defend against a shark attack. Additionally, older people may be more vulnerable to severe injuries from shark bites. Furthermore, the observed higher risk of death in older age groups may be explained by behavioral factors such as an increased propensity to participate in riskier water activities or an increased amount of time spent in the water. 
 
@@ -361,9 +363,7 @@ The last two coefficients, that of Date and Time are not significant, but let is
 
 The 'Date' coefficient is -0.006, but with a p-value of 0.85, it is not statistically significant, implying that the month of the shark attack may not be a strong predictor of fatality. But this was not a surprise. Indeed, the three countries we took into consideration have seasons that vary throughout the year, based on their position on the globe. For example, Summer in USA goes from June to September, but in Australia and South Africa it goes from December to February/March. This might create a disequilibrium when R reads them.
 
-Remarkably, the 'Time' coefficient is 0.017, indicating that the time of day may not be a predictive factor for shark attack fatalities. The lack of significance of 'Time' may suggest that the time of an attack by a shark has little bearing on whether it ends fatally.  Intuitively, we thought that night attacks would be more fatal, given the difficulty in asking or receiving help, but apparently this is not the case.
-
-The model's goodness of fit is assessed through the null and residual deviances, with a lower residual deviance of 1079 on 2190 degrees of freedom compared to the null deviance of 1120.4 on 2194 degrees of freedom. This reduction in deviance indicates that the model explains some of the variability in the data. The Akaike Information Criterion (AIC) of 1089 is a measure of the model's relative quality, considering both fit and complexity.
+Remarkably, the 'Time' coefficient is 0.044, indicating that the time of day may not be a predictive factor for shark attack fatalities. The lack of significance of 'Time' may suggest that the time of an attack by a shark has little bearing on whether it ends fatally.  Intuitively, we thought that night attacks would be more fatal, given the difficulty in asking or receiving help, but apparently this is not the case.
 
 
 ## 5.3 RQ2: Is it true that shark attacks have been increasing with climate change?
@@ -448,18 +448,18 @@ options(scipen = 1000)
 
 stargazer(model,
           title = 'Regression for shark attacks against climate change factors',
-          type = 'html',
-          digits = 5)
+          type = 'html'
+          )
 
 ```
 
 The results of our regression are really interesting to analyse! The statistical significance of the coefficients related to temperature change, sea level change, and CO2 emissions indicates their important contribution to our predictive model. 
 The complex interaction between environmental dynamics and shark activity is highlighted by the positive correlation found between the annual frequency of shark attacks and these three climate change parameters.
 
-The constant term denotes the baseline frequency of shark attacks when all environmental factors are held constant, and it is equal to <strong>8.00035</strong>. This means that, when we hold all the parameters to 0 (more precisely, if there is no detection of climate change), we would still have a positive amount of shark attacks.The interpretation is fairly clear, indicating that shark attacks are obviously not caused by climate change per se.
+The constant term denotes the baseline frequency of shark attacks when all environmental factors are held constant, and it is equal to 8.00000. This means that, when we hold all the parameters to 0 (more precisely, if there is no detection of climate change), we would still have a positive amount of shark attacks.The interpretation is fairly clear, indicating that shark attacks are obviously not caused by climate change per se.
 
-Our second finding is that the temperature change beta coefficient is 4.34176, and the significance level is indicated by three asterisks (***). This highlights a strong and favorable correlation between temperature changes and the number of shark attacks. Similarly, the sea level change beta coefficient, which is marked with three asterisks and registers at 0.28554, indicates a significant positive correlation between rising sea levels and an increase in shark attacks. 
+Our second finding is that the temperature change beta coefficient is 4.340, and the significance level is indicated by three asterisks (***). This highlights a strong and favorable correlation between temperature changes and the number of shark attacks. Similarly, the sea level change beta coefficient, which is marked with three asterisks and registers at 0.286, indicates a significant positive correlation between rising sea levels and an increase in shark attacks. 
 Finally, the beta coefficient for CO2 emissions is very close to zero, still remaining positive. This notifies us that an increase of CO2 emissions leads to a very small increase of shark attacks.
 
-Finally, we also notice that \( R^2 \) is equal to 0,7917, meaning that, in this context, our variables explain 79,17% of the variation of our variables of interest.
+Finally, we also notice that \( R^2 \) is equal to 0,792, meaning that, in this context, our variables explain 79,2% of the variation of our variables of interest.
 
