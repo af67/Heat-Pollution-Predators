@@ -218,6 +218,7 @@ plot_top_10 <- ggplot(summary_df_top_10, aes(x = Var1, y = Freq, fill = Var2)) +
 # Display the plot
 print(plot_top_10)
 ```
+
 ## 4.6 Activities related to the attacks
 
 <strong>What are the activities with the most attacks?</strong>
