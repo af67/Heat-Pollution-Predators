@@ -6,6 +6,7 @@ source(here::here("scripts/setup.R"))
 
 ## 4.1 Evolution of shark attacks through the years
 
+
 With the y-axis showing the frequency of shark attacks and the x-axis showing the passage of time, the graph below displays a striking pattern in shark attacks over time. The data exhibits a recognizable pattern that indicates a steady increase in the quantity of shark attacks within the designated period. This rising tendency begs critical concerns regarding what is causing such an increase and necessitates more research into ecological, environmental, and human-related elements that could be involved in this occurrence. The graph emphasizes the need of keeping an eye on and comprehending the dynamics of these episodes in addition to providing a visual depiction of the rise in shark attacks. 
 
 This trend is a key research topic: why are marine attacks increasing year after year? What could be the reasons? In fact, the reasons can be various, for example of an ecological, environmental nature or linked to human seaside activity. The graph highlights the need to keep an eye on and understand the dynamics of these episodes, which is exactly what we will do during our study.
@@ -19,9 +20,12 @@ ggplot(data = final_attacks_cleaned, aes(x = Year)) +
   geom_smooth(stat = "count", aes(group = 1), color = "blue", size = 1) +
   geom_bar(stat = "count", fill = "red") +
   labs(title = "Shark Attacks Evolution Over Years", x = "Year", y = "Number of Attacks")
+
+
 ```
 
-To take a look at how this evolution happens withn males and females, we can run another plot showing that males have always been the sex facing more attacks.
+
+To take a look at how this evolution happens within males and females, we can run another plot showing that males have always been the sex facing more attacks.
 ```{r, echo=TRUE}
 
 # Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
@@ -40,48 +44,85 @@ interactive_attacks_evolution_sex
 
 ```
 
-## 4.2 Pattern of shark attacks frequencies
+## 4.2 Density of shark attacks per country
 
-<strong> Pattern of shark attacks frequencies through the day</strong> 
+This engaging interactive map reveals a depiction of worldwide shark attack data per country.The map uses a color gradient to dynamically depict the intensity of shark attacks. What are the trends we can observe? The United States of America, Australia, and South Africa standing out as hubs of increased shark activity. According to our visualization, these areas might have special ecological features or human activity that draws sharks. 
 
-The bar graph below, where the x-axis indicates four time categories —morning, afternoon, evening, and night— displays the distribution of shark attacks throughout the day. The graph's most noticeable aspect is how frequently shark attacks occur in the afternoon, followed by the morning, evening and night. This concentration of incidents in the afternoon raises intriguing questions about potential human behavioral factors that could contribute to this temporal pattern. 
+Meanwhile, Brazil and the Bahamas secure the second spot as a group, and finally, most nations on Earth report less than 50 shark attacks.
 
-First and foremost, we believe that the afternoon is when most people choose to go swimming, which contributes to the frequency of shark attacks during this time. Recreational water activities such as swimming, surfing, kayaking, and other water sports are probably more popular during these times. Furthermore, the afternoon is when the seas are the warmest, so it's intriguing to find out if this aspect also has a significant influence on shark activity.
-Conversely, the decreased number of assaults that occur at night may be related to less people using the water during that time, but there may be other possible reasons as well (less high temperatures, poorer visibility).
+Our assumption is that there might be a different density and frequency of the the impact of human activity in each of these areas, different marine biodiversity and geographic features, which a complex web of variables that affects shark attaks happening more in some parts of the world rather than others. 
 
-Lastly, we suppose that the medium frequencies of the morning and evening might correspond to transitional periods when shark and human behavior are changing.
+```{r}
 
-```{r, echo=TRUE}
+#Import the data concerning the map
+map <- read.csv(here::here("data/map.csv"))
+map <- map[c('latitude', 'longitude', 'country')]
 
-bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
+#Let's rename the columns of the dataset
+colnames(map)[colnames(map) == 'latitude'] <- 'lat'
+colnames(map)[colnames(map) == 'longitude'] <- 'lng'
+colnames(map)[colnames(map) == 'country'] <- 'Country'
+map$Country <- toupper(map$Country)
 
-# Create a sorted table
-sorted_table <- table(final_attacks_cleaned$Time)
-sorted_table <- sorted_table[order(-sorted_table)]
+map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
+merged_map <- merge(merged_data3, map, by = "Country", all = FALSE)
 
-# Create a bar plot with the sorted data
-barplot1 <- barplot(sorted_table,
-                    col = bar_colors,
-                    xlab = "Time of Day", ylab = "Frequency of Attacks",
-                    main = "Frequency of Shark Attacks by Time of Day",
-                    border = "white",
-                    ylim = c(0, 1800),
-                    space = 0.5,
-                    cex.names = 0.8,
-                    font.axis = 2,
-                    beside = TRUE)
+# Create a new variable representing the nb of attacks per country
+results <- merged_map %>%
+  group_by(Country) %>%
+  summarise(Attackscountry = n())
+print(results)
+
+#Attach aggregated data to your original dataframe
+merged_map <- left_join(merged_map, results, by = "Country")
+
+# Definition of the thresholds for the categorization
+seuils <- c(0, 50, 100, 500, Inf)
+
+# Definition of the colors we want to have in the map
+#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
+couleurs <- c("green", "yellow", "orange", "red")
+
+# Add a new category column based on thresholds
+merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
+
+merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
+
+# Let's have fun with an interactive map
+ma_carte <- leaflet(merged_map) %>%
+  setView(lng = -95, lat = 37, zoom = 2) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    lng = ~lng,
+    lat = ~lat,
+    radius = ~sqrt(echelle_taille) * 2,
+    color = ~factor(merged_map$cat_attacks, labels = couleurs),
+    fillOpacity = 0.4,
+    label = ~paste(Country, ":", Attackscountry),
+    options = markerOptions(autoPopup = TRUE)
+  ) %>%
+  addLegend(
+    position = "bottomleft",
+    colors = couleurs,
+    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
+    title = "Number of shark attacks"
+  )
+
+# Personnaliser le style CSS pour la carte
+ma_carte$dependencies[[1]]$stylesheet <- "leaflet.css"
+
+# Ajouter du style personnalisé
+ma_carte$dependencies[[1]]$inline <- TRUE
+ma_carte$dependencies[[1]]$script <- "$('#map').css({'width': '80%', 'height': '300px', 'float': 'left'});"
 
 
-# Add text labels with frequencies on the bars
-text_labels <- sorted_table
-text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, col = "black")
-
-
+# Let's see the map
+ma_carte
 ```
 
 <strong>Pattern of shark attacks frequencies per country</strong> 
 
-A first glance at our plotted data reveals that the United States, Australia, and South Africa are the three primary countries with a significant number of shark attacks. 
+We decided to also run a barplot in other to observe the top 10 countries with the highest amount of shark attacks. It was useful to observe the placing of each country in a more straight-forward way.
 
 ```{r, echo=TRUE}
 shark_attacks_by_country <- final_attacks_cleaned %>%
@@ -106,43 +147,10 @@ interactive_plot <- ggplotly(plot2)
 interactive_plot
 
 ```
-## 4.3 Sex of the victims
-
-<strong>Better understanding of the attacks and the sex of the victims</strong>
-
-We initially believed that men experienced attacks more frequently, but our surprise grew when we examined this chart. It highlights a substantial disparity in the distribution of attacks between men and women.
-
-```{r, echo=TRUE}
-# Create a summary table with the count of attacks for each sex
-attacks_summary_sex <- final_attacks_cleaned %>%
-  group_by(Sex) %>%
-  summarise(NumAttacks = n())
-
-# Define the desired order of levels
-sex_order <- c("M", "F", "Unknown")
-
-# Convert the 'Sex' variable to a factor with the specified order
-attacks_summary_sex$Sex <- factor(attacks_summary_sex$Sex, levels = sex_order)
-
-# Bar plot to show the distribution of shark attacks by sex
-interactive_bar_plot_sex_attacks <- ggplotly(
-  ggplot(attacks_summary_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
-    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
-    labs(title = "Distribution of Shark Attacks by Sex",
-         x = "Sex",
-         y = "Number of Attacks") +
-    scale_fill_manual(values = c("blue", "pink", "gray"))
-)
-
-# Display the interactive bar plot
-interactive_bar_plot_sex_attacks
-
-```
-## 4.4 Continental distribution of the attacks
 
 <strong>What are the continents that have the most attacks?</strong>
 
-This plot illustrates the regions with the highest number of attacks since 1970, with North America and Australia & Oceania taking the lead.
+Finally, through a chart that combines countries in continents, we are able to illustrate the regions with the highest number of attacks since 1970, with North America and Australia and Oceania taking the lead. This is even more surprising than before! Asia, the continents that counts for 59.72% (Statista, 2022) of the world population does not even figure here. This fact intrigued us even more to go deeper and find out the real causes of shark attacks.
 
 ```{r, echo=TRUE}
 
@@ -181,8 +189,88 @@ interactive_bar_plot_region_attacks
 
 ```
 
+## 4.3 Pattern of shark attacks frequencies
 
-## 4.5 Fatality of shark attacks
+<strong> Pattern of shark attacks frequencies through the day</strong> 
+
+The bar graph below, where the x-axis indicates four time categories —morning, afternoon, evening, and night— displays the distribution of shark attacks throughout the day. The graph's most noticeable aspect is how frequently shark attacks occur in the afternoon, followed by the morning, evening and night. This concentration of incidents in the afternoon raises intriguing questions about potential human behavioral factors that could contribute to this temporal pattern. 
+
+First and foremost, we believe that the afternoon is when most people choose to go swimming, which contributes to the frequency of shark attacks during this time. Recreational water activities such as swimming, surfing, kayaking, and other water sports are probably more popular during these times. Furthermore, the afternoon is when the seas are the warmest, so it's intriguing to find out if this aspect also has a significant influence on shark activity.
+Conversely, the decreased number of assaults that occur at night may be related to less people using the water during that time, but there may be other possible reasons as well (less high temperatures, poorer visibility).
+
+Lastly, we suppose that the medium frequencies of the morning and evening might correspond to transitional periods when shark and human behavior are changing.
+
+```{r, echo=TRUE}
+
+bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
+
+# Create a sorted table
+sorted_table <- table(final_attacks_cleaned$Time)
+sorted_table <- sorted_table[order(-sorted_table)]
+
+# Create a bar plot with the sorted data
+barplot1 <- barplot(sorted_table,
+                    col = bar_colors,
+                    xlab = "Time of Day", ylab = "Frequency of Attacks",
+                    main = "Frequency of Shark Attacks by Time of Day",
+                    border = "white",
+                    ylim = c(0, 1800),
+                    space = 0.5,
+                    cex.names = 0.8,
+                    font.axis = 2,
+                    beside = TRUE)
+
+
+# Add text labels with frequencies on the bars
+text_labels <- sorted_table
+text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, col = "black")
+
+
+```
+
+
+<strong>Better understanding of the attacks and the sex of the victims</strong>
+
+We initially believed that men experienced attacks more frequently, but our surprise grew when we examined this chart. It highlights a substantial disparity in the distribution of attacks between men and women.
+
+```{r, echo=TRUE}
+# Create a summary table with the count of attacks for each sex
+attacks_summary_sex <- final_attacks_cleaned %>%
+  group_by(Sex) %>%
+  summarise(NumAttacks = n())
+
+# Define the desired order of levels
+sex_order <- c("M", "F", "Unknown")
+
+# Convert the 'Sex' variable to a factor with the specified order
+attacks_summary_sex$Sex <- factor(attacks_summary_sex$Sex, levels = sex_order)
+
+# Bar plot to show the distribution of shark attacks by sex
+interactive_bar_plot_sex_attacks <- ggplotly(
+  ggplot(attacks_summary_sex, aes(x = Sex, y = NumAttacks, fill = Sex)) +
+    geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+    labs(title = "Distribution of Shark Attacks by Sex",
+         x = "Sex",
+         y = "Number of Attacks") +
+    scale_fill_manual(values = c("blue", "pink", "gray"))
+)
+
+# Display the interactive bar plot
+interactive_bar_plot_sex_attacks
+
+```
+
+
+To keep up with this trend, we thought about looking for a survey that indicates the type of recreational water activity that each participant is more inclined do. Starting from this survey, we would have classified the activities by risk level to then see if it is actually true that, beyond our dataset, it is males who carry out more risky activities. Unfortunately, despite our long searches, we were unable to find such a dataset. As a result, we looked for a study that had already been done. In the image below, you can find a research carried out by the Marine and Coastguard Agency: this reports the "Proportion of each gender group participating (to recreational water activities) and gender profile of participants" (Marine and Coastguard Agency, 2022).
+
+The study confirms our assumption that generally, it is men who practice more recreational water activities, even if the difference between men and women is very low. Furthermore, men are more frequently inclined to do Boating and Sailing activities, both considered to have a more likely direct impact with a shark than "coastal activities" (such as Beachcombing, Cliff climbing or Spending General Leisure Time At The Beach, as cited on the report), considered safer.
+
+
+![Proportion of each gender group participating (to recreational water activities) and gender profile of participants (once again, note that this picture was taken from a report, this is not a plot we have created!)](image2.png)
+
+
+
+
 
 <strong>Fatalities by type of shark</strong> 
 
@@ -229,7 +317,6 @@ print(plot_top_10)
 
 ```
 
-## 4.6 Activities related to the attacks
 
 <strong>What are the activities with the most attacks?</strong>
 
@@ -261,69 +348,38 @@ interactive_top_activities_attacks
 
 
 ```
-## 4.7 Monthly distribution of the attacks
 
-<strong>What is the time of the year that have the most shark attacks?</strong>
+<strong>How is the relationship between the attacks and the age of the victims?</strong>
 
-As illustrated in this graph, there is a tendency for shark attacks to occur more frequently during the summer months compared to the rest of the year. It seems pretty logical as there is more people in the water during summer time.
+There exists a negative correlation between the age of the victim and the frequency of attacks. This can be attributed to factors such as the higher water engagement of teens and adults below 40 compared to older individuals, leading to a greater involvement in water-related activities.
 
 ```{r, echo=TRUE}
 
+# Create a summary table with the count of attacks for each age
+attacks_summary <- final_attacks_cleaned %>%
+  group_by(Age) %>%
+  summarise(NumAttacks = n())
 
-#Here it is great but I tried to class the months in order but it has not worked yet
+# Scatter plot to show the relationship between the number of shark attacks and age
+interactive_attacks_age <- ggplotly(
+  ggplot(attacks_summary, aes(x = Age, y = NumAttacks)) +
+    geom_point(color = "blue", size = 2) +
+    geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
+    labs(title = "Relationship between Shark Attacks and Age",
+         x = "Age",
+         y = "Number of Attacks")
+)
 
-# Create a plot to show the repartition of shark attacks per month by sex
-attacks_per_months <- ggplot(data = final_attacks_cleaned, aes(x = factor(Date), fill = Sex)) +
-  geom_bar(position = "stack", color = "white") +
-  labs(title = "Shark Attacks Repartition by Month and Sex",
-       x = "Month",
-       y = "Number of Attacks",
-       fill = "Sex") +
-  scale_fill_manual(values = c("pink", "blue", "orange"), name = "Sex") +
-  theme_minimal()
-
-
-interactive_attacks_per_months <- ggplotly(attacks_per_months)
-interactive_attacks_per_months
+interactive_attacks_age
 
 ```
 
 
-## 4.8 Evolution of temperatures through the years
 
-The graph below illustrates the change in global temperature throughout the last few decades, showing an overall increase in temperature over the 50-year period. Despite some fluctuations, the upward trend indicates a clear warming pattern, with a notable acceleration following the 1980s and one of the two most significant rises occurring in the recent decade.
+## 4.4 Evolution of sea level through the years
 
+This line graph depicts the trend of rising sea levels from around the ‘90s until the early 2020s, showing some fluctuations initially, and a notable upward trend thereafter. The early 2000s represent a steady rate of increase, with a minor decrease in the early 2010s. This pattern appears to be somewhat consistent with global temperature changes, and a steepening rise in the last couple of years indicate a complementary relation with the increasing temperature levels. 
 
-```{r, echo=TRUE}
-# Filter out NA values and non-numeric values in the Temperature column
-temperature_data_filtered <- final_temperature_cleaned %>%
-  filter(!is.na(Temperature), !is.na(as.numeric(Temperature)))
-
-# Convert the Temperature column to numeric
-temperature_data_filtered$Temperature <- as.numeric(temperature_data_filtered$Temperature)
-
-# Calculate the mean temperature for each year
-world_temperature <- temperature_data_filtered %>%
-  group_by(Year) %>%
-  summarise(World_Temperature = mean(Temperature, na.rm = TRUE))
-
-# Create a line plot for the world temperature
-plot5 <- ggplot(world_temperature, aes(x = Year, y = World_Temperature)) +
-  geom_line() +
-  labs(title = "World Temperature Change Over Years",
-       x = "Year",
-       y = "World Temperature Change") +
-  theme_minimal()
-
-interactive_plot <- ggplotly(plot5)
-interactive_plot
-
-```
-
-
-## 4.9 Evolution of sea level through the yars
-
-This line graph depicts the trend of rising sea levels from around the ‘90s until the early 2020s, showing some fluctuations initially, and a notable upward trend thereafter. The early 2000s represent a steady rate of increase, with a minor decrease in the early 2010s. This pattern appears to be somewhat consistent with global temperature changes, and a steepening rise in the last couple of years indicate a complementary relation with the increasing temperature levels.
 
 ```{r, echo=TRUE}
 # Create a line plot
@@ -335,7 +391,41 @@ interactive_plot <- ggplotly(plot6)
 interactive_plot
 ```
 
-## 4.10 CO2 emissions insights
+<strong>Does sea level and the number of shark attacks have a relationship?</strong>
+
+Our first conclusion from the previous graph is that both sea level and shark attakcs variations follow the same pattern: they are increasing through time! Let us plot this better in another graph.
+
+We can discern a positive correlation between the increase in sea levels and the occurrence of shark attacks. This observation is particularly intriguing since we can ask ourselves: is this a coincidence or increasing sea levels really infleunce the occurrence of shark attacks? Well, while taking this in mind, we try to plot other global warming consequences with shark attacks to see if there is any visible pattern.
+
+```{r, echo=TRUE}
+# Calculate the number of attacks per year
+attacks_summary <- final_attacks_cleaned %>%
+  group_by(Year) %>%
+  summarize(Number_of_Attacks = n())
+
+# Assuming there's a common column named "Year" in both datasets
+merged_data5 <- merge(attacks_summary, sealevel, by = "Year", all.x = TRUE)
+
+correlation_coefficient <- cor(merged_data5$Number_of_Attacks, merged_data5$GMSL_GIA, use = "complete.obs")
+
+# Scatter plot
+interactive_scatter_plot_sea_level_attacks <- ggplotly(
+  ggplot(merged_data5, aes(x = GMSL_GIA, y = Number_of_Attacks)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
+    labs(title = "Relationship Between Sea Level and Shark Attacks",
+         x = "Global Mean Sea Level Global Isostatic Adjustment (GMSL_GIA)",
+         y = "Number of Attacks")
+)
+
+# Display the interactive scatter plot
+interactive_scatter_plot_sea_level_attacks
+
+
+```
+
+
+## 4.5 CO2 emissions insights
 
 <strong>Trend of CO2 emissions per year</strong> 
 
@@ -410,7 +500,7 @@ interactive_plot
 
 <strong>What are the countries with the most CO2 emissions?</strong>
 
-Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. However, without surprise, the two biggest pollutant name of the world are the United States of America and China.
+Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. But what is more interesting is that, nevertheless, the emissions by countries like USA, China, Russia, Japan and India are so high that European countries cannot even cope with them. 
 
 ```{r}
 # Filter out 'OWID_WRL' from the data
@@ -435,38 +525,7 @@ interactive_top30_countries_co2 <- ggplotly(
 interactive_top30_countries_co2
 
 ```
-## 4.11 Relationships plots between our variables
 
-Now that we have a better understanding of our variables, we can analyse their relationships.
-
-<strong>How is the relationship between the attacks and the age of the victims?</strong>
-
-There exists a negative correlation between the age of the victim and the frequency of attacks. This can be attributed to factors such as the higher water engagement of teens and adults below 40 compared to older individuals, leading to a greater involvement in water-related activities.
-
-```{r, echo=TRUE}
-
-# Create a summary table with the count of attacks for each age
-attacks_summary <- final_attacks_cleaned %>%
-  group_by(Age) %>%
-  summarise(NumAttacks = n())
-
-# Scatter plot to show the relationship between the number of shark attacks and age
-interactive_attacks_age <- ggplotly(
-  ggplot(attacks_summary, aes(x = Age, y = NumAttacks)) +
-    geom_point(color = "blue", size = 2) +
-    geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
-    labs(title = "Relationship between Shark Attacks and Age",
-         x = "Age",
-         y = "Number of Attacks")
-)
-
-interactive_attacks_age
-
-```
-
-<strong>Does sea level and the number of shark attacks have a relationship?</strong>
-
-We can discern a positive correlation between the increase in sea levels and the occurrence of shark attacks. This observation is particularly intriguing since we commonly understand that rising sea levels result from global warming. Consequently, it raises the possibility that human influence may be a more significant factor in the surge of shark attacks than previously acknowledged.
 
 ```{r, echo=TRUE}
 # Calculate the number of attacks per year
@@ -475,25 +534,57 @@ attacks_summary <- final_attacks_cleaned %>%
   summarize(Number_of_Attacks = n())
 
 # Assuming there's a common column named "Year" in both datasets
-merged_data5 <- merge(attacks_summary, sealevel, by = "Year", all.x = TRUE)
+merged_data7 <- merge(attacks_summary, final_ghg_cleaned, by = "Year", all.x = TRUE)
 
-correlation_coefficient <- cor(merged_data5$Number_of_Attacks, merged_data5$GMSL_GIA, use = "complete.obs")
+correlation_coefficient <- cor(merged_data7$Number_of_Attacks, merged_data7$`Annual CO2 Emissions`, use = "complete.obs")
 
 # Scatter plot
-interactive_scatter_plot_sea_level_attacks <- ggplotly(
-  ggplot(merged_data5, aes(x = GMSL_GIA, y = Number_of_Attacks)) +
+interactive_scatter_plot_ghg_attacks <- ggplotly(
+  ggplot(merged_data7, aes(x = `Annual CO2 Emissions`, y = Number_of_Attacks)) +
     geom_point() +
     geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
     labs(title = "Relationship Between Sea Level and Shark Attacks",
-         x = "Global Mean Sea Level Global Isostatic Adjustment (GMSL_GIA)",
+         x = "GHG emissions",
          y = "Number of Attacks")
 )
 
 # Display the interactive scatter plot
-interactive_scatter_plot_sea_level_attacks
+interactive_scatter_plot_ghg_attacks
 
 
 ```
+
+## 4.6 Evolution of temperatures through the years
+
+The graph below illustrates the change in global temperature throughout the last few decades, showing an overall increase in temperature over the 50-year period. Despite some fluctuations, the upward trend indicates a clear warming pattern, with a notable acceleration following the 1980s and one of the two most significant rises occurring in the recent decade.
+
+
+```{r, echo=TRUE}
+# Filter out NA values and non-numeric values in the Temperature column
+temperature_data_filtered <- final_temperature_cleaned %>%
+  filter(!is.na(Temperature), !is.na(as.numeric(Temperature)))
+
+# Convert the Temperature column to numeric
+temperature_data_filtered$Temperature <- as.numeric(temperature_data_filtered$Temperature)
+
+# Calculate the mean temperature for each year
+world_temperature <- temperature_data_filtered %>%
+  group_by(Year) %>%
+  summarise(World_Temperature = mean(Temperature, na.rm = TRUE))
+
+# Create a line plot for the world temperature
+plot5 <- ggplot(world_temperature, aes(x = Year, y = World_Temperature)) +
+  geom_line() +
+  labs(title = "World Temperature Change Over Years",
+       x = "Year",
+       y = "World Temperature Change") +
+  theme_minimal()
+
+interactive_plot <- ggplotly(plot5)
+interactive_plot
+
+```
+
 
 <strong>How is the relationship between temperature change and the number of shark attacks?</strong>
 
@@ -545,74 +636,3 @@ interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
 interactive_scatter_plot_worldtemperature_attacks
 
 ```
-
-## 4.12 Interactive map
-```{r}
-#Interactive map
-
-#Import the data concerning the map
-map <- read.csv(here::here("data/map.csv"))
-map <- map[c('latitude', 'longitude', 'country')]
-
-#Let's rename the columns of the dataset
-colnames(map)[colnames(map) == 'latitude'] <- 'lat'
-colnames(map)[colnames(map) == 'longitude'] <- 'lng'
-colnames(map)[colnames(map) == 'country'] <- 'Country'
-map$Country <- toupper(map$Country)
-
-map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
-merged_map <- merge(merged_data3, map, by = "Country", all = FALSE)
-
-# Create a new variable representing the nb of attacks per country
-results <- merged_map %>%
-  group_by(Country) %>%
-  summarise(Attackscountry = n())
-print(results)
-
-#Attach aggregated data to your original dataframe
-merged_map <- left_join(merged_map, results, by = "Country")
-
-# Definition of the thresholds for the categorization
-seuils <- c(0, 50, 100, 500, Inf)
-
-# Definition of the colors we want to have in the map
-#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
-couleurs <- c("green", "yellow", "orange", "red")
-
-# Add a new category column based on thresholds
-merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = seuils, labels = FALSE)
-
-merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
-
-# Let's have fun with an interactive map
-ma_carte <- leaflet(merged_map) %>%
-  setView(lng = -95, lat = 37, zoom = 2) %>%
-  addTiles() %>%
-  addCircleMarkers(
-    lng = ~lng,
-    lat = ~lat,
-    radius = ~sqrt(echelle_taille) * 2,
-    color = ~factor(merged_map$cat_attacks, labels = couleurs),
-    fillOpacity = 0.4,
-    label = ~paste(Country, ":", Attackscountry),
-    options = markerOptions(autoPopup = TRUE)
-  ) %>%
-  addLegend(
-    position = "bottomleft",
-    colors = couleurs,
-    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
-    title = "Number of shark attacks"
-  )
-
-# Personnaliser le style CSS pour la carte
-ma_carte$dependencies[[1]]$stylesheet <- "leaflet.css"
-
-# Ajouter du style personnalisé
-ma_carte$dependencies[[1]]$inline <- TRUE
-ma_carte$dependencies[[1]]$script <- "$('#map').css({'width': '80%', 'height': '300px', 'float': 'left'});"
-
-
-# Let's see the map
-ma_carte
-```
-

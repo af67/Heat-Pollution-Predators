@@ -4,15 +4,33 @@ source(here::here("scripts/setup.R"))
 
 # 6. <strong>Conclusion</strong>
 
+<strong>Final Conclusion</strong>
+
+The purpose of this research project was to understand the dynamics of shark attacks globally, offering a comprehensive analysis of the various factors influencing this phenomenon. By investigating the effects of climate variations and various incident related aspects, we aimed to provide insights for enhancing both human safety and marine conservation.
+Overall, the results obtained from the multiple regression models revealed varying degrees of significance for different variables, namely age, sex, time, and shark species among others, as we put focus on providing an in-depth analysis with context-specific considerations.
+A primary statistical test on the factors influencing shark attacks suggests that age and year of occurrence are highly significant predictors, however, the results of the individual country models have shown no statistical significance, highlighting some differences from the global pattern. Despite this finding, the models involving both countries together reveal a strong negative relationship between the variables at various levels, giving more insight on the distinct patterns observed in these regions.
+The regression test pertaining to the factors influencing fatality rates suggests a decrease in the probability of a fatal outcome over the years, which is likely to be as a result of the advancements made in emergency responses and safety measures. While the age variable showed a positive correlation with fatality, which might be related to physical abilities, neither date or time were proven to be statistically significant.
+The effects of climate change on shark behaviour and interactions with humans can be attributed to several aspects, namely temperature and sea level change, as well as GHG emissions. The statistical tests show a strong negative relationship between temperature change, sea level rise, and the annual frequency of shark attacks, while global emissions have little impact, albeit significant.
+
+<strong>Limitations and Future Research</strong>
+
+This project is subject to a number of limitations, with some that need to be addressed in future studies. The first limitation arises from the quality of the available data, on which the accuracy and reliability of our findings are contingent. The amount of missing and non-standardised data, as is the case for the age variable among others, accounts for a noteworthy level of uncertainty in the analysis. A second limitation involves the geographical scope of our research findings, as the focus on specific regions where the incidents are the most frequent, does not reflect the diverse global patterns of shark attacks.
+It is important to acknowledge that the reliability and generalisability of the findings may be limited due to the nature of the datasets used, and it is recommended that some aspects be considered and addressed in future studies. First, the primary emphasis was to examine the impacts of the more prevalent climate change parameters, and therefore other environmental factors should be considered for a more thorough investigation. Furthermore, the application of an enhanced data collection method would help reduce missing information, as future studies would benefit from the availability of more up-to-date data, providing a more comprehensive understanding of evolving trends. Finally, the study does not emphasise on regions with lower amounts of reported incidents, and the investigation of such regions would allow a more representative understanding of the phenomenon.
+
 # 7. <strong>References</strong>
 
 CBS News. (2010, October 24). Five Most Dangerous Sharks to Humans. https://www.cbsnews.com/pictures/five-most-dangerous-sharks-to-humans/
 
+Maritime and Coastguard Agency (2022). Watersports Participation Survey 2021 https://mymembership.britishmarine.co.uk/media/putms4uv/4eb_watersports_participation_survey_2021_-_for_publication.pdf
+
 Midway, S. R., Wagner, T., & Burgess, G. H. (2019). Trends in global shark attacks. PLOS ONE, 14(2), e0211049. https://doi.org/10.1371/journal.pone.0211049
+
+Statista. (2023, November 7). World population by continent 2022. https://www.statista.com/statistics/237584/distribution-of-the-world-population-by-continent/
 
 West, J. G. (2011). Changing patterns of shark attacks in Australian waters. Marine and Freshwater Research, 62(6), 744. https://doi.org/10.1071/mf10181
 
 World’s biggest CO₂ emitters 2021 | Statista. (2023, September 12). Statista. https://www.statista.com/statistics/271748/the-largest-emitters-of-co2-in-the-world/
+
 
 
 ```{r setup, include=FALSE}

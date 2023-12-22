@@ -12,7 +12,7 @@ The purpose of this part is to provide a clear overview of the data landscape an
 
 Our first dataset contains the information in over 6000 shark attacks that have occurred worldwide over the course of the past centuries. The dataset was obtained from the Shark Research Institute's (SRI) website, which carries out and funds rigorous, peer-reviewed shark field research and instructs people using scientific data. 
 
-Even though the dataset is owned by the SRI, we have downloaded it through the following plateform: https://www.kaggle.com/datasets/teajay/global-shark-attacks.
+Even though the dataset is owned by the SRI, we have downloaded it through the following plateform: https://www.kaggle.com/datasets/teajay/global-shark-attacks. Please, note that there is no difference between the SRI and the Kaggle version, and that no modification has been done on the original one.
 
 ```{r, echo=TRUE}
 
@@ -126,7 +126,7 @@ library(gridExtra)
 
 The first dataset we will examine is the one pertaining to shark attacks. It was quite full of misspellings and missing values, which required a lot of time and a very dense code to be able to clean it.
 
-For our work, we have decided to only study the phenomenon of shark attacks from 1970 forward. In fact, it is possible to observe in the raw dataset that, before to this date, observations had more erroneous information. This leads one to believe that, more likely than not, the information we needed is more accurate if we do not travel too far back in time.
+For our work, we have decided to only study the phenomenon of shark attacks from 1970 forward. In fact, it is possible to observe in the raw dataset that, before this date, observations had more erroneous information. This leads one to believe that, more likely than not, the information we needed is more accurate if we do not travel too far back in time. 
 
 
 ```{r results='hide', warning=FALSE}
@@ -557,8 +557,7 @@ attacks <- subset(attacks, !is.na(Age))
 
 #NOW WORK ON TIME
 
-#sometimes hours are written in a different format compared to most of the others, which follow the format
-#13h30. Since they are not a lot we just replaced them manually
+#sometimes hours are written in a different format compared to most of the others, which follow the format 13h30. Since they are not a lot we just replaced them manually
 
 attacks<- mutate(attacks, Time= ifelse(Time=="Possibly same incident as 2000.08.21", "", Time))
 attacks<- mutate(attacks, Time= ifelse(Time=="14h00  -15h00", "14h30", Time))
@@ -582,11 +581,7 @@ attacks <- mutate(attacks, Time = ifelse(Time == "30 minutes after 1992.07.08.a"
 
 
 
-#now, our objective is to classify hours in parts of the day. indeed, it is useless to keep hours as they are
-#for a regression because we want times like 7h30 and 7h00 OR 15h00 and 16h00 to be read as the same thing.
-# some of the rows already had the part of the day in it, but in order to work easily with all the column, we
-#replaced "morning" with 8h00 etc. in this way, we're able to remove all the strings that are useless. finally, 
-#void rows have been replaced by an NA and hours, which were there as CHAR have been replaced by numeric
+#now, our objective is to classify hours in parts of the day. Later on in our work, we will be interested in understanding weather most shark attacks happen during the daylight or during the night. When we will run a regression it will hard to interpret the variable "hours" if they are left as they are, since "low" hours don't always correspond to daylight (1a.m and 6a.m. are both low but one is night and the orher is daytime).
 
 attacks$Time <- str_replace_all(attacks$Time, "\\bmorning\\b", "8h00")
 attacks$Time <- str_replace_all(attacks$Time, "\\bafternoon\\b", "15h00")
@@ -597,10 +592,7 @@ attacks$Time <- gsub("[^[:digit:]]", "", attacks$Time)
 attacks$Time = na_if(attacks$Time, "")
 attacks$Time <- as.numeric(attacks$Time)
 
-# since we removed all the letters, hours now are not written as 8h00 or 15h30 but as 800 and 15h00. this is
-# great for us, so that we can easily create a function that classifies those numbers as parts of the day. the 
-#function works this way: if a value is included between 0 and 500 (i.e. midnight and 5a.m.), the value is replaced
-#by the word "night" etc.
+# since we removed all the letters, hours now are not written as 8h00 or 15h30 but as 800 and 15h00. This is great for us, so that we can easily create a function that classifies those numbers as parts of the day. The function works this way: if a value is included between 0 and 500 (i.e. midnight and 5a.m.), the value is replaced by the word "night", 500 to 1200 is "morning" and so on and so forth.
 
 timeoftheday <- function(time) {
   if (!is.na(time)) {
@@ -613,10 +605,10 @@ timeoftheday <- function(time) {
     } else if (time >= 1730 && time < 2400) {
       return("evening")
     } else {
-      return("")  # Handle any other cases (if necessary)
+      return("")  #handle any other cases (if necessary)
     }
   } else {
-    return(NA)  # Retain NA values
+    return(NA)  #we want to retain NA values
   }
 }
 
@@ -625,20 +617,13 @@ attacks$Time <- tolower(attacks$Time)
 attacks$Time <- na_if(attacks$Time, "")
 
 
-sum(is.na(attacks$Time)) #this is the only one that still presents 1415 NA. we dont want to delete
-#them all coz we'd lose 44% of our data. 
-table(attacks$Time)#table shows that most of them happen in the afternoon, while 2ns place is owned by
-#morning. To confirm the higher frequency of attacks between 8am and 6pm is this artile (link JC found??)
-#we explain this by the fact that, naturally, most of people swim during the day. therefore, what we do
-#is replacing NA randomly by the proportion of afternoon, morning and evening.
+sum(is.na(attacks$Time)) #when we try to calculate the amount of Na in this column we find 1415 NA. We don't want to delete them all because we would lose 44% of our data. 
 
-sum(!is.na(attacks$Time))
+table(attacks$Time) #table shows that most of them happen in the afternoon, while 2ns place is owned by morning. We explain this by the fact that, naturally, most of people swim during the day. therefore, what we do is replacing NA randomly by the proportion of afternoon, morning and evening.
 
-#create function that substitutes the NA in time with one of the 4 parts of the day, based on their
-#proportion presence in our dataset
+#create function that substitutes the NA in time with one of the 4 parts of the day, based on their proportion presence in our dataset
 
 non_na_time_proportions <- table(attacks$Time) / sum(!is.na(attacks$Time))
-
 
 # Identify NA positions
 position_of_na <- is.na(attacks$Time)
