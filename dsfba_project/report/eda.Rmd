@@ -187,7 +187,7 @@ interactive_bar_plot_region_attacks
 <strong>Fatalities by type of shark</strong> 
 
 As we can see in this graph, most of attacks were not fatal, meaning that sharks injured a lot of people without taking their lives away. The types of sharks that did the most of accidents were the following ones: Bull shark, Tiger shark and White shark, with the deadlies being the last one. Why do they commit attacks? Probably because their feeding behavior. Maybe they misidentify their predators attacking people instead of animals like turtles, seals, or sea lions. This is consistent with Bull shark and Tiger shark being repetitevly named as the deadlies sharks in the seas and oeceans (CBS News, 2010).
-Another relevant information derived from this graph is the big number of unidentified sharks. Out of all the attacks recorded by our dataset, we have almost 1500 Unidentified species. It is such a pity not to be able to have this information, which would have led us to more insightful results.
+Another relevant information derived from this graph is the big number of unidentified sharks. Out of all the attacks recorded by our dataset, we have almost 1750 Unidentified species. It is such a pity not to be able to have this information, which would have led us to more insightful results.
 
 
 ```{r, echo=TRUE}
