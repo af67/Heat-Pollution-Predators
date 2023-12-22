@@ -191,6 +191,11 @@ Another relevant information derived from this graph is the big number of uniden
 
 
 ```{r, echo=TRUE}
+
+# Merge the two shark species in the "Species" column
+final_attacks_cleaned <- final_attacks_cleaned %>%
+  mutate(Species = ifelse(Species %in% c("Unidentifies shark", "Unidentified shark"), "Unidentified shark", Species))
+
 # Get the top 10 shark species
 top_10_sharks <- head(names(sort(table(final_attacks_cleaned$Species), decreasing = TRUE)), 10)
 
@@ -221,6 +226,7 @@ plot_top_10 <- ggplot(summary_df_top_10, aes(x = Var1, y = Freq, fill = Var2)) +
 
 # Display the plot
 print(plot_top_10)
+
 ```
 
 ## 4.6 Activities related to the attacks
