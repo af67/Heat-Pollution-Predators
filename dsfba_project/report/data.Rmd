@@ -872,6 +872,8 @@ species <- ifelse(grepl("(gill)", species, ignore.case = TRUE), "Sevengill shark
 # Replace the cell with "Angel shark" if any of the specified words are found
 species <- ifelse(grepl("(Angel)", species, ignore.case = TRUE), "Angel shark", species)
 
+# Replace the cell with "Unidentified shark" if any of the specified words are found
+species <- ifelse(grepl("(Unidentifies)", species, ignore.case = TRUE), "Sevengill shark", species)
 
 attacks$Species <- species
 attacks$Species <- ifelse(is.na(attacks$Species), "Unidentifies shark", attacks$Species)
