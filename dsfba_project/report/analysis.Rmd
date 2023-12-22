@@ -8,7 +8,7 @@ source(here::here("scripts/setup.R"))
 After a deep Exploratory Data Analysis we thought about the relevance of some factors that might influence directly the occurrence of shark attacks. Directly in the sense that these are variables that were found in the main data set and not in a secondary one. Let's begin then:
 
 Before doing any regression, we will compute the correlation matrix in order to analyze our numerical variables
-```{r, echo= TRUE}
+```{r}
 
 data_RQ1 <- merged_map
 data_RQ1 <- na.omit(data_RQ1) 
@@ -62,14 +62,14 @@ where:
 
 
 Let's do our main regression based on all the countries
-```{r, echo= TRUE}
+```{r}
 
 # Let's do an overall multiple regression model
 model <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = merged_map)
 
 ```
 
-```{r results='asis', echo=TRUE}
+```{r results='asis'}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -90,7 +90,7 @@ stargazer(model,
 
 
 <strong>This first regression will be based only on the USA</strong> 
-```{r, echo=TRUE}
+```{r}
 # USA Regression
 #This first regression will be based only on the USA
 usa_data <- merged_map %>%
@@ -112,7 +112,7 @@ knitr::kable(vif_values, col.names = c("Variable", "VIF"))
 
 ```
 
-```{r results='asis', echo=TRUE}
+```{r results='asis'}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -128,7 +128,7 @@ stargazer(model1,
 -	This model fits the data concerning USA very well, because of the high R-Squared value (0.5) and the small residuals. Does this model fit well or is there some multicollinearity?
 -	According to the VIF analysis, the values are low. As they are below 5, we cannot say that there is high multicollinearity between some variables because here all the values are close to 1. Each variable contributes relatively independently to explaining the variability of Attackscountry.
 
-```{r, echo= TRUE}
+```{r}
 # Assuming 'usa_data' is your dataset for the USA
 # Include the intercept in the initial model
 current_model <- lm(Attackscountry ~ 1, data = usa_data)
@@ -176,7 +176,7 @@ As said previously, we chose the model with the lowest AIC indicating a better f
 
 
 <strong> This second regression will be based only on Australia</strong> 
-```{r, echo= TRUE}
+```{r}
 #This second regression will be based only on Australia
 aus_data <- merged_map %>%
   filter(Country == "AUSTRALIA")
@@ -185,7 +185,7 @@ model2 <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, data = a
 
 ```
 
-```{r results='asis', echo=TRUE}
+```{r results='asis'}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -198,7 +198,7 @@ stargazer(model2,
 -	None of these variables are statistically significant. The residual standard error is very small and the multiple R-squared is approximately 50%. It indicates that there is a good fit and the variability is explained by 50% by the model, respectively. 
 
 
-```{r, echo= TRUE}
+```{r}
 # Include the intercept in the initial model
 current_model2 <- lm(Attackscountry ~ 1, data = aus_data)
 
@@ -242,7 +242,7 @@ But still, it is not that relevant to analyze only one country.
 
 <strong> Let's focus on both countries</strong> 
 
-```{r, echo= TRUE}
+```{r}
 # This regression will be based on both USA and AUSTRALIA
 combined_data <- merged_map %>%
  filter(Country %in% c("USA", "AUSTRALIA"))
@@ -252,7 +252,7 @@ model_combined <- lm(Attackscountry ~ Year + Sex + Age + Species + Type + Time, 
 
 ```
 
-```{r results='asis', echo=TRUE}
+```{r results='asis'}
 original_scipen <- options("scipen")
 options(scipen = 1000)
 
@@ -266,7 +266,7 @@ stargazer(model_combined,
 -	The variability of Attackscountry has a value of 5.25% (R^2) and is explained by the model. We conclude that this model is better explained by another model that contains more useful variables.
 
 
-```{r, echo= TRUE}
+```{r}
 #Model combined, AIC 
 
 # Include the intercept in the initial model
@@ -302,12 +302,12 @@ We have done the following type of models of this first regression that will hel
 - Focus on the two countries above.
 
 Each type of model according to their focus has its own primary factors influencing the occurrence of shark attacks. For example, in the first one (Overall), Age, Year, Type and Time are the factors that influence the attacks. But the two that are highly significant are Age and Year. In the 4th one, the one that is focused on both countries, the main factors are Age, Species, Type and Time. In conclusion, Age, Type and Time are highly significant predictors, thus they strongly influence the occurrence of shark attacks from a statistical point of view. 
-We did not consider models focus on one country because they are not that relevant. We choose to analyze more than 1 country because it makes more sense. We analyzed the two countries with the most shark attacks because we had the most data about these countries. It gives us more details and the significative factors that influence the shark attacks. We reduce the complexity of our model because of the focus on the regions with the most attacks, so it makes our results more relevant.
+We did not consider models focus on one country because they are not that relevant, our objective was to capture as much observations as possible. We analyzed the two countries with the most shark attacks because we had the most data about these countries. It gave us more details and the significative factors that influence the shark attacks. We reduce the complexity of our model because of the focus on the regions with the most attacks, so it makes our results more relevant.
 
-## 5.2 RQ2: Which are the factors leading to the fatality of a shark attack?
+## 5.2 RQ2: What are the factors leading to the fatality of a shark attack?
 
 In this paragraph, we aim to address the research question of what factors contribute to the fatality of shark attacks. The variable we will try to study this time is "Fatality", which appears to be a binomial variable, where 0 expresses no fatality, 1 expresses fatality. 
-In the EDA we were already able to see that fortunately, most of shark attacks are not fatal, but still, there are some cases where these accidents take off some lives. This investigation is compelling because the identification of these factors can help guide targeted safety protocols and public education initiatives. 
+In the EDA we were already able to see that fortunately, most of shark attacks are not fatal, but still, there are some cases where these accidents take off some lives. This investigation is compelling because the identification of these factors can help guide targeted safety protocols and public education initiatives. Given the high amount of data available for 3 countries only (USA, Australia and South Africa), we have decided to focus on these ones only. The reason is that, having only few observations for other countries makes them not representative for a study.
 
 The model we will use to answer our question is that of a logistic regression, which utilizes 'Date,' 'Year,' 'Age,' and 'Time' as predictors.
 
@@ -324,7 +324,7 @@ where:
 
 
 
-```{r, echo= TRUE}
+```{r}
 
 filtered_data4 <- merged_data3 %>%
   filter(ISO_Code %in% c("ZAF", "USA", "AUS"))
@@ -366,10 +366,10 @@ The 'Date' coefficient is -0.006, but with a p-value of 0.85, it is not statisti
 Remarkably, the 'Time' coefficient is 0.044, indicating that the time of day may not be a predictive factor for shark attack fatalities. The lack of significance of 'Time' may suggest that the time of an attack by a shark has little bearing on whether it ends fatally.  Intuitively, we thought that night attacks would be more fatal, given the difficulty in asking or receiving help, but apparently this is not the case.
 
 
-## 5.3 RQ2: Is it true that shark attacks have been increasing with climate change?
+## 5.3 RQ2: How does climate affect the rate of shark attack incidents?
 
 The graphs in the section on Exploratory Data Analysis (EDA) show us that the elements impacting climate change are trending upward. Interestingly, there is a comparable rising trend in the incidence of shark attacks. It presents a valid question regarding whether these two developments are correlated and how strong that association is.
-The problem of climate change is intricate and multidimensional. Three primary variables will be the focus of our investigation: temperature change, sea level rise, and CO2 emissions. Although we recognize that many other factors also contribute to this environmental phenomenon, we will focus on these specific variables and simplify the analysis in this way.
+The problem of climate change is intricate and multidimensional. Three primary variables will be the focus of our investigation: temperature change, sea level rise, and CO2 emissions. Although we recognize that many other factors also contribute to this environmental phenomenon, we will focus on these specific variables and simplify the analysis in this way. Also notice that, in order to remain coherent with the rest of the RQ, we focused once again on 3 countries: USA, Australia and South Africa.
 
 We must include a new column in our dataset that indicates the number of shark attacks that occur annually in each nation in order to answer this issue. We shall be able to investigate their frequency in this way.
 
@@ -384,7 +384,7 @@ where:
 5. \(\epsilon\) = Residual Error
 
 
-```{r, echo= TRUE, results='hide', warning=FALSE, message=FALSE}
+```{r, results='hide'}
 
 #The first thing we do is creating a copy of our dataset, so that we can take away some information that are not needed here. Indeed, with the na.omit function, we delete all the rows of the years
 #after 1992. The reason for this is that we were not able to find a dataset on sea level information that contained information starting from 1970.
@@ -394,8 +394,7 @@ data_RQ3 <- na.omit(data_RQ3)
 
 str(data_RQ3) #Firstly, we run the str function to check if all the variables of interest are num or int, and not chr
 
-#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that
-#all vorrelations are far from being equal to 1 or -1, which is a positive sign.
+#Run correlation matrix to be sure that there is no multicollinearity. When we run it, we see that all correlations are far from being equal to 1 or -1, which is a positive sign.
 ```
 
 Before running our regression, it is important to track if there is any sign of multicollinearity in our data. For this reason, we run two correlation plots. 
@@ -403,7 +402,7 @@ The first plot helps us visualize pretty quickly what is the correlation magnitu
 
 A clearer plot is the second one, that provides the reader with the exact correlation coefficients. The takeaway is that there is no linear dependence among the predictors we have chosen: this observation gives us confidence in the validity of our regression analysis, and opens us the doors to run our regression!
 
-```{r, echo= TRUE, results='hide', r, warning=FALSE, message=FALSE}
+```{r, results='hide'}
 
 subset_data <- data_RQ3[, c("Temperature", "Annual CO2 Emissions", "GMSL_GIA")]
 correlation_matrix <- cor(subset_data, use = "complete.obs")
@@ -421,7 +420,7 @@ corrplot(
 ```
 
 
-```{r, echo= TRUE}
+```{r}
 
 # We create a new variable 'SharkAttacksCount' representing the frequency of shark attacks per year
 count_shark_attacks <- data_RQ3 %>%
@@ -463,3 +462,46 @@ Finally, the beta coefficient for CO2 emissions is very close to zero, still rem
 
 Finally, we also notice that \( R^2 \) is equal to 0,792, meaning that, in this context, our variables explain 79,2% of the variation of our variables of interest.
 
+
+But hold up, it is not over! Since it is true that only 3 countries are not representative of the whole world, we also tried to run the same regression but only with Brazil and Bahamas which, in our bar plot, appear respectively as the fourth and fifth nations per shark attacks. The results are the following:
+
+
+```{r}
+
+# We create a new variable 'SharkAttacksCount' representing the frequency of shark attacks per year
+
+data_RQ4 <- merged_data3
+count_shark_attacks <- data_RQ4 %>%
+  group_by(Year, ISO_Code) %>%
+  summarize(SharkAttacksCount = n())
+
+
+# Then, we merge the aggregated shark attacks data back to your original dataset (merged_data3) based on the 'year' and 'ISO_Code' variables. We do this, so as to be able to run a the regression
+data_RQ4 <- merge(data_RQ4, count_shark_attacks, by = c("Year", "ISO_Code"), all.x = TRUE)
+
+# FIRST MODEL
+filtered_data <- data_RQ4 %>%
+  filter(ISO_Code %in% c("BHS", "BRA"))
+
+model222 <- lm(SharkAttacksCount ~ Temperature + GMSL_GIA + `Annual CO2 Emissions`, data = filtered_data)
+
+
+```
+
+
+```{r results='asis', echo=FALSE}
+original_scipen <- options("scipen")
+options(scipen = 1000)
+
+stargazer(model222,
+          title = 'Regression for shark attacks against climate change factors',
+          type = 'html'
+          )
+
+```
+
+
+While just before all variables were significant, now we can see that Annual CO2 Emissions	and Temperature lose their significance. This may be due to a few  reasons. 
+The connection of shark attacks with our 3 variables of interest might be more evident in nations like the USA, Australia, and South Africa because of the higher occurrence of these incidents here, which clarifies the patterns. These links are less evident in nations like Brazil and the Bahamas where there are fewer shark attacks. Therefore, the insufficient data may not be helpful to discern the patterns clearly.
+
+Another possibility is that what affects shark attacks varies from place to place. So, we believe that looking closely at each country would help both us and policy makers to make clearer conclusions about the interrelation of climate change and shark attacks. Unfortunately for us, time was not enough to delve deeper into this question, but we hope to be able to study this phenomenon deeper one day.

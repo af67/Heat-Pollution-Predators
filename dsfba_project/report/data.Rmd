@@ -14,7 +14,7 @@ Our first dataset contains the information in over 6000 shark attacks that have 
 
 Even though the dataset is owned by the SRI, we have downloaded it through the following plateform: https://www.kaggle.com/datasets/teajay/global-shark-attacks. Please, note that there is no difference between the SRI and the Kaggle version, and that no modification has been done on the original one.
 
-```{r, echo=TRUE}
+```{r}
 
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
@@ -37,7 +37,7 @@ Our second dataset contains the average temperature change for each country (ann
 The dataset was taken from the website of the Food and Agriculture Organization of United Nations: https://www.fao.org/faostat/en/#data/ET
 
 
-```{r, echo=TRUE, warning=FALSE}
+```{r}
 
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
@@ -61,7 +61,7 @@ GIA: Global Isostatic Adjustment, which is the ongoing movement of land once bur
 
 The dataset was taken from the website of the NASA: https://climate.nasa.gov/vital-signs/sea-level/
 
-```{r, echo=TRUE}
+```{r}
 
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
@@ -81,7 +81,7 @@ Our fourth dataset relates to GHG emissions, one of the main concerns linked to 
 
 The dataset was taken from the website Our World in Data: https://ourworldindata.org/annual-co2-emissions
 
-```{r, echo=TRUE}
+```{r}
 
 # Create a 2x2 table. The first column represents the name of variables, the second one the description of each variable
 
@@ -103,7 +103,7 @@ The first step of our work is data cleaning. While collecting data for a study, 
 Please be aware that at the beginning of each subsection we only provide <strong>general</strong> instructions of our cleaning. Through the code, you will get additional in-depth explanations of each step we took.
  
 
-```{r message=FALSE}
+```{r}
 #We start by selecting the packages that we will need to run our functions
 library(tidyverse)
 library(knitr)
@@ -129,7 +129,7 @@ The first dataset we will examine is the one pertaining to shark attacks. It was
 For our work, we have decided to only study the phenomenon of shark attacks from 1970 forward. In fact, it is possible to observe in the raw dataset that, before this date, observations had more erroneous information. This leads one to believe that, more likely than not, the information we needed is more accurate if we do not travel too far back in time. 
 
 
-```{r results='hide', warning=FALSE}
+```{r results='hide'}
 
 attacks <- read.csv(here::here("data/attacks1.csv"))
 attacks <- attacks[1:3406, ]
@@ -252,7 +252,7 @@ While cleaning the column of Ages, we realized that NA were too much and we coul
 Here is an example with USA and Bahamas. For USA, the distribution of the non-missing victims' ages is skewed on the left. Therefore we have decided to substitute all the missing values with the first quantile. For Bahamas, it is evident that data follow a normal distribution, therefore we replace NAs with the mean.
 
 
-```{r warning=FALSE}
+```{r}
 
 #At this point, NA were still too much, so we will  work in the following way: for each country that presents LESS NA than the total observation, we compute an histogram (Age against frequency). If the distribution is normal, we substitute the NA with the mean. If it is left skewed, we substitute the NAs with the first quantile, if it is right skewed, we substitute it with the third quantile 
 
@@ -301,7 +301,7 @@ attacks$Age[attacks$Country == "BAHAMAS" & is.na(attacks$Age)] <- mean_BAH
 
 ```
 
-```{r results='hide', warning=FALSE, echo= TRUE}
+```{r results='hide'}
 #EGYPT#
 
 ages_in_egy <- attacks %>%
@@ -953,7 +953,7 @@ final_attacks_cleaned <- attacks
 
 
 
-```{r, echo=TRUE}
+```{r}
 
 DT::datatable(attacks, options = list(pageLength = 10))
 
@@ -968,7 +968,7 @@ To proceed with the cleaning, we eliminated the rows corresponding to the standa
 
 We then rotated the dataset so as to have all the years under a single column; we subsequently matched each country and year with its temperature change observation. Finally we added the ISO code to merge with the other datasets.
 
-```{r, echo=TRUE, warning=FALSE}
+```{r}
 
 temperature <- read_xlsx(here::here("data/Temperature.xlsx"))
 
@@ -1062,7 +1062,7 @@ DT::datatable(temperature, options = list(pageLength = 10))
 We choose a data set about the sea level change observed during the last years. We start analyzing the sea level changes since 1993 because we did not find any data of years before. 
 In this data set we had few columns but we only kept 2 columns that were the more relevant for us: the year and the GMSL_GIA. This last column is the global mean of sea level including the glacial isostatic adjustement (GIA). We choose the column with GIA and not without because this show the response of solid Earth to the past changes in surface loading by ice and water such as the glaciation and deglaciation.
 
-```{r, echo=TRUE, warning=FALSE}
+```{r}
 
 sealevel <- read.csv(here::here("data/sealevel.csv"))
 
@@ -1093,7 +1093,7 @@ DT::datatable(sealevel, options = list(pageLength = 10))
 
 Finally, the GHG emissions dataset was the easiest  to clean. Indeed, we already have a column for the ISO code, so we simply had to filter the years so that the observations began in 1970.
 
-```{r, echo=TRUE, warning=FALSE}
+```{r}
 co2 <- read.csv(here::here("data/CO2.csv"))
 
 # Change names of columns in order to have the same columns that in the other datasets
@@ -1127,7 +1127,7 @@ DT::datatable(co2, options = list(pageLength = 10))
 
 After cleaning the four datasets, we have finally merged them. This step is essential to be able to run regression across variables that came from multiple datasets. 
 
-```{r, echo=TRUE, warning=FALSE}
+```{r}
 
 
 #MERGE FIRST TWO DATA SETS

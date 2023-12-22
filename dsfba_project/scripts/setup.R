@@ -35,9 +35,10 @@ knitr::opts_chunk$set(
   # cache = TRUE,
   fig.asp = NULL,
   fig.show = "hold",
-  message = TRUE,
+  message = FALSE,
   echo = TRUE,
-  warning = FALSE
+  warning = FALSE,
+  results= 'show'
 )
 
 #Import all the datasets

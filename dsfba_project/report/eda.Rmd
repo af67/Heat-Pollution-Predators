@@ -11,11 +11,9 @@ With the y-axis showing the frequency of shark attacks and the x-axis showing th
 
 This trend is a key research topic: why are marine attacks increasing year after year? What could be the reasons? In fact, the reasons can be various, for example of an ecological, environmental nature or linked to human seaside activity. The graph highlights the need to keep an eye on and understand the dynamics of these episodes, which is exactly what we will do during our study.
 
-Three fundamental areas of this graph should be an element of analysis: 1975-1978; 1988-1990; 2019-2020. In fact, we could ask ourselves, why is there a decrease in attacks in this period?
-For the last period, the answer is simple: our dataset presents data up to June 2018, for the second half of the year we have no data, which explains the drastic drop in attacks.
-For the other two periods, we will discover the reasons during a more in-depth analysis
+One might ask himself/herself why there is a huge drop in shark attacks between2019-2020. The answer is simple: our dataset presents data up to June 2018, for the second half of the year we have no data, which explains the drastic drop in attacks.
 
-```{r, echo=TRUE}
+```{r}
 ggplot(data = final_attacks_cleaned, aes(x = Year)) +
   geom_smooth(stat = "count", aes(group = 1), color = "blue", size = 1) +
   geom_bar(stat = "count", fill = "red") +
@@ -26,7 +24,7 @@ ggplot(data = final_attacks_cleaned, aes(x = Year)) +
 
 
 To take a look at how this evolution happens within males and females, we can run another plot showing that males have always been the sex facing more attacks.
-```{r, echo=TRUE}
+```{r}
 
 # Create a plot to show the trend of shark attacks throughout the years, including victim's sex (interactive version)
 attacks_evolution_sex <- ggplot(data = final_attacks_cleaned, aes(x = Year, fill = Sex)) +
@@ -124,7 +122,7 @@ ma_carte
 
 We decided to also run a barplot in other to observe the top 10 countries with the highest amount of shark attacks. It was useful to observe the placing of each country in a more straight-forward way.
 
-```{r, echo=TRUE}
+```{r}
 shark_attacks_by_country <- final_attacks_cleaned %>%
   group_by(Country) %>%
   summarise(total_attacks = n())
@@ -152,7 +150,8 @@ interactive_plot
 
 Finally, through a chart that combines countries in continents, we are able to illustrate the regions with the highest number of attacks since 1970, with North America and Australia and Oceania taking the lead. This is even more surprising than before! Asia, the continents that counts for 59.72% (Statista, 2022) of the world population does not even figure here. This fact intrigued us even more to go deeper and find out the real causes of shark attacks.
 
-```{r, echo=TRUE}
+
+```{r}
 
 #Create a new column in attacks that represents the continents
 attacks_grouped <- final_attacks_cleaned %>%
@@ -200,7 +199,7 @@ Conversely, the decreased number of assaults that occur at night may be related 
 
 Lastly, we suppose that the medium frequencies of the morning and evening might correspond to transitional periods when shark and human behavior are changing.
 
-```{r, echo=TRUE}
+```{r}
 
 bar_colors <- c("#66c2a5", "#fc8d62", "#8da0cb", "#e78ac3")
 
@@ -233,7 +232,7 @@ text(x = barplot1, y = sorted_table, labels = text_labels, pos = 3, cex = 0.8, c
 
 We initially believed that men experienced attacks more frequently, but our surprise grew when we examined this chart. It highlights a substantial disparity in the distribution of attacks between men and women.
 
-```{r, echo=TRUE}
+```{r}
 # Create a summary table with the count of attacks for each sex
 attacks_summary_sex <- final_attacks_cleaned %>%
   group_by(Sex) %>%
@@ -272,13 +271,14 @@ The study confirms our assumption that generally, it is men who practice more re
 
 
 
+
 <strong>Fatalities by type of shark</strong> 
 
 As we can see in this graph, most of attacks were not fatal, meaning that sharks injured a lot of people without taking their lives away. The types of sharks that did the most of accidents were the following ones: Bull shark, Tiger shark and White shark, with the deadlies being the last one. Why do they commit attacks? Probably because their feeding behavior. Maybe they misidentify their predators attacking people instead of animals like turtles, seals, or sea lions. This is consistent with Bull shark and Tiger shark being repetitevly named as the deadlies sharks in the seas and oeceans (CBS News, 2010).
 Another relevant information derived from this graph is the big number of unidentified sharks. Out of all the attacks recorded by our dataset, we have almost 1750 Unidentified species. It is such a pity not to be able to have this information, which would have led us to more insightful results.
 
 
-```{r, echo=TRUE}
+```{r}
 
 # Merge the two shark species in the "Species" column
 final_attacks_cleaned <- final_attacks_cleaned %>%
@@ -322,7 +322,7 @@ print(plot_top_10)
 
 Identifying the activities most commonly targeted by shark attacks was a crucial aspect of our analysis. The results underscore that among various water-related activities, surfing stands out as the predominant target, with 903 attacks recorded since 1970, making it the preferred activity for sharks. This is not a surprise as the similarity in shape between a surfboard and a seal may lead sharks to mistake the two, providing a plausible explanation for the higher incidence of attacks during surfing.
 
-```{r, echo=TRUE}
+```{r}
 
 # Check the top activities with the most attacks
 top_activities <- final_attacks_cleaned %>%
@@ -353,7 +353,7 @@ interactive_top_activities_attacks
 
 There exists a negative correlation between the age of the victim and the frequency of attacks. This can be attributed to factors such as the higher water engagement of teens and adults below 40 compared to older individuals, leading to a greater involvement in water-related activities.
 
-```{r, echo=TRUE}
+```{r}
 
 # Create a summary table with the count of attacks for each age
 attacks_summary <- final_attacks_cleaned %>%
@@ -381,7 +381,7 @@ interactive_attacks_age
 This line graph depicts the trend of rising sea levels from around the ‘90s until the early 2020s, showing some fluctuations initially, and a notable upward trend thereafter. The early 2000s represent a steady rate of increase, with a minor decrease in the early 2010s. This pattern appears to be somewhat consistent with global temperature changes, and a steepening rise in the last couple of years indicate a complementary relation with the increasing temperature levels. 
 
 
-```{r, echo=TRUE}
+```{r}
 # Create a line plot
 plot6 <- ggplot(data = final_sealevel_cleaned, aes(x = Year, y = GMSL_GIA)) +
   geom_line(color = "green", size = 1.5) +
@@ -397,7 +397,7 @@ Our first conclusion from the previous graph is that both sea level and shark at
 
 We can discern a positive correlation between the increase in sea levels and the occurrence of shark attacks. This observation is particularly intriguing since we can ask ourselves: is this a coincidence or increasing sea levels really infleunce the occurrence of shark attacks? Well, while taking this in mind, we try to plot other global warming consequences with shark attacks to see if there is any visible pattern.
 
-```{r, echo=TRUE}
+```{r}
 # Calculate the number of attacks per year
 attacks_summary <- final_attacks_cleaned %>%
   group_by(Year) %>%
@@ -432,7 +432,7 @@ interactive_scatter_plot_sea_level_attacks
 The bar graph reveals an evident increase of emissions in the depicted period, as indicated by a consistent upward trend with few fluctuations and no significant declines. The rise reflects the growth of industrialisation over the years, especially marked by the end of the Cold War and subsequent economic growth in many parts of the world. The early 2000s show a particularly sharp increase, which is likely to be as a result of the rapid increase in manufacturing and energy production in Asian regions. Post-2010 years show some fluctuations that could be attributed to emissions mitigation efforts, but the trend overall remains the same.
 
 
-```{r, echo=TRUE}
+```{r}
 # Create a line plot with backticks to show the trend in co2 emissions throughout the years
 plot7 <- ggplot(data = final_ghg_cleaned, aes(x = Year, y = `Annual CO2 Emissions`)) +
   geom_line(color = "blue") +
@@ -453,7 +453,7 @@ Oceania represents the lowest overall emissions among the listed regions, with a
 Antarctica’s emissions are not visible on the graph, which is consistent with expectations as it is a largely uninhabited continent.
 
 
-```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE}
+```{r, results='hide'}
 
 co2_grouped <- final_ghg_cleaned %>%
   mutate(Region = case_when(
@@ -485,7 +485,7 @@ mean_emissions <- co2_grouped %>%
 
 ```
 
-```{r, echo=TRUE}
+```{r}
 # Step 2: Let's plot the Data
 plot2 <- ggplot(mean_emissions, aes(x = Year, y = Mean_Emissions, color = Region)) +
   geom_line() +
@@ -526,40 +526,12 @@ interactive_top30_countries_co2
 
 ```
 
-
-```{r, echo=TRUE}
-# Calculate the number of attacks per year
-attacks_summary <- final_attacks_cleaned %>%
-  group_by(Year) %>%
-  summarize(Number_of_Attacks = n())
-
-# Assuming there's a common column named "Year" in both datasets
-merged_data7 <- merge(attacks_summary, final_ghg_cleaned, by = "Year", all.x = TRUE)
-
-correlation_coefficient <- cor(merged_data7$Number_of_Attacks, merged_data7$`Annual CO2 Emissions`, use = "complete.obs")
-
-# Scatter plot
-interactive_scatter_plot_ghg_attacks <- ggplotly(
-  ggplot(merged_data7, aes(x = `Annual CO2 Emissions`, y = Number_of_Attacks)) +
-    geom_point() +
-    geom_smooth(method = "lm", se = FALSE, color = "red") +  # Add a linear trend line
-    labs(title = "Relationship Between Sea Level and Shark Attacks",
-         x = "GHG emissions",
-         y = "Number of Attacks")
-)
-
-# Display the interactive scatter plot
-interactive_scatter_plot_ghg_attacks
-
-
-```
-
 ## 4.6 Evolution of temperatures through the years
 
 The graph below illustrates the change in global temperature throughout the last few decades, showing an overall increase in temperature over the 50-year period. Despite some fluctuations, the upward trend indicates a clear warming pattern, with a notable acceleration following the 1980s and one of the two most significant rises occurring in the recent decade.
 
 
-```{r, echo=TRUE}
+```{r}
 # Filter out NA values and non-numeric values in the Temperature column
 temperature_data_filtered <- final_temperature_cleaned %>%
   filter(!is.na(Temperature), !is.na(as.numeric(Temperature)))
@@ -588,9 +560,9 @@ interactive_plot
 
 <strong>How is the relationship between temperature change and the number of shark attacks?</strong>
 
-In addition to the previous plot, it is evident that there is a positive correlation between global temperatures and the frequency of shark attacks. This further strengthens the earlier argument, suggesting potentially a stronger human responsibility for these attacks. 
+In addition to the previous plot, it is evident that there is a positive correlation between global temperatures and the frequency of shark attacks. This further strengthens our assumption of a possible link between global warming and shark attacks occurrences
 
-```{r, echo=TRUE}
+```{r}
 
 # Identify non-numeric values in the Temperature column
 non_numeric_temp <- final_temperature_cleaned %>%
@@ -636,3 +608,11 @@ interactive_scatter_plot_worldtemperature_attacks <- ggplotly(
 interactive_scatter_plot_worldtemperature_attacks
 
 ```
+
+## 4.7 Final Considerations
+
+Above all, the apparent pattern of an annual increase in shark attacks has aroused interest and prompted research into the main variables that serve as significant triggers for the occurrence of these events. Given that the graphs and plots showed a clear preference for male victims and that males die at a higher rate than females, a thorough investigation is necessary to understand the complex interactions between gender dynamics and shark attacks. Moreover, the discovery that shark attacks occur more frequently during the day provides a crucial basis for deciphering the environmental complexities surrounding these incidents, raising the question of whether daytime variations play a significant role in shark attack occurrences.
+
+Examining the variables that contribute to the lethality of the encounters with sharks, the investigation broadens to examine why those accidents are more lethal in certain circumstances rather than others, and what is the network of variables that affect how deadly shark encounters can be.
+
+Our research integrates into the larger framework of climate change, going beyond the specific topic of shark attacks. A comparison of the time trends of shark attacks with increasing greenhouse gas (GHG) emissions, rising sea levels, and rising temperatures reveals a fascinating relationship that drives the development of the final research question, which aims to understand whether global warming correlates with the increase of shark attacks.

@@ -612,7 +612,107 @@ var(temperature$Temperature)
 
 
 
+#inter
+
+map <- read.csv(here::here("data/map.csv"))
+map <- map[c('latitude', 'longitude', 'country')]
+
+#Let's rename the columns of the dataset
+colnames(map)[colnames(map) == 'latitude'] <- 'lat'
+colnames(map)[colnames(map) == 'longitude'] <- 'lng'
+colnames(map)[colnames(map) == 'country'] <- 'Country'
+map$Country <- toupper(map$Country)
+
+map$Country <- ifelse(map$Country == "UNITED STATES", "USA", map$Country)
+merged_map <- merge(merged_data3, map, by = "Country", all = FALSE)
+
+# Create a new variable representing the nb of attacks per country
+results <- merged_map %>%
+  group_by(Country) %>%
+  summarise(Attackscountry = n())
+print(results)
+
+#Attach aggregated data to your original dataframe
+merged_map <- left_join(merged_map, results, by = "Country")
+
+# Definition of the thresholds for the categorization
+seuils <- c(0, 50, 100, 500, Inf)
+
+# Definition of the colors we want to have in the map
+#couleurs <- c("#4DA6FF", "#0074CC", "#6C8EBF", "#001F3F80")
+couleurs <- c("green", "yellow", "orange", "red")
+
+# Add a new category column based on thresholds
+unique_breaks <- c(-Inf, 50, 100, 500, max(merged_map$Attackscountry, na.rm = TRUE))
+merged_map$cat_attacks <- cut(merged_map$Attackscountry, breaks = unique_breaks, labels = FALSE)
+
+merged_map$echelle_taille <- merged_map$Attackscountry * 0.1
+
+ma_carte <- leaflet(merged_map) %>%
+  setView(lng = -95, lat = 37, zoom = 2) %>%
+  addTiles() %>%
+  addPolygons(
+    data = merged_map,
+    fillColor = ~colorQuantile("YlOrRd", merged_map$Attackscountry)(merged_map$Attackscountry),
+    fillOpacity = 0.7,
+    color = "white",
+    weight = 1,
+    highlight = highlightOptions(
+      weight = 2,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+    ),
+    label = ~paste(Country, ":", Attackscountry),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+    )
+  ) %>%
+  addLegend(
+    position = "bottomleft",
+    colors = colorQuantile("YlOrRd", merged_map$Attackscountry)(merged_map$Attackscountry),
+    labels = c("Less than 50", "50 to 100", "100 to 500", "More than 500"),
+    title = "Number of shark attacks"
+  )
+
+# Customize the style CSS for the map
+ma_carte$dependencies[[1]]$stylesheet <- "leaflet.css"
+
+# Add custom style
+ma_carte$dependencies[[1]]$inline <- TRUE
+ma_carte$dependencies[[1]]$script <- "$('#map').css({'width': '80%', 'height': '300px', 'float': 'left'});"
+
+# Let's see the map
+ma_carte
 
 
+# Assuming `merged_map` is your data frame
+library(tmap)
 
+# Merge with your data
+merged_map <- left_join(merged_map, results, by = "Country")
 
+# Create the map
+shark_attacks_map <- tm_shape(merged_map) + 
+  tm_fill(
+    col = "cat_attacks",
+    title = "Number of shark attacks",
+    breaks = c(0, 50, 100, 500, Inf),
+    palette = c("green", "yellow", "orange", "red")
+  ) +
+  tm_borders(col = "white", alpha = 0.5) +
+  tm_layout(
+    title = "Shark Attacks by Country",
+    title.size = 1,
+    legend.outside = TRUE,
+    legend.outside.position = "right",
+    inner.margins = 0.1,
+    main.title = "Title of Your Map Here"
+  )
+
+# Display the map
+tmap_mode("view")
+tmap_leaflet(shark_attacks_map)
