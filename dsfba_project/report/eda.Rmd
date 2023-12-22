@@ -410,7 +410,7 @@ interactive_plot
 
 <strong>What are the countries with the most CO2 emissions?</strong>
 
-Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. However, without surprise, the two biggest pollutant name of the world are from North America and Asia.
+Here is a plot to further illustrate the distribution of CO2 emissions in the world; the top 30 countries with the most shark attacks since 1970. One interesting thing is that most countries are European countries. However, without surprise, the two biggest pollutant name of the world are the United States of America and China.
 
 ```{r}
 # Filter out 'OWID_WRL' from the data
