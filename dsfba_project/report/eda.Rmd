@@ -497,7 +497,7 @@ interactive_scatter_plot_sea_level_attacks
 
 <strong>How is the relationship between temperature change and the number of shark attacks?</strong>
 
-In addition to the previous plot, it is evident that there is a positive correlation between global temperatures and the frequency of shark attacks. This further strengthens the earlier argument, suggesting potentially a stronger human responsibility. 
+In addition to the previous plot, it is evident that there is a positive correlation between global temperatures and the frequency of shark attacks. This further strengthens the earlier argument, suggesting potentially a stronger human responsibility for these attacks. 
 
 ```{r, echo=TRUE}
 
